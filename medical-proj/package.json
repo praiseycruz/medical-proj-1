@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^12.1.10",
     "bootstrap": "^4.5.3",
     "final-form": "^4.20.1",
+    "izitoast": "^1.4.0",
     "node-sass": "4.12",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",

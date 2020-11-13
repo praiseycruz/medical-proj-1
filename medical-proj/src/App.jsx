@@ -10,6 +10,8 @@ import { Navbar, Nav, Accordion, Card, NavDropdown, DropdownButton, Dropdown } f
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faBell, faCaretDown, faCaretRight, faUser } from "@fortawesome/free-solid-svg-icons"
 
+import 'izitoast/dist/css/iziToast.min.css'; // added izitoast css
+
 import './assets/scss/global.scss'
 import { history } from './helpers'
 
