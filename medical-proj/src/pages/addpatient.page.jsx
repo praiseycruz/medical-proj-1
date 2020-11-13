@@ -166,18 +166,22 @@ class AddPatientPage extends React.Component {
     _openModal = () => {
         let { isPatientCreated } = this.state
 
-        if (isPatientCreated) {
-            this.setState({
-                showModal: true
-            })
-        } else {
-            iziToast.warning({
-                position: 'topRight',
-                title: 'Warning',
-                displayMode: 1,
-                message: 'Please register a Patient before adding a Device',
-            });
-        }
+        // if (isPatientCreated) {
+        //     this.setState({
+        //         showModal: true
+        //     })
+        // } else {
+        //     iziToast.warning({
+        //         position: 'topRight',
+        //         title: 'Warning',
+        //         displayMode: 1,
+        //         message: 'Please register a Patient before adding a Device',
+        //     });
+        // }
+
+        this.setState({
+            showModal: true
+        })
 
     }
 
@@ -621,7 +625,7 @@ class AddPatientPage extends React.Component {
 
                                  <Modal.Body>
                                      <div className="adding-new">
-                                         <Form.Group className="devices-types mt-4">
+                                         {/*<Form.Group className="devices-types mt-4">
                                              <Form.Label className="col-sm-5">Device type</Form.Label>
                                              <div className="col-sm-7">
                                                  <Field name="device-type" type="text">
@@ -655,7 +659,7 @@ class AddPatientPage extends React.Component {
                                                      )}
                                                  </Field>
                                              </div>
-                                         </Form.Group>
+                                         </Form.Group>*/}
 
                                          <Form.Group className="devices-types">
                                              <Form.Label className="col-sm-5">Device Name</Form.Label>
