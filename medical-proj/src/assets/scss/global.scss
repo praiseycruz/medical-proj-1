@@ -50,6 +50,17 @@ body {
         }
     }
 
+    .input-errors {
+        color: #ff2f2f;
+        font-size: 12px;
+    }
+
+    .form-control {
+        &.is-invalid {
+            border: 1px solid #ff2f2f;
+        }
+    }
+
     .modal-content {
         background-color: #3C4452;
 

@@ -2,10 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from './styled_components/addpatient.style'
-import { Form as FormFinal, Field } from "react-final-form";
-import { Form, Row, Col, Button, Container, Modal, Card } from 'react-bootstrap'
+import { Form as FormFinal, Field } from "react-final-form"
+import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-bootstrap'
 import { TableComponent } from '../components/Table'
 import { patientAction } from '../actions'
+import iziToast from 'izitoast';
 
 class AddPatientPage extends React.Component {
     constructor(props) {
@@ -13,55 +14,41 @@ class AddPatientPage extends React.Component {
         this.state = {
             showModal: false,
             devices: [
-                {
-                    id: '1',
-                    deviceName: 'Device Name',
-                    name: 'GlucoMeter Glucometer',
-                    serialNum: 'W9865456828403682'
-                },
-                {
-                    id: '2',
-                    deviceName: 'Device Name',
-                    name: 'GlucoMeter Glucometer',
-                    serialNum: 'W9865456828403682'
-                },
-                {
-                    id: '3',
-                    deviceName: 'Device Name',
-                    name: 'GlucoMeter Glucometer',
-                    serialNum: 'W9865456828403682'
-                }
+
             ],
             cols: [
                 {
                     title: '',
                     key: 'deviceName',
                     render: colData => {
-                        return <span>{colData.deviceName}</span>;
+                        return <span>{colData.deviceName}</span>
                     }
                 },
                 {
                     title: '',
                     key: 'name',
                     render: colData => {
-                        return <span>{colData.name}</span>;
+                        return <span>{colData.name}</span>
                     }
                 },
                 {
                     title: '',
                     key: 'serialNum',
                     render: colData => {
-                        return <span>{colData.serialNum}</span>;
+                        return <span>{colData.serialNum}</span>
                     }
                 },
                 {
                     title: '',
                     key: 'button',
                     render: colData => {
-                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>;
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>
                     }
                 }
-            ]
+            ],
+            isPatientCreated: false,
+            hasPatientCreated: false,
+            patientData: {}
         }
     }
 
@@ -74,28 +61,28 @@ class AddPatientPage extends React.Component {
             "name": [
                 {
                     "use": "official",
-                    "given": [`${firstname}`],
-                    "family": `${lastname}`
+                    "given": [`${values.firstname}`],
+                    "family": `${values.lastname}`
                 }
             ],
-            "gender": `${gender}`,
+            "gender": `${values.gender}`,
             "telecom": [
                 {
-                    "value": `${phoneNum}`,
+                    "value": `${values.phoneNum}`,
                     "use": "mobile",
                     "system": "phone"
                 },
                 {
                     "system": "email",
-                    "value": `${email}`
+                    "value": `${values.email}`
                 }
             ],
             "address": [
                 {
                     "text": [
-                        `${address}`
+                        `${values.address}`
                     ],
-                    "postalCode": `${zipcode}`
+                    "postalCode": `${values.zipcode}`
                 }
             ],
             "identifier": [
@@ -109,7 +96,7 @@ class AddPatientPage extends React.Component {
                         ]
                     },
                     "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${ssn}`
+                    "value": `${values.ssn}`
                 }
             ],
         }
@@ -117,14 +104,81 @@ class AddPatientPage extends React.Component {
         dispatch(patientAction.create(patientData))
     }
 
-    _handleValidate = () => {
+    _handleValidate = values => {
+        const errors = {}
+		let firstname = []
+        let lastname = []
+		let addemail = []
+        let ssn = []
+        let address = []
+        let zipcode = []
+        let phoneNum = []
 
+		if (!values.firstname)
+			firstname.push("Firstname is required")
+
+        if (!values.lastname)
+            lastname.push("Lastname is required")
+
+        if (!values.addemail)
+            addemail.push("Email is required")
+
+        if (!values.ssn)
+            ssn.push("SSN is required")
+
+        if (!values.address)
+            address.push("Address is required")
+
+        if (!values.zipcode)
+            zipcode.push("Zipcode is required")
+
+        if (!values.phoneNum)
+            phoneNum.push("Phone number is required")
+
+
+        if (firstname.length > 0)
+            errors.firstname = firstname
+
+        if (lastname.length > 0)
+            errors.lastname = lastname
+
+        if (addemail.length > 0)
+            errors.addemail = addemail
+
+        if (ssn.length > 0)
+            errors.ssn = ssn
+
+        if (address.length > 0)
+            errors.address = address
+
+        if (zipcode.length > 0)
+            errors.zipcode = zipcode
+
+        if (phoneNum.length > 0)
+            errors.phoneNum = phoneNum
+
+
+
+        console.log(errors);
+		return errors
     }
 
     _openModal = () => {
-        this.setState({
-            showModal: true
-        })
+        let { isPatientCreated } = this.state
+
+        if (isPatientCreated) {
+            this.setState({
+                showModal: true
+            })
+        } else {
+            iziToast.warning({
+                position: 'topRight',
+                title: 'Warning',
+                displayMode: 1,
+                message: 'Please register a Patient before adding a Device',
+            });
+        }
+
     }
 
     _closeModal = () => {
@@ -134,16 +188,120 @@ class AddPatientPage extends React.Component {
     }
 
     _addDevice = () => {
-
+        // let deviceData = {
+        //     "resourceType": "Device",
+        //     "text": {
+        //         "status": "generated",
+        //         "div": "<div>\n      <p>example</p>\n    </div>"
+        //     },
+        //     "identifier": [
+        //         {
+        //             "system": "http://goodcare.org/devices/id",
+        //             "value": "345675"
+        //         },
+        //         {
+        //             "label": "Serial Number",
+        //             "value": "AMID-342135-8464"
+        //         }
+        //     ],
+        //     "type": {
+        //         "coding": [
+        //             {
+        //                 "system": "http://snomed.info/sct",
+        //                 "code": "86184003",
+        //                 "display": "Electrocardiographic monitor and recorder"
+        //             }
+        //         ],
+        //         "text": "ECG"
+        //     },
+        //     "manufacturer": "Acme Devices, Inc",
+        //     "model": "AB 45-J",
+        //     "lotNumber": "43453424",
+        //     "contact": [
+        //         {
+        //             "system": "phone",
+        //             "value": "ext 4352"
+        //         }
+        //     ]
+        // }
     }
 
     _removeData = (id) => {
         alert(id)
     }
 
+    _handleSubmitDevice = () => {
+
+    }
+
+    _handleValidateDevice = () => {
+
+    }
+
+    componentDidUpdate() {
+        let { patient } = this.props
+        let { hasPatientCreated, isPatientCreated } = this.state
+
+        if (typeof patient !== 'undefined' && patient !== null) {
+            let { create } = patient
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { success, patient, loading } = create
+
+                if (success) {
+                    if ( typeof patient !== 'undefined' && patient !== null) {
+                        if (!hasPatientCreated) {
+                            this.setState({
+                                isPatientCreated: true,
+                                hasPatientCreated: true,
+                                patientData: patient
+                            })
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     render() {
         let { showModal, devices } = this.state
+        let { patient } = this.props
 
+        let isAddingNewPatientLoading = false
+        let patientId = null
+        let patientName = null
+        let patientData = null
+
+        if (typeof patient !== 'undefined' && patient !== null) {
+            let { create } = patient
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { success, patient, loading } = create
+
+                if (loading) {
+                    isAddingNewPatientLoading = true
+                } else {
+                    isAddingNewPatientLoading = false
+                }
+
+                if (typeof patient !== 'undefined' && patient !== null) {
+                    patientId = patient.id
+
+                    if (typeof patient.name !== 'undefined' && patient.name !== null ) {
+                        // patientData = patient.name.map((value, index) => {
+                        //     patientName = value.given + ' ' + value.family
+                        // }))
+
+                        patientData = patient.name.map((item, index) => {
+                            patientName = item.given + ' ' + item.family
+                        })
+                    }
+                }
+            }
+        }
+
+        console.log(patientName, patientId)
         return (
             <AddPatientWrapper>
                 <div className="page-breadcrumbs">
@@ -188,8 +346,16 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="First name"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
+
+                                                                                    {/*meta.error && meta.touched && (
+                                                                                        <div className="input-errors">
+                                                                                            <i className="fas fa-exclamation-circle"></i>&nbsp;
+                                                                                            <span>{meta.error}</span>
+                                                                                        </div>
+                                                                                    )*/}
                                                                                 </>
                                                                             )}
                                                                         </Field>
@@ -242,6 +408,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="Last name"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -260,6 +427,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="SSN"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -270,7 +438,7 @@ class AddPatientPage extends React.Component {
                                                             </Row>
                                                         </Form.Group>
 
-                                                        <Form.Group className="email" controlId="formBasicEmail">
+                                                        <Form.Group className="email">
                                                             <Row>
                                                                 <Col sm={6}>
                                                                     <Form.Label className="col-sm-4">Email</Form.Label>
@@ -282,6 +450,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="Email address"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -300,6 +469,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="Address"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -322,6 +492,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="Number"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -340,6 +511,7 @@ class AddPatientPage extends React.Component {
                                                                                         type={type}
                                                                                         placeholder="Zip code"
                                                                                         autoComplete="off"
+                                                                                        className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -373,8 +545,18 @@ class AddPatientPage extends React.Component {
                                                         </Form.Group>
 
                                                         <div className="btn-add">
-                                                            <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
-                                                                Add Patient
+                                                            <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
+                                                                { isAddingNewPatientLoading ?
+                                                                    <>
+                                                                        {/*<Spinner animation="border" role="status">
+                                                                            <span className="sr-only">Loading...</span>
+                                                                        </Spinner>*/}
+
+                                                                        <span className="ml-2">Adding Patient...</span>
+                                                                    </>
+                                                                    :
+                                                                    <>Add Patient</>
+                                                                }
                                                             </Button>
                                                         </div>
                                                     </div>
@@ -406,7 +588,9 @@ class AddPatientPage extends React.Component {
                                                                 </Field>
                                                             </div>
 
-                                                            <Button onClick={this._openModal}>Add Device</Button>
+                                                            <Button
+                                                                id="btn-add-device"
+                                                                onClick={this._openModal}>Add Device</Button>
                                                         </div>
                                                     </Form.Group>
 
@@ -424,8 +608,8 @@ class AddPatientPage extends React.Component {
                          initialValues={{
 
                          }}
-                         onSubmit={this._handleSubmit}
-                         validate={this._handleValidate}
+                         onSubmit={this._handleSubmitDevice}
+                         validate={this._handleValidateDevice}
                          render={({values, initialValues, pristine, submitting, handleSubmit }) => (
                              <Form onSubmit={handleSubmit}>
                              <Modal
@@ -436,7 +620,7 @@ class AddPatientPage extends React.Component {
                                  onHide={this._closeModal}
                              >
                                  <Modal.Header closeButton>
-                                    <h5>Adding new device - "John Doe"</h5>
+                                    <h5>Adding new device - {`"${patientName}"`}</h5>
                                  </Modal.Header>
 
                                  <Modal.Body>
@@ -653,7 +837,9 @@ class AddPatientPage extends React.Component {
                                  </Modal.Body>
 
                                  <Modal.Footer>
-                                     <Button onClick={this._addDevice}>Add Device</Button>
+                                     <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
+                                         Add Device
+                                     </Button>
                                  </Modal.Footer>
                              </Modal>
                              </Form>
@@ -665,9 +851,9 @@ class AddPatientPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { } = state
+    const { patient } = state
     return {
-
+        patient
     }
 }
 

@@ -12,6 +12,12 @@ export const AddPatientWrapper = styled.div`
         align-items: center;
         margin-top: 20px;
         padding: 0 15px;
+
+        button {
+            &:focus {
+                box-shadow: none;
+            }
+        }
     }
 
     .form-control {
