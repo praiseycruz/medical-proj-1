@@ -9,12 +9,24 @@ import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icon
 class DashboardPage extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {
+            searchValue: null
+        }
     }
 
     componentDidMount() {
     }
 
+    _searchHandler = (event) => {
+        let searchData = event.target.value
+
+        this.setState({
+            searchValue: event.target.value.toLowerCase()
+        })
+    }
+
     render() {
+        console.log(this.state.searchValue);
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
@@ -105,7 +117,7 @@ class DashboardPage extends React.Component {
                                         </Form.Label>
 
                                         <Col sm="4" md="6" className="p-0">
-                                            <Form.Control type="text" placeholder="Search by name or ID" />
+                                            <Form.Control type="text" placeholder="Search by name or ID" onChange={this._searchHandler} autoComplete="off" />
                                         </Col>
                                     </Form.Group>
                                 </Form>

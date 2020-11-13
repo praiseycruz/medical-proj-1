@@ -1,6 +1,7 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
 import { DashboardPage, PatientPage, AddPatientPage } from './pages'
+import { PhysicianPage } from './pages/Physician'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
 import { SideBarContainer, SideBarContent } from './styled_components/sidebar.style'
@@ -144,10 +145,10 @@ export default class App extends React.Component {
                                         <span className="link-text">Patients Readings</span>
                                     </Link>
 
-                                    <Link to="#" className="card-links">
+                                    <NavLink to="/physician" className="card-links" activeClassName="active">
                                         <i className="fas fa-user-md"></i>
                                         <span className="link-text">Physician Management</span>
-                                    </Link>
+                                    </NavLink>
 
                                     <Link to="#" className="card-links">
                                         <i className="fas fa-file-medical"></i>
@@ -186,6 +187,7 @@ export default class App extends React.Component {
                             />
                             <Route exact path="/dashboard" component={DashboardPage} />
                             <Route exact path="/addpatients" component={AddPatientPage} />
+                            <Route exact path="/physician" component={PhysicianPage} />
                         </Switch>
                     </MainContentWrapper>
         		</MainWrapper>
