@@ -5,26 +5,153 @@ import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-bootstrap'
 import { TableComponent } from '../../components/Table'
-import { patientAction } from '../../actions'
+import { practitionerAction } from '../../actions'
 import iziToast from 'izitoast';
 
 class PhysicianPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            showModal: false,
+            cols: [
+                {
+                    title: '',
+                    key: 'deviceName',
+                    render: colData => {
+                        return <span>{colData.deviceName}</span>
+                    }
+                },
+                {
+                    title: '',
+                    key: 'name',
+                    render: colData => {
+                        return <span>{colData.name}</span>
+                    }
+                },
+                {
+                    title: '',
+                    key: 'serialNum',
+                    render: colData => {
+                        return <span>{colData.serialNum}</span>
+                    }
+                },
+                {
+                    title: '',
+                    key: 'button',
+                    render: colData => {
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>
+                    }
+                }
+            ],
+            isPractitionerCreated: false,
+            hasPractitionerCreated: false,
+            practitionerData: {}
         }
     }
 
     componentDidMount() {
     }
 
-    _handleSubmit = () => {
+    _handleSubmit = async values => {
+        const { dispatch } = this.props
 
+        let practitionerData = {
+            "resourceType": "Practitioner",
+            "name": [
+                {
+                    "use": "official",
+                    "given": [`${values.firstname}`],
+                    "family": `${values.lastname}`
+                }
+            ],
+            "gender": `${values.gender}`,
+            "telecom": [
+                {
+                    "value": `${values.phoneNum}`,
+                    "use": "mobile",
+                    "system": "phone"
+                },
+                {
+                    "system": "email",
+                    "value": `${values.addemail}`
+                }
+            ],
+            "address": [
+                {
+                    "text": [
+                        `${values.address}`
+                    ],
+                    "postalCode": `${values.zipcode}`
+                }
+            ],
+            "identifier": [
+                {
+                    "system": "http://hl7.org/fhir/sid/us-ssn",
+                    "value": `${values.ssn}`
+                }
+            ],
+        }
+
+        dispatch(practitionerAction.create(practitionerData))
     }
 
-    _handleValidate = () => {
+    _handleValidate = values => {
+        const errors = {}
+		let firstname = []
+        let lastname = []
+		let addemail = []
+        let ssn = []
+        let address = []
+        let zipcode = []
+        let phoneNum = []
 
+		if (!values.firstname)
+			firstname.push("Firstname is required")
+
+        if (!values.lastname)
+            lastname.push("Lastname is required")
+
+        if (!values.addemail)
+            addemail.push("Email is required")
+
+        if (!values.ssn)
+            ssn.push("SSN is required")
+
+        if (!values.address)
+            address.push("Address is required")
+
+        if (!values.zipcode)
+            zipcode.push("Zipcode is required")
+
+        if (!values.phoneNum)
+            phoneNum.push("Phone number is required")
+
+
+        if (firstname.length > 0)
+            errors.firstname = firstname
+
+        if (lastname.length > 0)
+            errors.lastname = lastname
+
+        if (addemail.length > 0)
+            errors.addemail = addemail
+
+        if (ssn.length > 0)
+            errors.ssn = ssn
+
+        if (address.length > 0)
+            errors.address = address
+
+        if (zipcode.length > 0)
+            errors.zipcode = zipcode
+
+        if (phoneNum.length > 0)
+            errors.phoneNum = phoneNum
+
+
+
+        console.log(errors);
+		return errors
     }
 
     render() {
