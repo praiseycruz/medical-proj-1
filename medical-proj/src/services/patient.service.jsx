@@ -4,7 +4,7 @@ import { config } from '../config'
 export const patientService = {
     create,
     findById,
-    findAll
+    searchByIdOrName,
 }
 
 function create(data) {
@@ -44,8 +44,23 @@ function findById(id) {
 
 }
 
-function findAll() {
+function searchByIdOrName(query, count) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
 
+    const filterParam = Number.isNaN(parseInt(query)) ? `name co ${query}` : `identifier co http://hl7.org/fhir/sid/us-ssn|${query}`
+
+    return fetch(config.apiGateway.URL + config.Patient.search(filterParam, count), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
 }
 
 function handleResponse(response) {
