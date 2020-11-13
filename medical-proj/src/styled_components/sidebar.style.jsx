@@ -14,6 +14,7 @@ export const SideBarContent = styled.div`
     overflow: hidden;
     width: auto;
     height: 688px;
+    margin-top: 20px; 
 
     .user-panel {
         display: flex;

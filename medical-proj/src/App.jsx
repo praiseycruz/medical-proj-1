@@ -115,7 +115,7 @@ export default class App extends React.Component {
 
                     <SideBarContainer className="sidebar">
                         <SideBarContent>
-                            <div className="user-panel">
+                            {/*<div className="user-panel">
                                 <div className="user-image">
                                     <img src="/images/default-user-icon.png" className="img-circle user-img-circle img-fluid" alt="User" />
                                 </div>
@@ -123,7 +123,7 @@ export default class App extends React.Component {
                                 <div className="user-info">
                                     <p>John Doe</p>
                                 </div>
-                            </div>
+                            </div>*/}
 
                             <div className="sidebar-menu-section">
                                 <Accordion>
