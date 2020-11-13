@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from './styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form";
-import { Form, Row, Col, Button, Container, Modal } from 'react-bootstrap'
+import { Form, Row, Col, Button, Container, Modal, Card } from 'react-bootstrap'
 import { TableComponent } from '../components/Table'
 import { patientAction } from '../actions'
 
@@ -170,242 +170,252 @@ class AddPatientPage extends React.Component {
                             render={({values, initialValues, pristine, submitting, handleSubmit }) => (
                                 <Form onSubmit={handleSubmit}>
                                     <div className="patient-info">
-                                        <h2>Patient Info</h2>
+                                        <>
+                                            <Card>
+                                                <Card.Header>Patient Info</Card.Header>
 
-                                        <Container>
-                                            <Form.Group className="firstname">
-                                                <Row>
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">First name</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="firstname" type="text">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="First name"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
+                                                <Card.Body>
+                                                    <div>
+                                                        <Form.Group className="firstname">
+                                                            <Row>
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">First name</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="firstname" type="text">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="First name"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Gender</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <label className="gender-label male">
+                                                                            <Field name="gender" type="radio" value="male">
+                                                                                {({ input, meta }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>Male</span>
+                                                                        </label>
+
+                                                                        <label className="gender-label">
+                                                                            <Field name="gender" type="radio" value="female">
+                                                                                {({ input, meta, type }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            type={type}
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>Female</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="lastname">
+                                                            <Row>
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Last name</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="lastname" type="text">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="Last name"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">SSN</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="ssn" type="text">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="SSN"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="email" controlId="formBasicEmail">
+                                                            <Row>
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Email</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="addemail" type="email">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="Email address"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Address</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="address" type="text">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="Address"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="phoneNum">
+                                                            <Row>
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Phone Number</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="phoneNum" type="number">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="Number"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Zip Code</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="zipcode" type="number">
+                                                                            {({ input, meta, type }) => (
+                                                                                <>
+                                                                                    <Form.Control
+                                                                                        type={type}
+                                                                                        placeholder="Zip code"
+                                                                                        autoComplete="off"
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="monitoring">
+                                                            <Row>
+                                                                <Col sm={6}>
+                                                                    <Form.Label className="col-sm-4">Remote Monitoring</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <Field name="monitor" type="checkbox">
+                                                                            {({ input, meta, type }) => (
+
+                                                                                <>
+                                                                                    <input
+                                                                                        type={type}
+                                                                                        {...input}
+                                                                                    />
+                                                                                </>
+                                                                            )}
+                                                                        </Field>
+                                                                        <span className="ml-2">Yes</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <div className="btn-add">
+                                                            <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
+                                                                Add Patient
+                                                            </Button>
                                                         </div>
-                                                    </Col>
-
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Gender</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <label className="gender-label male">
-                                                                <Field name="gender" type="radio" value="male">
-                                                                    {({ input, meta }) => (
-                                                                        <>
-                                                                            <input
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                                <span>Male</span>
-                                                            </label>
-
-                                                            <label className="gender-label">
-                                                                <Field name="gender" type="radio" value="female">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <input
-                                                                                type={type}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                                <span>Female</span>
-                                                            </label>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Group>
-
-                                            <Form.Group className="lastname">
-                                                <Row>
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Last name</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="lastname" type="text">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="Last name"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="ssn" type="text">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="SSN"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Group>
-
-                                            <Form.Group className="email" controlId="formBasicEmail">
-                                                <Row>
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Email</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="addemail" type="email">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="Email address"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Address</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="address" type="text">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="Address"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Group>
-
-                                            <Form.Group className="phoneNum">
-                                                <Row>
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Phone Number</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="phoneNum" type="number">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="Number"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Zip Code</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="zipcode" type="number">
-                                                                {({ input, meta, type }) => (
-                                                                    <>
-                                                                        <Form.Control
-                                                                            type={type}
-                                                                            placeholder="Zip code"
-                                                                            autoComplete="off"
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Group>
-
-                                            <Form.Group className="monitoring">
-                                                <Row>
-                                                    <Col sm={6}>
-                                                        <Form.Label className="col-sm-4">Remote Monitoring</Form.Label>
-                                                        <div className="col-sm-8">
-                                                            <Field name="monitor" type="checkbox">
-                                                                {({ input, meta, type }) => (
-
-                                                                    <>
-                                                                        <input
-                                                                            type={type}
-                                                                            {...input}
-                                                                        />
-                                                                    </>
-                                                                )}
-                                                            </Field>
-                                                            <span className="ml-2">Yes</span>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </Form.Group>
-                                        </Container>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        </>
                                     </div>
 
                                     <div className="devices">
-                                        <h2>Devices</h2>
+                                        <>
+                                            <h2>Devices</h2>
 
-                                        <Container>
-                                            <Form.Group className="devices">
-                                                <div className="device-wrapper">
-                                                    <div className="col-sm-12 col-md-6 col-lg-4">
-                                                        <Field name="devices" type="text">
-                                                            {({ input, meta, type }) => (
-                                                                <>
-                                                                    <Form.Control
-                                                                        type={type}
-                                                                        placeholder="Device type"
-                                                                        autoComplete="off"
-                                                                        {...input}
-                                                                    />
-                                                                </>
-                                                            )}
-                                                        </Field>
+                                            <Card>
+                                                <Card.Body>
+                                                    <Form.Group className="devices">
+                                                        <div className="device-wrapper">
+                                                            <div className="col-sm-12 col-md-6 col-lg-4 p-0">
+                                                                <Field name="devices" type="text">
+                                                                    {({ input, meta, type }) => (
+                                                                        <>
+                                                                            <Form.Control
+                                                                                type={type}
+                                                                                placeholder="Device type"
+                                                                                autoComplete="off"
+                                                                                {...input}
+                                                                            />
+                                                                        </>
+                                                                    )}
+                                                                </Field>
+                                                            </div>
+
+                                                            <Button onClick={this._openModal}>Add Device</Button>
+                                                        </div>
+                                                    </Form.Group>
+
+                                                    <div className="mt-4">
+                                                        <TableComponent data={devices} cols={this.state.cols} bordered={false} striped={false} removeThead={true} isTableFor={'devices'} />
                                                     </div>
-
-                                                    <Button onClick={this._openModal}>Add Device</Button>
-                                                </div>
-                                            </Form.Group>
-
-                                            <div className="mt-4">
-                                                <TableComponent data={devices} cols={this.state.cols} bordered={false} striped={false} removeThead={true}/>
-                                            </div>
-                                        </Container>
-                                    </div>
-
-                                    <div className="btn-add">
-                                        <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
-                                            Add Patient
-                                        </Button>
+                                                </Card.Body>
+                                            </Card>
+                                        </>
                                     </div>
                                 </Form>
                         )} />

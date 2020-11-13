@@ -5,16 +5,24 @@ import { createLogger } from 'redux-logger';
 
 const loggerMiddleware = createLogger();
 
+//
+// export const store = (process.env.REACT_APP_STAGE === 'development') ? createStore(
+// 	reducers,
+// 	applyMiddleware(
+// 		thunkMiddleware, // thunk middleware that allows simple async use of dispatch
+// 		loggerMiddleware // log everything that's been happening in your browser, like actions, requests, errors
+// 	)
+// ) : createStore(
+// 	 reducers,
+// 	applyMiddleware(
+// 		thunkMiddleware
+// 	)
+// );
 
-export const store = (process.env.REACT_APP_STAGE === 'development') ? createStore(
-	 reducers,
+export const store = createStore(
+	reducers,
 	applyMiddleware(
 		thunkMiddleware, // thunk middleware that allows simple async use of dispatch
 		loggerMiddleware // log everything that's been happening in your browser, like actions, requests, errors
-	)
-) : createStore(
-	 reducers,
-	applyMiddleware(
-		thunkMiddleware
 	)
 );

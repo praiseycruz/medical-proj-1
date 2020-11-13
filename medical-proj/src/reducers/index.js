@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import { patient } from './patient.reducer';
 
 const rootReducer = combineReducers({
-  patient,
+    patient,
 })
 
 export default rootReducer;

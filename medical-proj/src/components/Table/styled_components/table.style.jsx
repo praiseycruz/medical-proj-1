@@ -16,21 +16,29 @@ export const TableWrapper = styled.div`
         tbody {
             tr {
                 td {
-                    &:nth-child(1) {
-                        padding-top: 20px;
-                    }
+                    &.devices {
+                        &:nth-child(1) {
+                            padding-top: 20px;
+                        }
 
-                    &:nth-child(2) {
-                        padding-top: 20px;
-                    }
+                        &:nth-child(2) {
+                            padding-top: 20px;
+                        }
 
-                    &:nth-child(3) {
-                        padding-top: 20px;
-                    }
+                        &:nth-child(3) {
+                            padding-top: 20px;
+                        }
 
-                    button {
-                        font-size: 14px;
-                        padding: 5px 20px;
+                        &:nth-child(4) {
+                            display: flex;
+                            justify-content: flex-end;
+                            align-items: center;
+                        }
+
+                        button {
+                            font-size: 14px;
+                            padding: 5px 20px;
+                        }
                     }
                 }
             }

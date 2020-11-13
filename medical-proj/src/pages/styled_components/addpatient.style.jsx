@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const AddPatientWrapper = styled.div`
     h2 {
         font-size: 22px;
-        margin: 30px 20px;
+        margin: 40px 0 20px;
     }
 
     .btn-add {
@@ -11,6 +11,7 @@ export const AddPatientWrapper = styled.div`
         justify-content: flex-end;
         align-items: center;
         margin-top: 20px;
+        padding: 0 15px;
     }
 
     .form-control {
@@ -21,6 +22,8 @@ export const AddPatientWrapper = styled.div`
     }
 
     .patient-info {
+        margin-top: 30px;
+
         .col-sm-6 {
             display: flex;
             justify-content: space-between;
@@ -57,9 +60,20 @@ export const AddPatientWrapper = styled.div`
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding: 0 15px;
 
         button {
             background-color: #5CA9F0;
+        }
+    }
+
+    .card {
+        background-color: #353C48;
+
+        .card-header {
+            font-size: 20px;
+            border-radius: 2px;
+            border: none;
         }
     }
 `

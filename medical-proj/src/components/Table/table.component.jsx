@@ -8,7 +8,7 @@ export class TableComponent extends React.Component {
     }
 
     render() {
-        let { data, cols, bordered, striped, removeThead } = this.props
+        let { data, cols, bordered, striped, removeThead, isTableFor } = this.props
 
         return (
             <TableWrapper>
@@ -29,7 +29,7 @@ export class TableComponent extends React.Component {
                         {data.map((item, index) => (
                             <tr key={index}>
                                 {cols.map((col, key) => (
-                                    <td key={key}>{col.render(item)}</td>
+                                    <td key={key} className={isTableFor}>{col.render(item)}</td>
                                 ))}
                             </tr>
                         ))}

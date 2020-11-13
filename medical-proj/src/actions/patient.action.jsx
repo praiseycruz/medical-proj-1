@@ -12,12 +12,11 @@ function create(data) {
         dispatch(request())
 
         proceed()
-        console.log('create')
 
         function proceed() {
             patientService.create(data).then( response => {
                 console.log(response)
-                dispatch(success())
+                dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
             })
