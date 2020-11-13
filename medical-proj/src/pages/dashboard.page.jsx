@@ -2,10 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { DashboardWrapper } from './styled_components/dashboard.style'
-import { Form, FormControl, Row, Col, Button } from 'react-bootstrap'
+import { Form, FormControl, Row, Col, Button, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
 import { dashboardAction } from '../actions/dashboard.action'
+import { TableComponent } from '../components/Table'
 
 class DashboardPage extends React.Component {
     constructor(props) {
@@ -13,7 +14,95 @@ class DashboardPage extends React.Component {
         this.state = {
             count: 0,
             hasGetPatientCount: false,
-            searchValue: null
+            searchValue: null,
+            patientsData: [
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                },
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                },
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                },
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                },
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                },
+                {
+                    name: 'John Doe',
+                    dob: '01/01/1987',
+                    gender: 'Male',
+                    careManager: 'John Doe',
+                    pcp: 'John Doe',
+                }
+            ],
+            cols: [
+                {
+                    title: 'Patient Name',
+                    key: 'name',
+                    render: colData => {
+                        return <span>{colData.name}</span>;
+                    }
+                },
+                {
+                    title: 'DOB',
+                    key: 'dob',
+                    render: colData => {
+                        return <span>{colData.dob}</span>;
+                    }
+                },
+                {
+                    title: 'Gender',
+                    key: 'gender',
+                    render: colData => {
+                        return <span>{colData.gender}</span>;
+                    }
+                },
+                {
+                    title: 'Care Manager',
+                    key: 'careManager',
+                    render: colData => {
+                        return <span>{colData.careManager}</span>;
+                    }
+                },
+                {
+                    title: 'PCP',
+                    key: 'pcp',
+                    render: colData => {
+                        return <span>{colData.pcp}</span>;
+                    }
+                },
+                {
+                    title: '',
+                    key: 'edit',
+                    render: colData => {
+                        return <span>{colData.pcp}</span>;
+                    }
+                }
+            ]
         }
     }
 
@@ -150,9 +239,25 @@ class DashboardPage extends React.Component {
                                 </Form>
                             </Col>
                         </Row>
+
+                        <Row>
+                            <Col sm={10} md={9} className="column-content">
+                                <Form>
+                                    <Form.Group as={Row} controlId="searchPrimaryCareManager">
+                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
+                                            Primary care manager
+                                        </Form.Label>
+
+                                        <Col sm="4" md="6" className="p-0">
+                                            <Form.Control type="text" placeholder="Search by name or ID" />
+                                        </Col>
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row>
                     </div>
 
-                    <div className="form-wrapper manager-content">
+                    {/*<div className="form-wrapper manager-content">
                         <Form>
                             <Form.Group as={Row} controlId="searchPrimaryCareManager">
                                 <Form.Label column sm="6" md="5" lg="4" xl="3">
@@ -164,7 +269,53 @@ class DashboardPage extends React.Component {
                                 </Col>
                             </Form.Group>
                         </Form>
-                    </div>
+                    </div>*/}
+
+                    <Card>
+                        <Card.Body>
+                            {/*<TableComponent data={this.state.patientsData} cols={this.state.cols} />*/}
+                            <table>
+                              <thead>
+                                <tr>
+                                  <th>S/N</th>
+                                  <th>First Name</th>
+                                  <th>Last Name</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                    <td>1</td>
+                                    <td>Abel</td>
+                                    <td>Agoi</td>
+                                  </tr>
+                                  <tr>
+                                    <td>2</td>
+                                    <td>Muyiwa</td>
+                                    <td>Aregbesola</td>
+                                  </tr>
+                                  <tr>
+                                    <td>3</td>
+                                    <td>Opeyemi</td>
+                                    <td>Agoi</td>
+                                  </tr>
+                                  <tr>
+                                    <td>4</td>
+                                    <td>Ope</td>
+                                    <td>Aina</td>
+                                  </tr>
+                              </tbody>
+                            </table>
+
+
+                            <div className="pagination">
+                              <span>&laquo;</span>
+                              <span className="active">1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                            </div>
+                        </Card.Body>
+                    </Card>
                 </div>
             </DashboardWrapper>
         )

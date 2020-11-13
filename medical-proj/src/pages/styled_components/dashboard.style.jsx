@@ -6,8 +6,9 @@ export const DashboardWrapper = styled.div`
     .dashboard-content {
         .form-wrapper {
             &.patients-content {
-                padding: 10px 0;
-                border-bottom: 1px solid #fff;
+                margin-top: 20px;
+                /* padding: 10px 0; */
+                /* border-bottom: 1px solid #fff; */
 
                 .add-patient {
                     display: flex;
@@ -114,11 +115,124 @@ export const DashboardWrapper = styled.div`
             }
         }
 
+        .card {
+            background-color: #353C48;
+            margin-top: 30px;
+
+            .card-header {
+                font-size: 20px;
+                border-radius: 2px;
+                border: none;
+            }
+
+            .card-body {
+                padding: 15px;
+
+                .pagination {
+                    margin-top: 25px;
+                }
+                .pagination span {
+                  cursor: pointer;
+                  color: black;
+                  float: left;
+                  padding: 8px 16px;
+                  text-decoration: none;
+                  transition: background-color .3s;
+                  border: 1px solid #ddd;
+                }
+
+                .pagination span.active {
+                  background-color: #0099FF;
+                  color: white;
+                  border: 1px solid #0099FF;
+                }
+
+                table {
+                  border-collapse: collapse;
+                  border-spacing: 0;
+                  border-collapse: separate;
+                  border-spacing: 0;
+                  color: #4a4a4d;
+                  font: 14px/1.4 "Helvetica Neue", Helvetica, Arial, sans-serif;
+                  width: 100%;
+
+                  tr {
+                    overflow-x: scroll;
+                  }
+
+                  th,
+                  td {
+                    padding: 15px 15px;
+                    vertical-align: middle;
+                  }
+
+                  thead {
+                    font-size: 14px;
+                    line-height: 24px;
+                    border: 1px solid transparent;
+                    max-width: 100%;
+                    font-weight: 900;
+                    line-height: 24px;
+                    mix-blend-mode: normal;
+                    color: #ddd;
+                    background-color: #333a46;
+                  }
+
+                  thead tr th {
+                    padding: 15px 15px;
+                    border: 1px solid transparent;
+                    text-align: left;
+                  }
+
+                  tbody {
+                    max-width: 100%;
+                  }
+
+                  /* tbody tr:nth-child(odd) {
+                    background: #f0f0f2;
+                  } */
+
+                  tbody tr:hover {
+                    background-color: #464b55;
+                  }
+
+                  td {
+                    padding: 15px 15px;
+                    border-bottom: 1px solid #424955;
+                    color: #ddd;
+                  }
+                }
+            }
+        }
+/*
+        .rdt_TableHeader {
+            background-color: transparent;
+            color: #ddd;
+            margin-top: 15px;
+        }
+
+        .rdt_TableHeadRow {
+            background-color: #353C48;
+        }
+
+        .rdt_TableCol {
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .rdt_Table {
+            div {
+                &:nth-child(2) {
+                    background-color: #353c48;
+                    color: #ddd;
+                }
+            }
+        } */
+
         @media screen and (min-width: 768px) and (max-width: 1023px) {
             .form-wrapper {
                 &.patients-content {
                     padding: 5px 0;
-                    border-bottom: 1px solid #fff;
 
                     .add-patient {
                         .bg-primary {
