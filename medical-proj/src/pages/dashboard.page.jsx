@@ -11,13 +11,36 @@ class DashboardPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            count: 0
+            count: 0,
+            hasGetPatientCount: false
         }
     }
 
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(dashboardAction.count())
+    }
+
+    componentDidUpdate() {
+        let { dashboardPatientCount } = this.props
+        let { hasGetPatientCount } = this.state
+
+        if (typeof dashboardPatientCount !== 'undefined' && dashboardPatientCount !== null) {
+            let { count } = dashboardPatientCount
+
+            if (typeof count !== 'undefined' && count !== null) {
+                if (typeof count.count !== 'undefined' && count.count !== null) {
+                    let totalNumberOfPatients = count.count
+
+                    if (!hasGetPatientCount) {
+                        this.setState({
+                            count: totalNumberOfPatients,
+                            hasGetPatientCount: true
+                        })
+                    }
+                }
+            }
+        }
     }
 
     render() {
@@ -139,9 +162,10 @@ class DashboardPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { patient } = state
+    const { patient, dashboardPatientCount } = state
     return {
-        patient
+        patient,
+        dashboardPatientCount
     }
 }
 
