@@ -1,6 +1,8 @@
 import styled from 'styled-components'
 
 export const PatientsWrapper = styled.div`
+    width: 100%;
+    
     .patients-content {
         .form-wrapper {
             &.patients-search {

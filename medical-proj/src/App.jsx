@@ -1,14 +1,14 @@
 import React from 'react'
-import { Router, Route, Link, Switch, Redirect } from 'react-router-dom'
+import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
 import { DashboardPage, PatientPage, AddPatientPage } from './pages'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
 import { SideBarContainer, SideBarContent } from './styled_components/sidebar.style'
 import { NavbarWrapper, NotificationBell } from './styled_components/navbar.style'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Accordion, Card } from 'react-bootstrap'
+import { Navbar, Nav, Accordion, Card, NavDropdown, DropdownButton, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faBell, faCaretDown, faCaretRight } from "@fortawesome/free-solid-svg-icons"
+import { faBars, faBell, faCaretDown, faCaretRight, faUser } from "@fortawesome/free-solid-svg-icons"
 
 import './assets/scss/global.scss'
 import { history } from './helpers'
@@ -38,14 +38,10 @@ export default class App extends React.Component {
         let { patientsOpen, sidebarOpen } = this.state
 
         return (
-            <Router history={history} exact path="/" render={() => {
-                return (
-                    <Redirect to="/dashboard" />
-                )
-            }}>
+            <Router history={history}>
         	   <MainWrapper className={`${sidebarOpen ? '' : 'content-collapse'}`}>
         			<NavbarWrapper>
-                        <Navbar fixed="top">
+                        {/*<Navbar fixed="top">
                             <PageLogoSection className="page-logo">
                                 <ul>
                                     <li><Link to="/dashboard">Evixia</Link></li>
@@ -61,8 +57,61 @@ export default class App extends React.Component {
                             <NotificationBell>
                                 <FontAwesomeIcon size="sm" className="icon" icon={faBell} />
                             </NotificationBell>
+                        </Navbar>*/}
+
+                        <Navbar collapseOnSelect expand="lg" variant="dark" fixed="top">
+                            <PageLogoSection className="page-logo">
+                                <ul>
+                                    <li><Link to="/dashboard">Evixia</Link></li>
+                                </ul>
+                            </PageLogoSection>
+
+                            <Nav className="mr-auto">
+                                <Nav.Link onClick={this._handleSidebar}>
+                                    <FontAwesomeIcon size="sm" className="icon" icon={faBars} />
+                                </Nav.Link>
+                            </Nav>
+
+                            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                            <Navbar.Collapse id="responsive-navbar-nav">
+                                <Nav className="ml-auto">
+                                    <DropdownButton
+                                        menuAlign="right"
+                                        title={
+                                            <FontAwesomeIcon size="sm" className="icon" icon={faBell} />
+                                        }
+                                        id="dropdown-menu-align-right">
+                                        <Dropdown.Item eventKey="1">Action</Dropdown.Item>
+                                        <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
+                                        <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
+                                    </DropdownButton>
+
+                                    <DropdownButton
+                                        menuAlign="right"
+                                        title={
+                                            <>
+                                                <img src="/images/default-user-icon.png" className="img-fluid"
+                                                style={{ width: '26px',  marginRight: '10px', borderRadius: '50%' }}/>
+                                                <span style={{ fontSize: '14px' }}>John Doe</span>
+                                            </>
+                                        }
+                                        id="dropdown-menu-align-right"
+                                        className="user-dropdown">
+                                        <Dropdown.Item eventKey="1">
+                                            Profile
+                                        </Dropdown.Item>
+                                        <Dropdown.Item eventKey="2">Settings</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                        <Dropdown.Item eventKey="4">Log Out</Dropdown.Item>
+                                    </DropdownButton>
+                                </Nav>
+                            </Navbar.Collapse>
                         </Navbar>
                     </NavbarWrapper>
+
+
 
                     <SideBarContainer className="sidebar">
                         <SideBarContent>
@@ -78,67 +127,45 @@ export default class App extends React.Component {
 
                             <div className="sidebar-menu-section">
                                 <Accordion>
-                                    <Card>
-                                        <Card.Header>
-                                            <img src="/images/dashboard.svg" className="img-fluid dashboard-icon" alt="dashboard-svg"/>
-                                            <Link to="/dashboard" className="card-links">Dashboard</Link>
-                                        </Card.Header>
-                                    </Card>
+                                    <NavLink to="/dashboard" activeClassName="active" className="card-links">
+                                        <img src="/images/dashboard.svg" className="img-fluid dashboard-icon" alt="dashboard-svg"/>
+                                        <span className="link-text">Dashboard</span>
+                                    </NavLink>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <Accordion.Toggle as={Link} variant="link" eventKey="1" onClick={this._caretOpen}>
-                                                <span>
-                                                    <i className="fas fa-wheelchair"></i>
-                                                    <span className="card-links">Patients</span>
-                                                </span>
+                                    <NavLink to="/addpatients" activeClassName="active" className="card-links">
+                                        <i className="fas fa-info-circle"></i>
+                                        <span className="link-text">Patients Details</span>
+                                    </NavLink>
 
-                                                <FontAwesomeIcon size="sm" className="icon" icon={patientsOpen ? faCaretDown : faCaretRight} />
-                                            </Accordion.Toggle>
-                                        </Card.Header>
+                                    <Link to="#" className="card-links">
+                                        <i className="fas fa-book-open"></i>
+                                        <span className="link-text">Patients Readings</span>
+                                    </Link>
 
-                                        <Accordion.Collapse eventKey="1" className="accordion-collapse">
-                                            <ul>
-                                                <li><Link to="/addpatients">Patients Details</Link></li>
-                                                <li><Link to="#">Patients Readings</Link></li>
-                                            </ul>
-                                        </Accordion.Collapse>
-                                    </Card>
+                                    <Link to="#" className="card-links">
+                                        <i className="fas fa-user-md"></i>
+                                        <span className="link-text">Physician Management</span>
+                                    </Link>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <i className="fas fa-user-md"></i>
-                                            <Link to="#" className="card-links">Physician Management</Link>
-                                        </Card.Header>
-                                    </Card>
+                                    <Link to="#" className="card-links">
+                                        <i className="fas fa-file-medical"></i>
+                                        <span className="link-text">Care Manager Management</span>
+                                    </Link>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <i className="fas fa-file-medical"></i>
-                                            <Link to="#" className="card-links">Care Manager Management</Link>
-                                        </Card.Header>
-                                    </Card>
+                                    <Link to="#" className="card-links">
+                                        <i className="fas fa-tasks"></i>
+                                        <span className="link-text">Tasks</span>
+                                    </Link>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <i className="fas fa-tasks"></i>
-                                            <Link to="#" className="card-links">Tasks</Link>
-                                        </Card.Header>
-                                    </Card>
+                                    <Link to="#" className="card-links">
+                                        <i className="fas fa-file-medical-alt"></i>
+                                        <span className="link-text">Reports</span>
+                                    </Link>
 
-                                    <Card>
-                                        <Card.Header>
-                                            <i className="fas fa-file-medical-alt"></i>
-                                            <Link to="#" className="card-links">Reports</Link>
-                                        </Card.Header>
-                                    </Card>
-
-                                    <Card>
-                                        <Card.Header>
-                                            <i className="far fa-building"></i>
-                                            <Link to="#" className="card-links">Office setup</Link>
-                                        </Card.Header>
-                                    </Card>
+                                    <Link to="#" className="card-links">
+                                        <i className="far fa-building"></i>
+                                        <span className="link-text">Office setup</span>
+                                    </Link>
                                 </Accordion>
                             </div>
                         </SideBarContent>

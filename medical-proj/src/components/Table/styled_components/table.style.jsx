@@ -12,5 +12,28 @@ export const TableWrapper = styled.div`
         thead {
             border-top: 1px solid #4f5467;
         }
+
+        tbody {
+            tr {
+                td {
+                    &:nth-child(1) {
+                        padding-top: 20px;
+                    }
+
+                    &:nth-child(2) {
+                        padding-top: 20px;
+                    }
+
+                    &:nth-child(3) {
+                        padding-top: 20px;
+                    }
+
+                    button {
+                        font-size: 14px;
+                        padding: 5px 20px;
+                    }
+                }
+            }
+        }
     }
 `

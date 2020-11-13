@@ -6,9 +6,13 @@ export const MainWrapper = styled.div`
     background-color: #353c48;
 
     &.content-collapse {
-        .sidebar,
-        .page-logo {
+        .sidebar {
             width: 60px;
+            transition: all 300ms ease-in-out;
+        }
+
+        .page-logo {
+            width: 100px;
             transition: all 300ms ease-in-out;
         }
 
@@ -19,11 +23,20 @@ export const MainWrapper = styled.div`
 
         .user-panel {
             display: none;
-            transition: all 300ms ease-in-out;
         }
 
         .card-links {
-            display: none !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            .link-text {
+                display: none !important;
+            }
+
+            img, i {
+                margin-right: 0 !important;
+            }
         }
     }
 `
@@ -31,7 +44,15 @@ export const MainWrapper = styled.div`
 export const MainContentWrapper = styled.div`
     background-color: #3c4452 !important;
     margin-left: 235px;
-    padding: 20px;
+    padding: 20px 30px;
     min-height: calc(100vh - 60px);
     transition: all 300ms ease-in-out;
+
+    @media screen and (min-width: 320px) and (max-width: 767px) {
+        padding: 15px;
+    }
+
+    @media screen and (min-width: 768px) and (max-width: 1023px) {
+        padding: 20px;
+    }
 `

@@ -1,9 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from './styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form";
 import { Form, Row, Col, Button, Container, Modal } from 'react-bootstrap'
 import { TableComponent } from '../components/Table'
+import { patientAction } from '../actions'
 
 class AddPatientPage extends React.Component {
     constructor(props) {
@@ -12,16 +14,19 @@ class AddPatientPage extends React.Component {
             showModal: false,
             devices: [
                 {
+                    id: '1',
                     deviceName: 'Device Name',
                     name: 'GlucoMeter Glucometer',
                     serialNum: 'W9865456828403682'
                 },
                 {
+                    id: '2',
                     deviceName: 'Device Name',
                     name: 'GlucoMeter Glucometer',
                     serialNum: 'W9865456828403682'
                 },
                 {
+                    id: '3',
                     deviceName: 'Device Name',
                     name: 'GlucoMeter Glucometer',
                     serialNum: 'W9865456828403682'
@@ -48,13 +53,68 @@ class AddPatientPage extends React.Component {
                     render: colData => {
                         return <span>{colData.serialNum}</span>;
                     }
+                },
+                {
+                    title: '',
+                    key: 'button',
+                    render: colData => {
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>;
+                    }
                 }
             ]
         }
     }
 
-    _handleSubmit = () => {
+    _handleSubmit = async values => {
+        let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
+        const { dispatch } = this.props
 
+        let patientData = {
+            "resourceType": "Patient",
+            "name": [
+                {
+                    "use": "official",
+                    "given": [`${firstname}`],
+                    "family": `${lastname}`
+                }
+            ],
+            "gender": `${gender}`,
+            "telecom": [
+                {
+                    "value": `${phoneNum}`,
+                    "use": "mobile",
+                    "system": "phone"
+                },
+                {
+                    "system": "email",
+                    "value": `${email}`
+                }
+            ],
+            "address": [
+                {
+                    "text": [
+                        `${address}`
+                    ],
+                    "postalCode": `${zipcode}`
+                }
+            ],
+            "identifier": [
+                {
+                    "type": {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                "code": "SSN"
+                            }
+                        ]
+                    },
+                    "system": "http://hl7.org/fhir/sid/us-ssn",
+                    "value": `${ssn}`
+                }
+            ],
+        }
+
+        dispatch(patientAction.create(patientData))
     }
 
     _handleValidate = () => {
@@ -77,15 +137,33 @@ class AddPatientPage extends React.Component {
 
     }
 
+    _removeData = (id) => {
+        alert(id)
+    }
+
     render() {
         let { showModal, devices } = this.state
 
         return (
             <AddPatientWrapper>
+                <div className="page-breadcrumbs">
+                    <h1>Patient</h1>
+
+                    <ol className="breadcrumb page-breadcrumb pull-right">
+                        <li>
+                            <i className="fa fa-home"></i>&nbsp;
+                            <Link className="parent-item" to="/dashboard">Home</Link>
+                            &nbsp;<i className="fa fa-angle-right">
+                            </i>
+                        </li>
+                        <li className="active">Patient Details</li>
+                    </ol>
+                </div>
+
                 <div>
                     <FormFinal
                             initialValues={{
-
+                                gender: 'male'
                             }}
                             onSubmit={this._handleSubmit}
                             validate={this._handleValidate}
@@ -119,13 +197,11 @@ class AddPatientPage extends React.Component {
                                                         <Form.Label className="col-sm-4">Gender</Form.Label>
                                                         <div className="col-sm-8">
                                                             <label className="gender-label male">
-                                                                <Field name="gender">
-                                                                    {({ input, meta, type }) => (
+                                                                <Field name="gender" type="radio" value="male">
+                                                                    {({ input, meta }) => (
                                                                         <>
                                                                             <input
-                                                                                type="radio"
                                                                                 {...input}
-                                                                                value="male"
                                                                             />
                                                                         </>
                                                                     )}
@@ -134,14 +210,12 @@ class AddPatientPage extends React.Component {
                                                             </label>
 
                                                             <label className="gender-label">
-                                                                <Field name="gender">
+                                                                <Field name="gender" type="radio" value="female">
                                                                     {({ input, meta, type }) => (
-
                                                                         <>
                                                                             <input
-                                                                                type="radio"
+                                                                                type={type}
                                                                                 {...input}
-                                                                                value="female"
                                                                             />
                                                                         </>
                                                                     )}
@@ -198,7 +272,7 @@ class AddPatientPage extends React.Component {
                                                     <Col sm={6}>
                                                         <Form.Label className="col-sm-4">Email</Form.Label>
                                                         <div className="col-sm-8">
-                                                            <Field name="addmail" type="email">
+                                                            <Field name="addemail" type="email">
                                                                 {({ input, meta, type }) => (
                                                                     <>
                                                                         <Form.Control
@@ -278,12 +352,12 @@ class AddPatientPage extends React.Component {
                                                     <Col sm={6}>
                                                         <Form.Label className="col-sm-4">Remote Monitoring</Form.Label>
                                                         <div className="col-sm-8">
-                                                            <Field name="monitor">
+                                                            <Field name="monitor" type="checkbox">
                                                                 {({ input, meta, type }) => (
 
                                                                     <>
                                                                         <input
-                                                                            type="checkbox"
+                                                                            type={type}
                                                                             {...input}
                                                                         />
                                                                     </>

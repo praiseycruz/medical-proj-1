@@ -4,24 +4,83 @@ import { Link } from 'react-router-dom'
 import { DashboardWrapper } from './styled_components/dashboard.style'
 import { Form, FormControl, Row, Col, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUsers } from "@fortawesome/free-solid-svg-icons"
+import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
 
 class DashboardPage extends React.Component {
     constructor(props) {
         super(props)
     }
 
+    componentDidMount() {
+    }
 
     render() {
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
+                    <div className="page-breadcrumbs">
+                        <h1>Dashboard</h1>
+
+                        <ol className="breadcrumb page-breadcrumb pull-right">
+							<li>
+                                <i className="fa fa-home"></i>&nbsp;
+                                <Link className="parent-item" to="/dashboard">Home</Link>
+                                &nbsp;<i className="fa fa-angle-right">
+                                </i>
+							</li>
+							<li className="active">Dashboard</li>
+						</ol>
+                    </div>
+
+                    <div className="state-overview">
+                        <div className="row">
+                            <div className="col-xl-4 col-md-6 col-12">
+                                <div className="info-box bg-blue">
+                                    <span className="info-box-icon push-bottom">
+                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
+                                    </span>
+
+                                    <div className="info-box-content">
+                                        <span className="info-box-text">Total RPM patients</span>
+                                        <span className="info-box-number">150</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-xl-4 col-md-6 col-12">
+                                <div className="info-box bg-red">
+                                    <span className="info-box-icon push-bottom">
+                                        <FontAwesomeIcon size="sm" className="icon" icon={faExclamationTriangle} />
+                                    </span>
+
+                                    <div className="info-box-content">
+                                        <span className="info-box-text">New critical alerts</span>
+                                        <span className="info-box-number">26</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="col-xl-4 col-md-6 col-12">
+                                <div className="info-box bg-purple">
+                                    <span className="info-box-icon push-bottom">
+                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
+                                    </span>
+
+                                    <div className="info-box-content">
+                                        <span className="info-box-text">No activity in days</span>
+                                        <span className="info-box-number">150</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="form-wrapper patients-content">
                         <Row>
                             <Col sm={10} md={9} className="column-content">
                                 <Form>
                                     <Form.Group as={Row} controlId="searchPatients">
-                                        <Form.Label column sm="6" md="4" lg="4" xl="2">
+                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
                                             Search patients
                                         </Form.Label>
 
@@ -41,7 +100,7 @@ class DashboardPage extends React.Component {
                             <Col sm={10} md={9} className="column-content">
                                 <Form>
                                     <Form.Group as={Row} controlId="searchPhysician">
-                                        <Form.Label column sm="6" md="4" lg="4" xl="2">
+                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
                                             Search physicians
                                         </Form.Label>
 
@@ -57,7 +116,7 @@ class DashboardPage extends React.Component {
                     <div className="form-wrapper manager-content">
                         <Form>
                             <Form.Group as={Row} controlId="searchPrimaryCareManager">
-                                <Form.Label column sm="6" md="4" lg="4" xl="2">
+                                <Form.Label column sm="6" md="5" lg="4" xl="3">
                                     Primary care manager
                                 </Form.Label>
 
@@ -67,49 +126,6 @@ class DashboardPage extends React.Component {
                             </Form.Group>
                         </Form>
                     </div>
-
-                    <div className="state-overview">
-                        <div className="row">
-                            <div className="col-xl-3 col-md-6 col-12">
-                                <div className="info-box bg-blue">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
-                                    </span>
-
-                                    <div className="info-box-content">
-										<span className="info-box-text">Total RPM patients</span>
-										<span className="info-box-number">150</span>
-									</div>
-                                </div>
-                            </div>
-
-                            <div className="col-xl-3 col-md-6 col-12">
-                                <div className="info-box bg-red">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
-                                    </span>
-
-                                    <div className="info-box-content">
-										<span className="info-box-text">New critical alerts</span>
-										<span className="info-box-number">26</span>
-									</div>
-                                </div>
-                            </div>
-
-                            <div className="col-xl-3 col-md-6 col-12">
-                                <div className="info-box bg-purple">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
-                                    </span>
-
-                                    <div className="info-box-content">
-										<span className="info-box-text">No activity in days</span>
-										<span className="info-box-number">150</span>
-									</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </DashboardWrapper>
         )
@@ -117,9 +133,9 @@ class DashboardPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { } = state
+    const { patient } = state
     return {
-
+        patient
     }
 }
 

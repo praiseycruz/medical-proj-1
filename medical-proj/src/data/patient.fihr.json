@@ -1,0 +1,38 @@
+{
+    "resourceType": "Patient",
+    "name": [
+        {
+            "use": "official",
+            "given": ["FIRST NAME"],
+            "family": "Last name"
+        }
+    ],
+    "gender": "male",
+    "telecom": [
+        {
+            "value": "phone number here",
+            "use": "mobile",
+            "system": "phone"
+        },
+        {
+            "system": "email",
+            "value": "email here"
+        }
+    ],
+    "address": [
+        {
+            "text": [
+                "first line address"
+            ]
+            "postalCode": "8000"
+        }
+    ],
+    "identifier": [
+        {
+            "use": "official",
+            "type":
+            "system": "http://hl7.org/fhir/sid/us-ssn",
+            "value": "SSN number"
+        }
+    ]
+}

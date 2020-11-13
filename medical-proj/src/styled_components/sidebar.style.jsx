@@ -57,7 +57,26 @@ export const SideBarContent = styled.div`
         height: 688px;
 
         .accordion {
-            .card {
+            .card-links {
+                padding: 15px;
+                color: #fff;
+                display: flex;
+                align-items: center;
+                font-size: 14px;
+                text-decoration: none;
+
+                &.active {
+                    background-color: #464B55;
+                }
+
+                img,
+                i {
+                    margin-right: 10px;
+                }
+            }
+
+
+            /* .card {
                 background-color: #353C48;
                 border: none;
 
@@ -108,7 +127,7 @@ export const SideBarContent = styled.div`
                         }
                     }
                 }
-            }
+            } */
         }
     }
 

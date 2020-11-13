@@ -41,6 +41,15 @@ export const AddPatientWrapper = styled.div`
                     margin-right: 10px;
                 }
             }
+
+            .form-control {
+                font-size: 14px;
+            }
+        }
+
+        label {
+            margin-bottom: 0;
+            font-size: 14px;
         }
     }
 

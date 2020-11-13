@@ -1,18 +1,25 @@
 import styled from 'styled-components'
 
 export const DashboardWrapper = styled.div`
+    width: 100%;
+
     .dashboard-content {
         .form-wrapper {
             &.patients-content {
-                padding: 5px 0;
+                padding: 10px 0;
                 border-bottom: 1px solid #fff;
 
                 .add-patient {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: center;
+
                     .bg-primary {
                         background-color: #5CA9F0 !important;
                         color: #fff;
-                        padding: 12px 20px;
+                        padding: 8px 15px;
                         border-radius: 5px;
+                        text-decoration: none;
                     }
                 }
             }
@@ -58,6 +65,9 @@ export const DashboardWrapper = styled.div`
                     padding: 15px;
 
                     .info-box-icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
                         float: left;
                         height: 70px;
                         width: 70px;
@@ -99,6 +109,21 @@ export const DashboardWrapper = styled.div`
 
                     &.bg-purple {
                         background-color: #8E44AD;
+                    }
+                }
+            }
+        }
+
+        @media screen and (min-width: 768px) and (max-width: 1023px) {
+            .form-wrapper {
+                &.patients-content {
+                    padding: 5px 0;
+                    border-bottom: 1px solid #fff;
+
+                    .add-patient {
+                        .bg-primary {
+                            padding: 8px;
+                        }
                     }
                 }
             }
