@@ -289,10 +289,6 @@ class AddPatientPage extends React.Component {
                     patientId = patient.id
 
                     if (typeof patient.name !== 'undefined' && patient.name !== null ) {
-                        // patientData = patient.name.map((value, index) => {
-                        //     patientName = value.given + ' ' + value.family
-                        // }))
-
                         patientData = patient.name.map((item, index) => {
                             patientName = item.given + ' ' + item.family
                         })
