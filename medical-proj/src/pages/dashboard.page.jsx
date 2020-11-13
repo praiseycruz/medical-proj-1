@@ -5,13 +5,19 @@ import { DashboardWrapper } from './styled_components/dashboard.style'
 import { Form, FormControl, Row, Col, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
+import { dashboardAction } from '../actions/dashboard.action'
 
 class DashboardPage extends React.Component {
     constructor(props) {
         super(props)
+        this.state = {
+            count: 0
+        }
     }
 
     componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(dashboardAction.count())
     }
 
     render() {
@@ -42,7 +48,7 @@ class DashboardPage extends React.Component {
 
                                     <div className="info-box-content">
                                         <span className="info-box-text">Total RPM patients</span>
-                                        <span className="info-box-number">150</span>
+                                        <span className="info-box-number">{ this.state.count }</span>
                                     </div>
                                 </div>
                             </div>
