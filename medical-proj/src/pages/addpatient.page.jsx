@@ -7,6 +7,7 @@ import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-b
 import { TableComponent } from '../components/Table'
 import { patientAction } from '../actions'
 import iziToast from 'izitoast';
+import { RandNum } from '../helpers/misc'
 
 class AddPatientPage extends React.Component {
     constructor(props) {
@@ -87,16 +88,12 @@ class AddPatientPage extends React.Component {
             ],
             "identifier": [
                 {
-                    "type": {
-                        "coding": [
-                            {
-                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-                                "code": "SSN"
-                            }
-                        ]
-                    },
                     "system": "http://hl7.org/fhir/sid/us-ssn",
                     "value": `${values.ssn}`
+                },
+                {
+                    "value": RandNum("PX"),
+                    "system": "EXSYS"
                 }
             ],
         }

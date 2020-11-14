@@ -7,6 +7,7 @@ import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-b
 import { TableComponent } from '../../components/Table'
 import { practitionerAction } from '../../actions'
 import iziToast from 'izitoast';
+import { RandNum } from '../../helpers'
 
 class PhysicianPage extends React.Component {
     constructor(props) {
@@ -88,6 +89,10 @@ class PhysicianPage extends React.Component {
                 {
                     "system": "http://hl7.org/fhir/sid/us-ssn",
                     "value": `${values.ssn}`
+                },
+                {
+                    "value": RandNum("PX"),
+                    "system": "EXSYS"
                 }
             ],
         }

@@ -7,9 +7,9 @@ var defaultState = {
         error: null,
         patient: {}
     },
-    findAll: {
+    getAll: {
         loading: false,
-        items: [],
+        patients: [],
         sucess: false,
         error: null
     },
@@ -65,46 +65,46 @@ export function patient(state = defaultState, action) {
                 ...otherState
             }
             return state
-        case patientConstants.FIND_ALL_REQUEST:
+        case patientConstants.GET_ALL_REQUEST:
             var {
-                findAll,
+                getAll,
                 ...otherState
             } = state
 
-            findAll.loading = false
-            findAll.error = null
-            findAll.success = false
-            findAll.items = action.items
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = false
             state = {
-                findAll,
+                getAll,
                 ...otherState
             }
             return state
-        case patientConstants.FIND_ALL_SUCCESS:
+        case patientConstants.GET_ALL_SUCCESS:
             var {
-                findAll,
+                getAll,
                 ...otherState
             } = state
 
-            findAll.loading = false
-            findAll.error = null
-            findAll.success = true
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = true
+            getAll.patients = action.patients
             state = {
-                findAll,
+                getAll,
                 ...otherState
             }
             return state
-        case patientConstants.FIND_ALL_FAILURE:
+        case patientConstants.GET_ALL_FAILURE:
             var {
-                findAll,
+                getAll,
                 ...otherState
             } = state
 
-            findAll.loading = false
-            findAll.error = action.error
-            findAll.success = false
+            getAll.loading = false
+            getAll.error = action.error
+            getAll.success = false
             state = {
-                findAll,
+                getAll,
                 ...otherState
             }
             return state

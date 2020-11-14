@@ -4,6 +4,7 @@ import { config } from '../config'
 export const patientService = {
     create,
     findById,
+    getAll,
     searchByIdOrName,
 }
 
@@ -42,6 +43,23 @@ function findById(id) {
         return Promise.reject(error)
     })
 
+}
+
+function getAll(count, skip) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    return fetch(config.apiGateway.URL + config.Patient.getAll(count, skip), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
 }
 
 function searchByIdOrName(query, count) {
