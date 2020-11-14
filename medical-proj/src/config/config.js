@@ -8,5 +8,7 @@ export const config = {
     },
     sessionGateway: {
         URL: 'http://medtrackswp.azurewebsites.net'
-    }
+    },
+    Patient : Patient.endPoints,
+    Practitioner : Practitioner.endPoints,
 }
