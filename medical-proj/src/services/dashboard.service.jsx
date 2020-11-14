@@ -13,7 +13,7 @@ function count() {
         }
     }
 
-    return fetch(config.apiGateway.URL + `/Patient?_summary=count`, requestOptions)
+    return fetch(config.apiGateway.URL + `/Patient?_summary=count&identifier=EXSYS|`, requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
