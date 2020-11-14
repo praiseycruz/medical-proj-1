@@ -7,6 +7,12 @@ var defaultState = {
         error: null,
         practitioner: {}
     },
+    getAll: {
+        loading: false,
+        practitioners: [],
+        sucess: false,
+        error: null
+    },
     findById: {
         loading: false,
         item: {},
@@ -56,6 +62,49 @@ export function practitioner(state = defaultState, action) {
             create.error = action.error
             state = {
                 create,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.GET_ALL_REQUEST:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = false
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.GET_ALL_SUCCESS:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = true
+            getAll.practitioners = action.practitioners
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.GET_ALL_FAILURE:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = action.error
+            getAll.success = false
+            state = {
+                getAll,
                 ...otherState
             }
             return state

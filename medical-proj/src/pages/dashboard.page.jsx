@@ -5,7 +5,7 @@ import { DashboardWrapper } from './styled_components/dashboard.style'
 import { Form, FormControl, Row, Col, Button, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
-import { dashboardAction, patientAction } from '../actions'
+import { dashboardAction, patientAction, practitionerAction } from '../actions'
 import { TableComponent } from '../components/Table'
 import { dataOrDefault } from '../helpers'
 
@@ -17,7 +17,8 @@ class DashboardPage extends React.Component {
             hasGetPatientCount: false,
             searchValue: null,
             patientsData: [],
-            cols: [
+            practitionersData: [],
+            patientCols: [
                 {
                     title: 'Patient Name',
                     key: 'name',
@@ -60,6 +61,36 @@ class DashboardPage extends React.Component {
                         return <span><button>Info</button></span>;
                     }
                 }
+            ],
+            practitionerCols: [
+                {
+                    title: 'Practitioner Name',
+                    key: 'name',
+                    render: colData => {
+                        return <span>{ colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
+                    }
+                },
+                {
+                    title: 'DOB',
+                    key: 'dob',
+                    render: colData => {
+                        return <span>{colData.resource.birthDate}</span>;
+                    }
+                },
+                {
+                    title: 'Gender',
+                    key: 'gender',
+                    render: colData => {
+                        return <span>{colData.resource.gender}</span>;
+                    }
+                },
+                {
+                    title: '',
+                    key: 'edit',
+                    render: colData => {
+                        return <span><button>Info</button></span>;
+                    }
+                }
             ]
         }
     }
@@ -68,10 +99,11 @@ class DashboardPage extends React.Component {
         const { dispatch } = this.props
         dispatch(dashboardAction.count())
         dispatch(patientAction.getAll(10, 0))
+        dispatch(practitionerAction.getAll(10, 0))
     }
 
     componentDidUpdate() {
-        let { dashboardPatientCount, patient } = this.props
+        let { dashboardPatientCount, patient, practitioner } = this.props
         let { hasGetPatientCount } = this.state
 
         if (typeof dashboardPatientCount !== 'undefined' && dashboardPatientCount !== null) {
@@ -81,16 +113,22 @@ class DashboardPage extends React.Component {
                 if (typeof count.count !== 'undefined' && count.count !== null) {
                     let totalNumberOfPatients = count.count
 
-                    if (!hasGetPatientCount && typeof patient !== 'undefined'
+                    if (!hasGetPatientCount
+                        && typeof patient !== 'undefined'
                         && typeof patient.getAll !== 'undefined'
                         && typeof patient.getAll.patients !== 'undefined'
                         && typeof patient.getAll.patients.entry !== 'undefined'
+                        && typeof practitioner !== 'undefined'
+                        && typeof practitioner.getAll !== 'undefined'
+                        && typeof practitioner.getAll.practitioners !== 'undefined'
+                        && typeof practitioner.getAll.practitioners.entry !== 'undefined'
                     ) {
 
                         this.setState({
                             count: totalNumberOfPatients,
                             hasGetPatientCount: true,
                             patientsData: patient.getAll.patients.entry,
+                            practitionersData: practitioner.getAll.practitioners.entry,
                         })
                     }
                 }
@@ -107,7 +145,6 @@ class DashboardPage extends React.Component {
     }
 
     render() {
-        console.log("HAHAAAHAHAH", this.state.patientsData);
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
@@ -238,15 +275,28 @@ class DashboardPage extends React.Component {
 
                     <Card>
                         <Card.Body>
-                            <TableComponent data={this.state.patientsData} cols={this.state.cols} />
+                            <TableComponent data={this.state.patientsData} cols={this.state.patientCols} />
 
-                            <div className="pagination">
+                            {/* <div className="pagination">
                               <span>&laquo;</span>
                               <span className="active">1</span>
                               <span>2</span>
                               <span>3</span>
                               <span>4</span>
-                            </div>
+                            </div> */}
+                        </Card.Body>
+                    </Card>
+                    <Card>
+                        <Card.Body>
+                            <TableComponent data={this.state.practitionersData} cols={this.state.practitionerCols} />
+
+                            {/* <div className="pagination">
+                              <span>&laquo;</span>
+                              <span className="active">1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                            </div> */}
                         </Card.Body>
                     </Card>
                 </div>
@@ -256,10 +306,11 @@ class DashboardPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { patient, dashboardPatientCount } = state
+    const { patient, practitioner, dashboardPatientCount } = state
     return {
         patient,
-        dashboardPatientCount
+        practitioner,
+        dashboardPatientCount,
     }
 }
 

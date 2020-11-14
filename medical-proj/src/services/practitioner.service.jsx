@@ -3,6 +3,7 @@ import { config } from '../config'
 
 export const practitionerService = {
     create,
+    getAll,
     findById,
 }
 
@@ -16,6 +17,23 @@ function create(data) {
     }
 
     return fetch(config.apiGateway.URL + `/Practitioner`, requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
+function getAll(count, skip) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    return fetch(config.apiGateway.URL + config.Practitioner.getAll(count, skip), requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
