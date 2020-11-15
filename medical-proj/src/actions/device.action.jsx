@@ -2,10 +2,12 @@ import { deviceService } from '../services'
 import { deviceConstants } from '../constants'
 
 export const deviceAction = {
-    addDevice
+    assignPatientToDevice,
+    findUnassigned,
+    findById,
 }
 
-function addDevice(data) {
+function assignPatientToDevice(deviceId, patientId) {
 
     return dispatch => {
 
@@ -14,7 +16,7 @@ function addDevice(data) {
         proceed()
 
         function proceed() {
-            deviceService.addDevice(data).then( response => {
+            deviceService.assignPatientToDevice(deviceId, patientId).then( response => {
                 console.log(response)
                 dispatch(success(response))
             }).catch(error => {
@@ -23,7 +25,55 @@ function addDevice(data) {
         }
     }
 
-    function request() { return { type: deviceConstants.CREATE_REQUEST } }
-    function success(device) { return { type: deviceConstants.CREATE_SUCCESS, device } }
-    function failure(error) { return { type: deviceConstants.CREATE_FAILURE, error } }
+    function request() { return { type: deviceConstants.ASSIGN_REQUEST } }
+    function success(device) { return { type: deviceConstants.ASSIGN_SUCCESS, device } }
+    function failure(error) { return { type: deviceConstants.ASSIGN_FAILURE, error } }
+}
+
+
+function findUnassigned() {
+
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            deviceService.findUnassigned().then( response => {
+                console.log(response)
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: deviceConstants.FIND_ALL_UNASSIGNED_REQUEST } }
+    function success(devices) { return { type: deviceConstants.FIND_ALL_UNASSIGNED_SUCCESS, devices } }
+    function failure(error) { return { type: deviceConstants.FIND_ALL_UNASSIGNED_FAILURE, error } }
+}
+
+
+function findById(id) {
+
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            deviceService.findById(id).then( response => {
+                console.log(response)
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: deviceConstants.FIND_BY_ID_REQUEST } }
+    function success(device) { return { type: deviceConstants.FIND_BY_ID_SUCCESS, device } }
+    function failure(error) { return { type: deviceConstants.FIND_BY_ID_FAILURE, error } }
 }

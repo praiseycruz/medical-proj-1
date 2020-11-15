@@ -2,21 +2,28 @@ import React from 'react'
 import { config } from '../config'
 
 export const deviceService = {
-    addDevice,
+    assignPatientToDevice,
     findById,
-    findAll
+    findUnassigned,
 }
 
-function addDevice(data) {
+function assignPatientToDevice(deviceId, patientId) {
     const requestOptions ={
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify([{
+            op: "add",
+            path: "/patient",
+            value: {
+                reference: `Patient/${patientId}`,
+                type: "Patient"
+            }
+        }])
     }
 
-    return fetch(config.apiGateway.URL + `/Device`, requestOptions)
+    return fetch(config.apiGateway.URL + config.Device.assignPatient(deviceId), requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
@@ -34,7 +41,7 @@ function findById(id) {
         }
     }
 
-    return fetch(config.apiGateway.URL + config.Patient.findById(id), requestOptions)
+    return fetch(config.apiGateway.URL + config.Device.findById(id), requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
@@ -44,7 +51,22 @@ function findById(id) {
 
 }
 
-function findAll() {
+function findUnassigned() {
+
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }
+
+    return fetch(config.apiGateway.URL + config.Device.findUnassigned(), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
 
 }
 
