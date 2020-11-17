@@ -15,7 +15,7 @@ function count() {
 
         function proceed() {
             dashboardService.count().then( response => {
-                console.log(response)
+                // console.log(response)
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))

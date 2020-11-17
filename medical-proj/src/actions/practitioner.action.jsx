@@ -16,7 +16,6 @@ function create(data) {
 
         function proceed() {
             practitionerService.create(data).then( response => {
-                console.log(response)
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
