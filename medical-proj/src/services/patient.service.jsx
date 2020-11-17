@@ -128,7 +128,7 @@ function searchByIdOrName(query, count) {
     })
 }
 
-function appendPractitionerToPatient(patientId, currentGPData, gpDataToAppend) {
+function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
     /*
         currentGPData must be whatever is in `Patient.generalPractitioner`
         Example:
@@ -147,14 +147,6 @@ function appendPractitionerToPatient(patientId, currentGPData, gpDataToAppend) {
         If this is the data on the server under patient.generalPractitioner, it adds a new
         practitioner under patient.generalPractitioner else returns 400 bad request
 
-        To append a new GP to this list, `gpDataToAppend` must be a single GP of the
-        form
-        {
-            "reference": "Practitioner/1635638",
-            "type": "Practitioner"
-        }
-        MUST NOT include GPs that are already present in patient.generalPractitioner
-
     */
     const requestOptions ={
         method: 'POST',
@@ -169,10 +161,11 @@ function appendPractitionerToPatient(patientId, currentGPData, gpDataToAppend) {
             },
             {
                 op: "add",
-                path: `/generalPractitioner/${nthPractitioner}`,
-                value: [
-                    gpDataToAppend
-                ]
+                path: `/generalPractitioner/-`,
+                value: [{
+                    reference: `Practitioner/${practitionerId}`,
+                    type: "Practitioner"
+                }]
             }
         ])
     }
