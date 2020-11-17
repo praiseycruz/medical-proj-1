@@ -9,8 +9,6 @@ import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icon
 import { dashboardAction, patientAction, practitionerAction } from '../../actions'
 import { TableComponent } from '../../components/Table'
 import { dataOrDefault } from '../../helpers'
-import jQuery from 'jquery'
-import * as queryString from "query-string"
 
 class DashboardPage extends React.Component {
     constructor(props) {
