@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from './styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-bootstrap'
-import { TableComponent } from '../components/Table'
-import { patientAction } from '../actions'
+import { TableComponent } from '../../components/Table'
+import { patientAction, dashboardAction, practitionerAction } from '../../actions'
 import iziToast from 'izitoast';
-import { RandNum } from '../helpers/misc'
+import { RandNum } from '../../helpers/misc'
 
 class AddPatientPage extends React.Component {
     constructor(props) {
@@ -53,7 +53,7 @@ class AddPatientPage extends React.Component {
         }
     }
 
-    _handleSubmit = async values => {
+    _handleSubmit = async (values) => {
         let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
         const { dispatch } = this.props
 
@@ -99,6 +99,12 @@ class AddPatientPage extends React.Component {
         }
 
         dispatch(patientAction.create(patientData))
+
+        // await sleep(300)
+        // Object.keys(values).forEach(key => {
+        //     form.change(key, undefined)
+        //     form.resetFieldState(key)
+        // })
     }
 
     _handleValidate = values => {
@@ -154,9 +160,6 @@ class AddPatientPage extends React.Component {
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
 
-
-
-        console.log(errors);
 		return errors
     }
 
@@ -242,6 +245,7 @@ class AddPatientPage extends React.Component {
     componentDidUpdate() {
         let { patient } = this.props
         let { hasPatientCreated, isPatientCreated } = this.state
+        const { dispatch } = this.props
 
         if (typeof patient !== 'undefined' && patient !== null) {
             let { create } = patient
@@ -252,11 +256,23 @@ class AddPatientPage extends React.Component {
                 if (success) {
                     if ( typeof patient !== 'undefined' && patient !== null) {
                         if (!hasPatientCreated) {
+
                             this.setState({
                                 isPatientCreated: true,
                                 hasPatientCreated: true,
                                 patientData: patient
                             })
+
+                            iziToast.success({
+                                position: 'topRight',
+                                title: 'Success',
+                                displayMode: 1,
+                                message: 'Patient registered successfully!',
+                            })
+
+                            dispatch(dashboardAction.count())
+                            dispatch(patientAction.getAll(10, 0))
+                            dispatch(practitionerAction.getAll(10, 0))
                         }
                     }
                 }
@@ -298,7 +314,6 @@ class AddPatientPage extends React.Component {
             }
         }
 
-        console.log(patientName, patientId)
         return (
             <AddPatientWrapper>
                 <div className="page-breadcrumbs">
@@ -544,13 +559,7 @@ class AddPatientPage extends React.Component {
                                                         <div className="btn-add">
                                                             <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
                                                                 { isAddingNewPatientLoading ?
-                                                                    <>
-                                                                        {/*<Spinner animation="border" role="status">
-                                                                            <span className="sr-only">Loading...</span>
-                                                                        </Spinner>*/}
-
-                                                                        <span className="ml-2">Adding Patient...</span>
-                                                                    </>
+                                                                    <span className="ml-2">Adding Patient...</span>
                                                                     :
                                                                     <>Add Patient</>
                                                                 }

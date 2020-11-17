@@ -1,3 +1,2 @@
-export * from './dashboard.page'
-export * from './patients.page'
-export * from './addpatient.page'
+export * from './Dashboard'
+export * from './Patient'

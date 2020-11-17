@@ -1,12 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { AddPatientWrapper } from '../styled_components/addpatient.style'
+import { AddPatientWrapper } from '../Patient/styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
-import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-bootstrap'
-import { TableComponent } from '../../components/Table'
+import { Form, Row, Col, Button, Card } from 'react-bootstrap'
 import { practitionerAction } from '../../actions'
-import iziToast from 'izitoast';
 import { RandNum } from '../../helpers'
 
 class PhysicianPage extends React.Component {
