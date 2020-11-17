@@ -7,20 +7,39 @@ export const deviceService = {
     findUnassigned,
 }
 
-function assignPatientToDevice(deviceId, patientId) {
+function assignPatientToDevice(deviceId, patientId, devicePatientData) {
+    /*
+        devicePatientData must be whatever is in `Device.patient`
+        Example:
+        devicePatientData = {
+            "reference": "Patient/1635625",
+            "type": "Patient"
+        }
+
+        If this is the data on the server under `Device.patient`, it replaces
+        patient under `Device.patient` else returns 400 bad request
+
+    */
     const requestOptions ={
-        method: 'POST',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify([{
-            op: "add",
-            path: "/patient",
-            value: {
-                reference: `Patient/${patientId}`,
-                type: "Patient"
+        body: JSON.stringify([
+            {
+                op: "test",
+                path: "/Patient",
+                value: devicePatientData
+            },
+            {
+                op: "add",
+                path: "/Patient",
+                value: {
+                    reference: `Patient/${patientId}`,
+                    type: "Patient"
+                }
             }
-        }])
+        ])
     }
 
     return fetch(config.apiGateway.URL + config.Device.assignPatient(deviceId), requestOptions)

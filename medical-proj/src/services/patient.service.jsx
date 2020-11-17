@@ -149,7 +149,7 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
 
     */
     const requestOptions ={
-        method: 'POST',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
