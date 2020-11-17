@@ -71,7 +71,7 @@ export function practitioner(state = defaultState, action) {
                 ...otherState
             } = state
 
-            getAll.loading = false
+            getAll.loading = true
             getAll.error = null
             getAll.success = false
             state = {
