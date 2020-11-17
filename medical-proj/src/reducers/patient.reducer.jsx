@@ -13,6 +13,12 @@ var defaultState = {
         success: false,
         error: null
     },
+    appendPractitioner: {
+        loading: false,
+        success: false,
+        error: null,
+        patient: {}
+    }
     // findById: {
     //     loading: false,
     //     item: {},
@@ -165,6 +171,50 @@ export function patient(state = defaultState, action) {
             getAll.success = false
             state = {
                 getAll,
+                ...otherState
+            }
+            return state
+        case patientConstants.APPEND_PRACTITIONER_REQUEST:
+            var {
+                appendPractitioner,
+                ...otherState
+            } = state
+            appendPractitioner.success = false
+            appendPractitioner.error = null
+            appendPractitioner.loading = true
+
+            state = {
+                appendPractitioner,
+                ...otherState
+            }
+
+            return state
+        case patientConstants.APPEND_PRACTITIONER_SUCCESS:
+            var {
+                appendPractitioner,
+                ...otherState
+            } = state
+            appendPractitioner.success = true
+            appendPractitioner.loading = false
+            appendPractitioner.error = null
+            appendPractitioner.patient = action.patient
+
+            state = {
+                appendPractitioner,
+                ...otherState
+            }
+            return state
+        case patientConstants.APPEND_PRACTITIONER_FAILURE:
+            var {
+                appendPractitioner,
+                ...otherState
+            } = state
+            appendPractitioner.loading = false
+            appendPractitioner.success = false
+            appendPractitioner.error = action.error
+
+            state = {
+                appendPractitioner,
                 ...otherState
             }
             return state

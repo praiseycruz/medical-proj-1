@@ -96,6 +96,7 @@ class AddPatientPage extends React.Component {
                     "system": "EXSYS"
                 }
             ],
+            "generalPractitioner": [],
         }
 
         dispatch(patientAction.create(patientData))

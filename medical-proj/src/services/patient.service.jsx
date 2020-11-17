@@ -7,6 +7,7 @@ export const patientService = {
     getAll,
     searchByIdOrName,
     getPaginationLink,
+    appendPractitionerToPatient,
     // getPreviousPage
 }
 
@@ -119,6 +120,31 @@ function searchByIdOrName(query, count) {
     const filterParam = Number.isNaN(parseInt(query)) ? `name co ${query}` : `identifier co http://hl7.org/fhir/sid/us-ssn|${query}`
 
     return fetch(config.apiGateway.URL + config.Patient.search(filterParam, count), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
+function appendPractitionerToPatient(patientId, practitionerId) {
+    const requestOptions ={
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify([{
+            op: "add",
+            path: "/generalPractitioner",
+            value: {
+                reference: `Practitioner/${practitionerId}`,
+                type: "Practitioner"
+            }
+        }])
+    }
+
+    return fetch(config.apiGateway.URL + config.Patient.appendPractitioner(patientId), requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)

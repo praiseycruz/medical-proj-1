@@ -5,7 +5,8 @@ export const patientAction = {
     create,
     getAll,
     getPaginationLink,
-    searchByIdOrName
+    searchByIdOrName,
+    appendPractitionerToPatient,
     // getPreviousPage
 }
 
@@ -98,6 +99,28 @@ function searchByIdOrName(query, count) {
     function request() { return { type: patientConstants.GET_ALL_REQUEST } }
     function success(patients) { return { type: patientConstants.GET_ALL_SUCCESS, patients } }
     function failure(error) { return { type: patientConstants.GET_ALL_FAILURE, error } }
+}
+
+function appendPractitionerToPatient(patientId, practitionerId) {
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            patientService.appendPractitionerToPatient(patientId, practitionerId).then( response => {
+                console.log(response)
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: patientConstants.APPEND_PRACTITIONER_REQUEST } }
+    function success(patient) { return { type: patientConstants.APPEND_PRACTITIONER_SUCCESS, patient } }
+    function failure(error) { return { type: patientConstants.APPEND_PRACTITIONER_FAILURE, error } }
 }
 
 // function getPreviousPage(link) {
