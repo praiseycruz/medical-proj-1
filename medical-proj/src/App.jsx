@@ -1,15 +1,15 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
-import { DashboardPage, PatientPage, AddPatientPage } from './pages'
+import { DashboardPage, AddPatientPage } from './pages'
 import { PhysicianPage } from './pages/Physician'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
 import { SideBarContainer, SideBarContent } from './styled_components/sidebar.style'
-import { NavbarWrapper, NotificationBell } from './styled_components/navbar.style'
+import { NavbarWrapper } from './styled_components/navbar.style'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Accordion, Card, NavDropdown, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Navbar, Nav, Accordion, DropdownButton, Dropdown } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faBell, faCaretDown, faCaretRight, faUser } from "@fortawesome/free-solid-svg-icons"
+import { faBars, faBell } from "@fortawesome/free-solid-svg-icons"
 
 import 'izitoast/dist/css/iziToast.min.css'; // added izitoast css
 
@@ -37,8 +37,12 @@ export default class App extends React.Component {
         })
     }
 
+    componentDidMount() {
+
+    }
+
     render() {
-        let { patientsOpen, sidebarOpen } = this.state
+        let { sidebarOpen } = this.state
 
         return (
             <Router history={history}>
@@ -96,7 +100,7 @@ export default class App extends React.Component {
                                         title={
                                             <>
                                                 <img src="/images/default-user-icon.png" className="img-fluid"
-                                                style={{ width: '26px',  marginRight: '10px', borderRadius: '50%' }}/>
+                                                style={{ width: '26px',  marginRight: '10px', borderRadius: '50%' }} alt="User Icon"/>
                                                 <span style={{ fontSize: '14px' }}>John Doe</span>
                                             </>
                                         }
