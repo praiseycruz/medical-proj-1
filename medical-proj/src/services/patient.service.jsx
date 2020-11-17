@@ -128,20 +128,53 @@ function searchByIdOrName(query, count) {
     })
 }
 
-function appendPractitionerToPatient(patientId, practitionerId) {
+function appendPractitionerToPatient(patientId, currentGPData, gpDataToAppend) {
+    /*
+        currentGPData must be whatever is in `Patient.generalPractitioner`
+        Example:
+        currentGPData = [
+            {
+                "reference": "Practitioner/1635625",
+                "type": "Practitioner"
+            },
+            {
+                "reference": "Practitioner/1635638",
+                "type": "Practitioner"
+            },
+            ...
+        ]
+
+        If this is the data on the server under patient.generalPractitioner, it adds a new
+        practitioner under patient.generalPractitioner else returns 400 bad request
+
+        To append a new GP to this list, `gpDataToAppend` must be a single GP of the
+        form
+        {
+            "reference": "Practitioner/1635638",
+            "type": "Practitioner"
+        }
+        MUST NOT include GPs that are already present in patient.generalPractitioner
+
+    */
     const requestOptions ={
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify([{
-            op: "add",
-            path: "/generalPractitioner",
-            value: [{
-                reference: `Practitioner/${practitionerId}`,
-                type: "Practitioner"
-            }]
-        }])
+        body: JSON.stringify([
+            {
+                op: "test",
+                path: "/generalPractitioner",
+                value: currentGPData
+            },
+            {
+                op: "add",
+                path: `/generalPractitioner/${nthPractitioner}`,
+                value: [
+                    gpDataToAppend
+                ]
+            }
+        ])
     }
 
     return fetch(config.apiGateway.URL + config.Patient.appendPractitioner(patientId), requestOptions)
