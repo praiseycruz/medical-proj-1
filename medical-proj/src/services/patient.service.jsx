@@ -137,10 +137,10 @@ function appendPractitionerToPatient(patientId, practitionerId) {
         body: JSON.stringify([{
             op: "add",
             path: "/generalPractitioner",
-            value: {
+            value: [{
                 reference: `Practitioner/${practitionerId}`,
                 type: "Practitioner"
-            }
+            }]
         }])
     }
 
