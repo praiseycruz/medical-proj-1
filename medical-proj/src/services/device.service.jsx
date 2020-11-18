@@ -26,11 +26,11 @@ function assignPatientToDevice(deviceId, patientId, devicePatientData) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify([
-            {
-                op: "test",
-                path: "/Patient",
-                value: devicePatientData
-            },
+            // { // This doesn't work as of now
+            //     op: "test",
+            //     path: "/Patient",
+            //     value: devicePatientData
+            // },
             {
                 op: "add",
                 path: "/Patient",
