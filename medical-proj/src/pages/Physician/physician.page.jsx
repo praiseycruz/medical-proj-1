@@ -404,5 +404,5 @@ function mapStateToProps(state) {
     }
 }
 
-const connectedDashboard = connect(mapStateToProps)(PhysicianPage)
-export { connectedDashboard as PhysicianPage }
+const connectedPhysicianPage = connect(mapStateToProps)(PhysicianPage)
+export { connectedPhysicianPage as PhysicianPage }

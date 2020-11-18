@@ -14,7 +14,7 @@ export const SideBarContent = styled.div`
     overflow: hidden;
     width: auto;
     height: 688px;
-    margin-top: 20px; 
+    margin-top: 20px;
 
     .user-panel {
         display: flex;
@@ -77,7 +77,7 @@ export const SideBarContent = styled.div`
             }
 
 
-            /* .card {
+            .card {
                 background-color: #353C48;
                 border: none;
 
@@ -86,6 +86,7 @@ export const SideBarContent = styled.div`
                     align-items: center;
                     background-color: transparent;
                     border: none;
+                    padding: 15px;
 
                     i {
                         font-size: 16px;
@@ -113,7 +114,11 @@ export const SideBarContent = styled.div`
                     margin: 0;
 
                     li {
-                        padding: 10px 10px 10px 55px;
+                        padding: 10px 10px 10px 35px;
+
+                        i {
+                            margin-right: 10px;
+                        }
                     }
                 }
 
@@ -121,14 +126,14 @@ export const SideBarContent = styled.div`
                     ul {
                         li {
                             a {
-                                color: #ffffff80;
+                                color: #dddddd;
                                 font-size: 14px;
                                 text-decoration: none;
                             }
                         }
                     }
                 }
-            } */
+            }
         }
     }
 

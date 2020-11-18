@@ -6,9 +6,9 @@ import { PageLogoSection } from './styled_components/header.style'
 import { SideBarContainer, SideBarContent } from './styled_components/sidebar.style'
 import { NavbarWrapper } from './styled_components/navbar.style'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Accordion, DropdownButton, Dropdown } from 'react-bootstrap'
+import { Navbar, Nav, Accordion, DropdownButton, Dropdown, Card } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faBell } from "@fortawesome/free-solid-svg-icons"
+import { faBars, faBell, faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons"
 
 import 'izitoast/dist/css/iziToast.min.css'; // added izitoast css
 
@@ -19,14 +19,14 @@ export default class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            patientsOpen: false,
+            officeSetup: false,
             sidebarOpen: true
         }
     }
 
     _caretOpen = () => {
         this.setState({
-            patientsOpen: !this.state.patientsOpen
+            officeSetup: !this.state.officeSetup
         })
     }
 
@@ -41,7 +41,7 @@ export default class App extends React.Component {
     }
 
     render() {
-        let { sidebarOpen } = this.state
+        let { sidebarOpen, officeSetup } = this.state
 
         return (
             <Router history={history}>
@@ -158,20 +158,37 @@ export default class App extends React.Component {
                                         <span className="link-text">Care Manager Management</span>
                                     </NavLink>
 
-                                    <Link to="#" className="card-links">
+                                    {/*<Link to="#" className="card-links">
                                         <i className="fas fa-tasks"></i>
                                         <span className="link-text">Tasks</span>
-                                    </Link>
+                                    </Link>*/}
 
                                     <Link to="#" className="card-links">
                                         <i className="fas fa-file-medical-alt"></i>
                                         <span className="link-text">Reports</span>
                                     </Link>
 
-                                    <Link to="#" className="card-links">
-                                        <i className="far fa-building"></i>
-                                        <span className="link-text">Office setup</span>
-                                    </Link>
+                                    <Card>
+                                        <Card.Header>
+                                            <Accordion.Toggle as={Link} variant="link" eventKey="1" onClick={this._caretOpen}>
+                                                <span>
+                                                    <i className="far fa-building"></i>
+                                                    <span>Office setup</span>
+                                                </span>
+
+                                                <FontAwesomeIcon size="sm" className="icon" icon={officeSetup ? faCaretDown : faCaretRight} />
+                                            </Accordion.Toggle>
+                                        </Card.Header>
+
+                                        <Accordion.Collapse eventKey="1" className="accordion-collapse">
+                                            <ul>
+                                                <li>
+                                                    <i className="fas fa-tasks"></i>
+                                                    <Link to="#">Tasks</Link>
+                                                </li>
+                                            </ul>
+                                        </Accordion.Collapse>
+                                    </Card>
                                 </Accordion>
                             </div>
                         </SideBarContent>
