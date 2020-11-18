@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from '../Patient/styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Card } from 'react-bootstrap'
-import { practitionerAction } from '../../actions'
+import { practitionerAction, dashboardAction, patientAction } from '../../actions'
+import iziToast from 'izitoast';
 import { RandNum } from '../../helpers'
 
 class PhysicianPage extends React.Component {
@@ -49,6 +50,44 @@ class PhysicianPage extends React.Component {
     }
 
     componentDidMount() {
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        let { practitioner } = this.props
+        let { isPractitionerCreated, hasPractitionerCreated } = this.state
+        const { dispatch } = this.props
+
+        if (typeof practitioner !== 'undefined' && practitioner !== null) {
+            let { create } = practitioner
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { success, practitioner } = create
+
+                if (success) {
+                    if ( typeof practitioner !== 'undefined' && practitioner !== null) {
+                        if (!hasPractitionerCreated) {
+
+                            this.setState({
+                                isPractitionerCreated: true,
+                                hasPractitionerCreated: true,
+                                practitionerData: practitioner
+                            })
+
+                            iziToast.success({
+                                position: 'topRight',
+                                title: 'Success',
+                                displayMode: 1,
+                                message: 'Practitioner registered successfully!',
+                            })
+
+                            dispatch(dashboardAction.count())
+                            dispatch(patientAction.getAll(10, 0))
+                            dispatch(practitionerAction.getAll(10, 0))
+                        }
+                    }
+                }
+            }
+        }
     }
 
     _handleSubmit = async values => {
@@ -151,13 +190,27 @@ class PhysicianPage extends React.Component {
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
 
-
-
-        console.log(errors);
 		return errors
     }
 
     render() {
+        let { practitioner } = this.props
+
+        let isAddingNewPractitionerLoading = false
+
+        if (typeof practitioner !== 'undefined' && practitioner !== null) {
+            let { create } = practitioner
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { practitioner, loading } = create
+
+                if (loading) {
+                    isAddingNewPractitionerLoading = true
+                } else {
+                    isAddingNewPractitionerLoading = false
+                }
+            }
+        }
 
         return (
             <AddPatientWrapper>
@@ -380,8 +433,12 @@ class PhysicianPage extends React.Component {
                                                     </Form.Group>
 
                                                     <div className="btn-add">
-                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                            Add Physician
+                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPractitionerLoading ? 'disabled' : ''}`}>
+                                                            { isAddingNewPractitionerLoading ?
+                                                                <span className="ml-2">Adding Practitioner...</span>
+                                                                :
+                                                                <>Add Practitioner</>
+                                                            }
                                                         </Button>
                                                     </div>
                                                 </div>
@@ -398,9 +455,9 @@ class PhysicianPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const {  } = state
+    const { practitioner } = state
     return {
-
+        practitioner
     }
 }
 
