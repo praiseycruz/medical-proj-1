@@ -1,12 +1,13 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
-import { DashboardPage, AddPatientPage, PhysicianPage, CareManagerPage } from './pages'
+import { DashboardPage, PhysicianPage, CareManagerPage } from './pages'
+import { AddPatientPage, PatientReadingsPage  } from './pages/Patient'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
 import { SideBarContainer, SideBarContent } from './styled_components/sidebar.style'
 import { NavbarWrapper } from './styled_components/navbar.style'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Navbar, Nav, Accordion, DropdownButton, Dropdown, Card } from 'react-bootstrap'
+import { Navbar, Nav, Accordion, DropdownButton, Dropdown, Card, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faBell, faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons"
 
@@ -138,15 +139,15 @@ export default class App extends React.Component {
                                         <span className="link-text">Dashboard</span>
                                     </NavLink>
 
-                                    <NavLink to="/addpatients" activeClassName="active" className="card-links">
+                                    <NavLink to="/add-patients" activeClassName="active" className="card-links">
                                         <i className="fas fa-info-circle"></i>
                                         <span className="link-text">Patients Details</span>
                                     </NavLink>
 
-                                    <Link to="#" className="card-links">
+                                    <NavLink to="/patient-readings" activeClassName="active" className="card-links">
                                         <i className="fas fa-book-open"></i>
                                         <span className="link-text">Patients Readings</span>
-                                    </Link>
+                                    </NavLink>
 
                                     <NavLink to="/physician" className="card-links" activeClassName="active">
                                         <i className="fas fa-user-md"></i>
@@ -170,7 +171,7 @@ export default class App extends React.Component {
 
                                     <Card>
                                         <Card.Header>
-                                            <Accordion.Toggle as={Link} variant="link" eventKey="1" onClick={this._caretOpen}>
+                                            <Accordion.Toggle as={Button} variant="link" eventKey="1" onClick={this._caretOpen}>
                                                 <span>
                                                     <i className="far fa-building"></i>
                                                     <span>Office setup</span>
@@ -206,7 +207,8 @@ export default class App extends React.Component {
                             }}
                             />
                             <Route exact path="/dashboard" component={DashboardPage} />
-                            <Route exact path="/addpatients" component={AddPatientPage} />
+                            <Route exact path="/add-patients" component={AddPatientPage} />
+                            <Route exact path="/patient-readings" component={PatientReadingsPage} />
                             <Route exact path="/physician" component={PhysicianPage} />
                             <Route exact path="/care-manager" component={CareManagerPage} />
                         </Switch>
