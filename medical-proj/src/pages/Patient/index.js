@@ -1,2 +1,2 @@
-export * from './addpatient.page'
-// export * from './patient.page'
+export * from './AddPatient'
+export * from './PatientReadings'

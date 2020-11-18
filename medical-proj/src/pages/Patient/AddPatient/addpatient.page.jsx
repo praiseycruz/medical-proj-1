@@ -1,22 +1,21 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { AddPatientWrapper } from './styled_components/addpatient.style'
+import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
-import { Form, Row, Col, Button, Container, Modal, Card, Spinner } from 'react-bootstrap'
-import { TableComponent } from '../../components/Table'
-import { patientAction, dashboardAction, practitionerAction } from '../../actions'
+import { Form, Row, Col, Button, Modal, Card } from 'react-bootstrap'
+import { TableComponent } from '../../../components/Table'
+import { patientAction, dashboardAction, practitionerAction, deviceAction } from '../../../actions'
 import iziToast from 'izitoast';
-import { RandNum } from '../../helpers/misc'
+import { RandNum } from '../../../helpers/misc'
 
 class AddPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             showModal: false,
-            devices: [
-
-            ],
+            devicesAdded: [],
+            devicesLists: [],
             cols: [
                 {
                     title: '',
@@ -43,18 +42,18 @@ class AddPatientPage extends React.Component {
                     title: '',
                     key: 'button',
                     render: colData => {
-                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeDeviceData(colData.id) }}>Remove</button>
                     }
                 }
             ],
             isPatientCreated: false,
             hasPatientCreated: false,
-            patientData: {}
+            deviceValue: ''
         }
     }
 
     _handleSubmit = async (values) => {
-        let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
+        // let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
         const { dispatch } = this.props
 
         let patientData = {
@@ -100,12 +99,6 @@ class AddPatientPage extends React.Component {
         }
 
         dispatch(patientAction.create(patientData))
-
-        // await sleep(300)
-        // Object.keys(values).forEach(key => {
-        //     form.change(key, undefined)
-        //     form.resetFieldState(key)
-        // })
     }
 
     _handleValidate = values => {
@@ -167,23 +160,22 @@ class AddPatientPage extends React.Component {
     _openModal = () => {
         let { isPatientCreated } = this.state
 
-        // if (isPatientCreated) {
-        //     this.setState({
-        //         showModal: true
-        //     })
-        // } else {
-        //     iziToast.warning({
-        //         position: 'topRight',
-        //         title: 'Warning',
-        //         displayMode: 1,
-        //         message: 'Please register a Patient before adding a Device',
-        //     });
-        // }
+        // this.setState({
+        //     showModal: true
+        // })
 
-        this.setState({
-            showModal: true
-        })
-
+        if (isPatientCreated) {
+            this.setState({
+                showModal: true
+            })
+        } else {
+            iziToast.warning({
+                position: 'topRight',
+                title: 'Warning',
+                displayMode: 1,
+                message: 'Please register Patient first before assigning a Device',
+            });
+        }
     }
 
     _closeModal = () => {
@@ -231,7 +223,7 @@ class AddPatientPage extends React.Component {
         // }
     }
 
-    _removeData = (id) => {
+    _removeDeviceData = (id) => {
         alert(id)
     }
 
@@ -243,7 +235,12 @@ class AddPatientPage extends React.Component {
 
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(deviceAction.findUnassigned())
+    }
+
+    componentDidUpdate(prevProps, prevState) {
         let { patient } = this.props
         let { hasPatientCreated, isPatientCreated } = this.state
         const { dispatch } = this.props
@@ -252,7 +249,7 @@ class AddPatientPage extends React.Component {
             let { create } = patient
 
             if (typeof create !== 'undefined' && create !== null) {
-                let { success, patient, loading } = create
+                let { success, patient } = create
 
                 if (success) {
                     if ( typeof patient !== 'undefined' && patient !== null) {
@@ -279,23 +276,45 @@ class AddPatientPage extends React.Component {
                 }
             }
         }
+
+        if (prevProps.device !== this.props.device) {
+            let { unassignedDevices } = this.props.device
+
+            if (typeof unassignedDevices !== 'undefined' && unassignedDevices !== null) {
+                let { devices } = unassignedDevices
+
+                if (typeof devices !== 'undefined' && devices !== null) {
+                    let { entry } = devices
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        this.setState({
+                            devicesLists: entry
+                        })
+                    }
+                }
+            }
+        }
     }
 
+    _getDeviceName = () => {
+
+    }
 
     render() {
-        let { showModal, devices } = this.state
+        let { showModal, devicesAdded, devicesLists } = this.state
         let { patient } = this.props
 
         let isAddingNewPatientLoading = false
         let patientId = null
         let patientName = null
         let patientData = null
+        let optionDevicesLists = null
 
         if (typeof patient !== 'undefined' && patient !== null) {
             let { create } = patient
 
             if (typeof create !== 'undefined' && create !== null) {
-                let { success, patient, loading } = create
+                let { patient, loading } = create
 
                 if (loading) {
                     isAddingNewPatientLoading = true
@@ -314,6 +333,8 @@ class AddPatientPage extends React.Component {
                 }
             }
         }
+
+        console.log(devicesLists);
 
         return (
             <AddPatientWrapper>
@@ -506,6 +527,7 @@ class AddPatientPage extends React.Component {
                                                                                         placeholder="Number"
                                                                                         autoComplete="off"
                                                                                         className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                        onKeyDown={ e => ( e.keyCode === 69 || e.keyCode === 190 ) && e.preventDefault() }
                                                                                         {...input}
                                                                                     />
                                                                                 </>
@@ -602,7 +624,7 @@ class AddPatientPage extends React.Component {
                                                     </Form.Group>
 
                                                     <div className="mt-4">
-                                                        <TableComponent data={devices} cols={this.state.cols} bordered={false} striped={false} removeThead={true} isTableFor={'devices'} />
+                                                        <TableComponent data={devicesAdded} cols={this.state.cols} bordered={false} striped={false} removeThead={true} isTableFor={'devices'} />
                                                     </div>
                                                 </Card.Body>
                                             </Card>
@@ -632,7 +654,7 @@ class AddPatientPage extends React.Component {
 
                                  <Modal.Body>
                                      <div className="adding-new">
-                                         {/*<Form.Group className="devices-types mt-4">
+                                        {/* <Form.Group className="devices-types mt-4">
                                              <Form.Label className="col-sm-5">Device type</Form.Label>
                                              <div className="col-sm-7">
                                                  <Field name="device-type" type="text">
@@ -648,7 +670,7 @@ class AddPatientPage extends React.Component {
                                                      )}
                                                  </Field>
                                              </div>
-                                         </Form.Group>
+                                         </Form.Group>*/}
 
                                          <Form.Group className="devices-types">
                                              <Form.Label className="col-sm-5">Device</Form.Label>
@@ -656,17 +678,24 @@ class AddPatientPage extends React.Component {
                                                  <Field name="device" type="text">
                                                      {({ input, meta, type }) => (
                                                          <>
-                                                             <Form.Control
+                                                             {/*<Form.Control
                                                                  type={type}
                                                                  placeholder="Device"
                                                                  autoComplete="off"
                                                                  {...input}
-                                                             />
+                                                             />*/}
+
+                                                             <Form.Control
+                                                                  as="select"
+                                                                  value={this.state.deviceValue}
+                                                                  onChange={(e) => { this._getDeviceName(e) }}>
+                                                                  {optionDevicesLists}
+                                                             </Form.Control>
                                                          </>
                                                      )}
                                                  </Field>
                                              </div>
-                                         </Form.Group>*/}
+                                         </Form.Group>
 
                                          <Form.Group className="devices-types">
                                              <Form.Label className="col-sm-5">Device Name</Form.Label>
@@ -858,9 +887,10 @@ class AddPatientPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { patient } = state
+    const { patient, device } = state
     return {
-        patient
+        patient,
+        device
     }
 }
 

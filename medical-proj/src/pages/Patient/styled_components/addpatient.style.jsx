@@ -60,6 +60,34 @@ export const AddPatientWrapper = styled.div`
             margin-bottom: 0;
             font-size: 14px;
         }
+
+        .edit-patient {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .patient-info-content {
+            margin-top: 25px;
+
+            .card {
+                .card-body {
+                    .row {
+                        .col-sm-12 {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            label {
+                                padding: 0;
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        }
     }
 
     .device-wrapper {
@@ -75,11 +103,108 @@ export const AddPatientWrapper = styled.div`
 
     .card {
         background-color: #353C48;
+        min-height: 330px;
 
         .card-header {
             font-size: 20px;
             border-radius: 2px;
             border: none;
+        }
+
+        .card-body {
+            .card-header-tabs {
+                border-bottom: 2px solid #3c4452;
+                margin: 0 10px 15px;
+
+                .nav-link {
+                    color: #fff;
+
+                    &.active {
+                        border-top-left-radius: 2px;
+                        border-top-right-radius: 2px;
+                        color: #fff;
+                        background-color: #464b55;
+                        border-color: transparent;
+                        border-bottom: none;
+                    }
+
+                    &:hover {
+                        border-color: #575d69;
+                        border-top-left-radius: 2px;
+                        border-top-right-radius: 2px;
+                        border-bottom: none;
+                    }
+                }
+            }
+
+            .tab-content {
+                .active {
+                    padding: 0 20px;
+                }
+
+                .supplied-devices-wrapper {
+                    .supplied-devices-section {
+                        margin-top: 30px;
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+
+                        h5 {
+                            margin-bottom: 0;
+                            font-size: 18px;
+                        }
+
+                        button {
+                            margin-left: 25px;
+                            border-radius: 2px;
+                            font-size: 16px;
+                        }
+                    }
+                }
+
+                .patient-device-wrapper {
+                    margin-top: 30px;
+                }
+            }
+
+            .patient-condition {
+                .col-sm-3 {
+                    text-align: center;
+                    padding: 0;
+
+                    &:last-child {
+                        label {
+                            text-align: right;
+                        }
+
+                        .add-assessment {
+                            display: flex;
+                            justify-content: flex-end;
+                            align-items: center;
+                            margin-top: 0;
+                        }
+                    }
+
+                    label {
+                        &.form-label {
+                            border-bottom: 1px solid #fff;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                        }
+
+                        &.programs-label {
+                            margin-bottom: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+
+                            input {
+                                margin-right: 5px;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 `

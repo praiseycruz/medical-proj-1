@@ -1,38 +1,85 @@
 import styled from 'styled-components'
 
-export const PatientsWrapper = styled.div`
-    width: 100%;
-    
-    .patients-content {
-        .form-wrapper {
-            &.patients-search {
-                padding: 5px 0;
-                border-bottom: 1px solid #fff;
+export const AddPatientWrapper = styled.div`
+    h2 {
+        font-size: 22px;
+        margin: 40px 0 20px;
+    }
 
-                .add-patient-button {
-                    /* display: flex;
-                    justify-content: flex-end;
-                    align-items: center; */
+    .btn-add {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 20px;
+        padding: 0 15px;
+
+        button {
+            &:focus {
+                box-shadow: none;
+            }
+        }
+    }
+
+    .form-control {
+        background-color: transparent;
+        border: 1px solid #5d6472;
+        border-radius: 2px;
+        color: #fff;
+    }
+
+    .patient-info {
+        margin-top: 30px;
+
+        .col-sm-6 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            .from-label {
+                font-size: 14px;
+            }
+
+            .gender-label {
+                &.male {
+                    margin-right: 25px;
+                }
+
+                input {
+                    margin-right: 10px;
                 }
             }
 
-            form {
-                .form-group {
-                    &.row {
-                        align-items: center;
-                    }
-
-                    .form-control {
-                        background-color: #353c48;
-                        width: 100%;
-                        max-width: 250px;
-                        color: #fff;
-                        border-radius: 30px;
-                        border: 1px solid #939496;
-                        font-size: 14px;
-                    }
-                }
+            .form-control {
+                font-size: 14px;
             }
+        }
+
+        label {
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+    }
+
+    .device-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 15px;
+
+        button {
+            background-color: #5CA9F0;
+        }
+    }
+
+    .card {
+        background-color: #353C48;
+
+        .card-header {
+            font-size: 20px;
+            border-radius: 2px;
+            border: none;
         }
     }
 `
