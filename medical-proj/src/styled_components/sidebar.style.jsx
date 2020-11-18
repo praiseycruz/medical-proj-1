@@ -97,7 +97,7 @@ export const SideBarContent = styled.div`
                         margin-right: 10px;
                     }
 
-                    a {
+                    button {
                         color: #fff;
                         text-decoration: none;
                         display: flex;
@@ -105,6 +105,11 @@ export const SideBarContent = styled.div`
                         align-items: center;
                         width: 100%;
                         font-size: 14px;
+                        padding: 0;
+
+                        &:focus {
+                            box-shadow: none;
+                        }
                     }
                 }
 
