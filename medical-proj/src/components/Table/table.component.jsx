@@ -10,6 +10,10 @@ export class TableComponent extends React.Component {
     render() {
         let { data, cols, bordered, striped, removeThead, isTableFor, loading, total } = this.props
 
+        // let a = data.map((s, key) => {
+        //     console.log(s);
+        // })
+
         return (
             <TableWrapper>
                 {/* loading !== 'undefined' && loading !== null && !loading ?
@@ -53,7 +57,7 @@ export class TableComponent extends React.Component {
                                 hover
                                 size="sm"
                                 className={`${bordered ? 'table-bordered' : 'table-borderless'} ${striped ? 'table-striped' : ''}`}>
-                                <thead className={`${removeThead ? 'd-none' : ''}`}>
+                                <thead className={`${isTableFor} ${removeThead ? 'd-none' : ''}`}>
                                     <tr>
                                         {cols.map((headerItem, index) => (
                                             <th key={index}>{headerItem.title}</th>
@@ -85,13 +89,6 @@ export class TableComponent extends React.Component {
                         <span className="ml-3">Loading data...</span>
                     </div>
                 }
-
-                { /*total !== 'undefined' && total !== null && total !== 0 ?
-                    <>
-                        asdasd
-                    </>
-                    : <>No data</>
-                */}
             </TableWrapper>
         )
     }

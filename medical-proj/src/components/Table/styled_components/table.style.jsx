@@ -43,6 +43,10 @@ export const TableWrapper = styled.div`
                     }
                 }
             }
+
+            &.alerts {
+                text-align: center;
+            }
         }
 
         tbody {
@@ -77,6 +81,43 @@ export const TableWrapper = styled.div`
 
                     &:last-child {
                         text-align: center;
+                    }
+
+                    &.conditions {
+                        &:nth-child(3) {
+                            text-align: center;
+                        }
+
+                        &:last-child {
+                            text-align: right;
+                            padding-right: 0;
+                        }
+                    }
+
+                    &.alerts {
+                        text-align: center;
+
+                        &:first-child {
+                            span {
+                                padding: 6px 12px;
+                                background-color: #DC3545;
+                                color: #fff;
+                                border-radius: 2px;
+                            }
+                        }
+
+                        button {
+                            font-size: 14px;
+                            border-radius: 2px;
+                        }
+                    }
+
+                    &.patients-devices {
+                        button {
+                            font-size: 13px;
+                            border-radius: 2px;
+                            margin: 2px;
+                        }
                     }
                 }
             }
