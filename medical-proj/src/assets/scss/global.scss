@@ -56,9 +56,32 @@ body {
     }
 
     .form-control {
+        color: #fff;
+
         &.is-invalid {
             border: 1px solid #ff2f2f;
         }
+
+        &:focus {
+            background-color: transparent;
+            color: #fff;
+        }
+
+        option {
+            background-color: #353C48;
+        }
+    }
+
+        /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type=number] {
+        -moz-appearance: textfield;
     }
 
     .modal-content {
