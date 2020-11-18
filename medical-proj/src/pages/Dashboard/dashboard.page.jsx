@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { DashboardWrapper } from './styled_components/dashboard.style'
-import { Form, FormControl, Row, Col, Button, Card, Spinner } from 'react-bootstrap'
+import { Form, Row, Col, Button, Card } from 'react-bootstrap'
 import { Form as FormFinal, Field } from "react-final-form"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
                     title: 'Name',
                     key: 'name',
                     render: colData => {
-                        return <span>{ colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
+                        return <span>{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
                     }
                 },
                 {
@@ -114,9 +114,8 @@ class DashboardPage extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        let { dashboardPatientCount, patient, practitioner } = this.props
-        let { hasGetPatientCount, patientsModule } = this.state
-        const { dispatch } = this.props
+        let { dashboardPatientCount } = this.props
+        let { hasGetPatientCount } = this.state
 
         if (typeof dashboardPatientCount !== 'undefined' && dashboardPatientCount !== null) {
             let { count } = dashboardPatientCount
@@ -171,7 +170,6 @@ class DashboardPage extends React.Component {
                     }
                 }
             }
-
         }
 
         if (prevProps.practitioner !== this.props.practitioner) {
@@ -202,8 +200,8 @@ class DashboardPage extends React.Component {
 
         //set current page to track current page
         //only allow relation with values (next, previous)
-        if (relation == 'next' || relation == 'previous') {
-            patientsModule.currentPage = (relation == 'next') ? patientsModule.currentPage + 1 : patientsModule.currentPage - 1
+        if (relation === 'next' || relation === 'previous') {
+            patientsModule.currentPage = (relation === 'next') ? patientsModule.currentPage + 1 : patientsModule.currentPage - 1
 
             //update patients module state
             this.setState({
@@ -222,12 +220,17 @@ class DashboardPage extends React.Component {
         dispatch(patientAction.searchByIdOrName(searchPatient, 10))
     }
 
-    _handleValidate = () => {
+    _handleValidate = values => {
+        let { searchPatient } = values
+        const { dispatch } = this.props
 
+        if (searchPatient === "" || searchPatient === null || searchPatient === 'undefined') {
+            dispatch(patientAction.getAll(10, 0))
+        }
     }
 
     render() {
-        let { patient, practitioner } = this.props
+        let { practitioner } = this.props
         let { pagination, count, patientLoading } = this.state
 
         // let isGetPatientLoading = false
@@ -254,12 +257,12 @@ class DashboardPage extends React.Component {
 
                 return (
                     <>
-                        { (item.relation == 'next' || item.relation == 'previous') &&
+                        { (item.relation === 'next' || item.relation === 'previous') &&
                             <button
                                 key={key}
-                                className={`${item.relation == 'previous' ? 'btn btn-secondary previous' : 'btn btn-primary next'}`}
+                                className={`${item.relation === 'previous' ? 'btn btn-secondary previous' : 'btn btn-primary next'}`}
                                 onClick={(e, link, relation) => { this._getPaginationLink(e, item.url, item.relation) }}>
-                                { item.relation == 'previous' ?
+                                { item.relation === 'previous' ?
                                     <>
                                         <i className="fas fa-angle-left"></i> &nbsp; Previous
                                     </> :
@@ -465,7 +468,7 @@ class DashboardPage extends React.Component {
                                         <div className="pagination-content">
                                             { !patientLoading ?
                                                 <>
-                                                    { this.state.patientTotal == 0 ?
+                                                    { this.state.patientTotal === 0 ?
                                                         <span>Showing 0 items of 0 entries</span>
                                                         :
                                                         <span>Showing {this.state.patientsData.length} items of {count} entries</span>
