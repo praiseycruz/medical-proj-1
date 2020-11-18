@@ -17,7 +17,7 @@ function assignPatientToDevice(deviceId, patientId) {
 
         function proceed() {
             deviceService.assignPatientToDevice(deviceId, patientId).then( response => {
-                console.log(response)
+                // console.log(response)
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
@@ -41,7 +41,7 @@ function findUnassigned() {
 
         function proceed() {
             deviceService.findUnassigned().then( response => {
-                console.log(response)
+                // console.log(response)
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))

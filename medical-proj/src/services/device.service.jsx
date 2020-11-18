@@ -60,7 +60,7 @@ function findUnassigned() {
         }
     }
 
-    return fetch(config.apiGateway.URL + config.Device.findUnassigned(), requestOptions)
+    return fetch(config.apiGateway.URL + config.Device.findUnassigned, requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)

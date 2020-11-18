@@ -90,7 +90,7 @@ export function device(state = defaultState, action) {
             unassignedDevices.success = true
             unassignedDevices.loading = false
             unassignedDevices.error = null
-            unassignedDevices.device = action.devices
+            unassignedDevices.devices = action.devices
 
             state = {
                 unassignedDevices,
