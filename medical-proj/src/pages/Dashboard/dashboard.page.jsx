@@ -26,6 +26,7 @@ class DashboardPage extends React.Component {
             patientsPagination: null,
             practitionersPagination: null,
             patientTotal: null,
+            practitionerTotal: null,
             patientLoading: false,
             patientsData: [],
             practitionersData: [],
@@ -67,9 +68,9 @@ class DashboardPage extends React.Component {
                 },
                 {
                     title: 'Actions',
-                    key: 'edit',
+                    key: 'button',
                     render: colData => {
-                        return <span><button className="btn btn-primary edit"><i className="fas fa-pencil-alt"></i></button></span>;
+                        return <span><button className="btn btn-primary edit" onClick={(e, data) => { this._getPatientData(e, colData.resource)} }><i className="fas fa-pencil-alt"></i></button></span>;
                     }
                 }
             ],
@@ -179,12 +180,13 @@ class DashboardPage extends React.Component {
                 let { practitioners } = getAll
 
                 if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry, link } = practitioners
+                    let { entry, link, total } = practitioners
 
                     if (typeof entry !== 'undefined' && entry !== null) {
                         this.setState({
                             practitionersData: entry,
-                            practitionersPagination: link
+                            practitionersPagination: link,
+                            practitionerTotal: total
                         })
                     }
                 }
@@ -214,6 +216,10 @@ class DashboardPage extends React.Component {
         dispatch(patientAction.getPaginationLink(link, patientsModule.currentPage))
     }
 
+    _getPractitionerPaginationLink = (e, link, relation) => {
+
+    }
+
     _handleSubmitSearch = values => {
         let { searchPatient } = values
         const { dispatch } = this.props
@@ -229,13 +235,24 @@ class DashboardPage extends React.Component {
         }
     }
 
+    _getPatientData = (e, patientData) => {
+        // this.props.history.push({
+        //     pathname: '/patient-readings',
+        //     data: patientData
+        // })
+
+        this.props.history.push('/patient-readings')
+        localStorage.setItem('patient-details', patientData);
+    }
+
     render() {
         let { practitioner } = this.props
-        let { pagination, count, patientLoading } = this.state
+        let { pagination, count, patientLoading, practitionersPagination } = this.state
 
         // let isGetPatientLoading = false
         let isGetPractionerLoading = false
         let pagePagination = null
+        let practitionerPagePagination = null
 
         if (typeof practitioner !== 'undefined' && practitioner !== null) {
             let { getAll } = practitioner
@@ -277,6 +294,32 @@ class DashboardPage extends React.Component {
             })
         }
 
+        if (typeof practitionersPagination !== 'undefined' && practitionersPagination !== null) {
+            practitionerPagePagination = practitionersPagination.map((item, index) => {
+                let key = index + 1
+
+                return (
+                    <>
+                        { (item.relation === 'next' || item.relation === 'previous') &&
+                            <button
+                                key={key}
+                                className={`${item.relation === 'previous' ? 'btn btn-secondary previous' : 'btn btn-primary next'}`}
+                                onClick={(e, link, relation) => { this._getPractitionerPaginationLink(e, item.url, item.relation) }}>
+                                { item.relation === 'previous' ?
+                                    <>
+                                        <i className="fas fa-angle-left"></i> &nbsp; Previous
+                                    </> :
+                                    <>
+                                        Next &nbsp; <i className="fas fa-angle-right"></i>
+                                    </>
+                                }
+                            </button>
+                        }
+                    </>
+                )
+            })
+        }
+
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
@@ -286,7 +329,7 @@ class DashboardPage extends React.Component {
                         <ol className="breadcrumb page-breadcrumb pull-right">
 							<li>
                                 <i className="fa fa-home"></i>&nbsp;
-                                <Link className="parent-item" to="/dashboard">Home</Link>
+                                <Link to="/dashboard" className="parent-item">Home</Link>
                                 &nbsp;<i className="fa fa-angle-right">
                                 </i>
 							</li>
@@ -451,7 +494,7 @@ class DashboardPage extends React.Component {
                                             </Col>
 
                                             <Col sm={2} md={3} className="add-patient">
-                                                <Link to="/addpatients" className="bg-primary">Add patient</Link>
+                                                <Link to="/add-patients" className="bg-primary">Add patient</Link>
                                             </Col>
                                         </Row>
                                     </div>
@@ -519,13 +562,25 @@ class DashboardPage extends React.Component {
                                         isTableFor="practitioners"
                                     />
 
-                                    {/* <div className="pagination">
-                                      <span>&laquo;</span>
-                                      <span className="active">1</span>
-                                      <span>2</span>
-                                      <span>3</span>
-                                      <span>4</span>
-                                    </div> */}
+                                    <div className="pagination">
+                                        <div className="pagination-content">
+                                            { !isGetPractionerLoading ?
+                                                <>
+                                                    { this.state.practitionerTotal === 0 ?
+                                                        <span>Showing 0 items of 0 entries</span>
+                                                        :
+                                                        <span>Showing {this.state.practitionersData.length} items of {this.state.practitionersData.length} entries</span>
+                                                    }
+
+                                                    <div className="pagination-button">
+                                                        { practitionerPagePagination }
+                                                    </div>
+                                                </>
+                                                :
+                                                <></>
+                                            }
+                                        </div>
+                                    </div>
                                 </Card.Body>
                             </Card>
                         </Col>
