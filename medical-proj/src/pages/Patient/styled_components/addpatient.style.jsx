@@ -103,12 +103,13 @@ export const AddPatientWrapper = styled.div`
 
     .card {
         background-color: #353C48;
-        min-height: 330px;
+        min-height: 260px;
 
         .card-header {
             font-size: 20px;
             border-radius: 2px;
             border: none;
+            background-color: #2D333D;
         }
 
         .card-body {

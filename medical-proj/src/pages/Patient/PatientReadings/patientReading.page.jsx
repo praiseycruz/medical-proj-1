@@ -129,7 +129,7 @@ class PatientReadingsPage extends React.Component {
                     date: '10/17/2020 3:37 PM'
                 },
                 {
-                    priority: 'High',
+                    priority: 'Low',
                     title: "Patient's blood pressure is out of target range",
                     date: '10/17/2020 3:37 PM'
                 },
@@ -139,7 +139,7 @@ class PatientReadingsPage extends React.Component {
                     date: '10/17/2020 3:37 PM'
                 },
                 {
-                    priority: 'High',
+                    priority: 'Low',
                     title: "Patient's blood pressure is out of target range",
                     date: '10/17/2020 3:37 PM'
                 },
@@ -149,7 +149,7 @@ class PatientReadingsPage extends React.Component {
                     title: 'Priority',
                     key: 'priority',
                     render: colData => {
-                        return <span>{colData.priority}</span>
+                        return <span className={colData.priority.toLowerCase()}>{colData.priority}</span>
                     }
                 },
                 {
@@ -320,7 +320,16 @@ class PatientReadingsPage extends React.Component {
     }
 
     render() {
-        let { diagnosisCode, diagnosisCodeValue, conditionLists, conditionValue, conditionsAdded, alertLists, devicesLists, patientDevicesLists } = this.state
+        let {
+            diagnosisCode,
+            diagnosisCodeValue,
+            conditionLists,
+            conditionValue,
+            conditionsAdded,
+            alertLists,
+            devicesLists,
+            patientDevicesLists
+        } = this.state
 
         let diagnosisCodeOption = diagnosisCode.map((item, key) => {
             return (
