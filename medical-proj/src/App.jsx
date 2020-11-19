@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
-import { DashboardPage, PhysicianPage, CareManagerPage } from './pages'
+import { DashboardPage, PhysicianPage, CareManagerPage, TaskManagementPage, ReportsPage } from './pages'
 import { AddPatientPage, PatientReadingsPage  } from './pages/Patient'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
@@ -149,25 +149,15 @@ export default class App extends React.Component {
                                         <span className="link-text">Patients Readings</span>
                                     </NavLink>
 
-                                    <NavLink to="/physician" className="card-links" activeClassName="active">
-                                        <i className="fas fa-user-md"></i>
-                                        <span className="link-text">Physician Management</span>
-                                    </NavLink>
-
-                                    <NavLink to="/care-manager" className="card-links" activeClassName="active">
-                                        <i className="fas fa-file-medical"></i>
-                                        <span className="link-text">Care Manager Management</span>
-                                    </NavLink>
-
                                     {/*<Link to="#" className="card-links">
                                         <i className="fas fa-tasks"></i>
                                         <span className="link-text">Tasks</span>
                                     </Link>*/}
 
-                                    <Link to="#" className="card-links">
+                                    <NavLink to="/reports" className="card-links" activeClassName="active">
                                         <i className="fas fa-file-medical-alt"></i>
                                         <span className="link-text">Reports</span>
-                                    </Link>
+                                    </NavLink>
 
                                     <Card>
                                         <Card.Header>
@@ -184,8 +174,20 @@ export default class App extends React.Component {
                                         <Accordion.Collapse eventKey="1" className="accordion-collapse">
                                             <ul>
                                                 <li>
-                                                    <i className="fas fa-tasks"></i>
-                                                    <Link to="#">Tasks</Link>
+                                                    <NavLink to="/physician" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-user-md"></i>
+                                                        <span className="link-text">Physician Management</span>
+                                                    </NavLink>
+
+                                                    <NavLink to="/care-manager" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-file-medical"></i>
+                                                        <span className="link-text">Care Manager Management</span>
+                                                    </NavLink>
+
+                                                    <NavLink to="/task-management" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-tasks"></i>
+                                                        Tasks
+                                                    </NavLink>
                                                 </li>
                                             </ul>
                                         </Accordion.Collapse>
@@ -211,6 +213,8 @@ export default class App extends React.Component {
                             <Route exact path="/patient-readings" component={PatientReadingsPage} />
                             <Route exact path="/physician" component={PhysicianPage} />
                             <Route exact path="/care-manager" component={CareManagerPage} />
+                            <Route exact path="/reports" component={ReportsPage} />
+                            <Route exact path="/task-management" component={TaskManagementPage} />
                         </Switch>
                     </MainContentWrapper>
         		</MainWrapper>
