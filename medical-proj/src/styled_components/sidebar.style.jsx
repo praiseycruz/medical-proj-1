@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 
 export const SideBarContainer = styled.div`
-    background-color: #353C48;
+    background-color: #282e38;
     position: fixed;
-    width: 235px;
+    width: 245px;
     float: left;
     box-shadow: none;
     transition: all 300ms ease-in-out;
@@ -72,13 +72,13 @@ export const SideBarContent = styled.div`
 
                 img,
                 i {
-                    margin-right: 10px;
+                    margin-right: 8px;
                 }
             }
 
 
             .card {
-                background-color: #353C48;
+                background-color: #282e38;
                 border: none;
 
                 .card-header {
@@ -90,11 +90,15 @@ export const SideBarContent = styled.div`
 
                     i {
                         font-size: 16px;
-                        margin-right: 10px;
+                        margin-right: 8px;
                     }
 
                     .dashboard-icon {
-                        margin-right: 10px;
+                        margin-right: 8px;
+                    }
+
+                    svg {
+                        font-size: 18px;
                     }
 
                     button {
@@ -119,10 +123,14 @@ export const SideBarContent = styled.div`
                     margin: 0;
 
                     li {
-                        padding: 10px 10px 10px 35px;
+                        padding: 0;
 
                         i {
-                            margin-right: 10px;
+                            margin-right: 8px;
+                        }
+
+                        a {
+                            padding: 15px 8px 15px 30px;
                         }
                     }
                 }

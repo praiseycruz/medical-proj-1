@@ -43,7 +43,7 @@ export const MainWrapper = styled.div`
 
 export const MainContentWrapper = styled.div`
     background-color: #3c4452 !important;
-    margin-left: 235px;
+    margin-left: 245px;
     padding: 20px 30px;
     min-height: calc(100vh - 60px);
     transition: all 300ms ease-in-out;
