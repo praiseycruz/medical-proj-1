@@ -11,6 +11,11 @@ export const config = {
     sessionGateway: {
         URL: 'http://medtrackswp.azurewebsites.net'
     },
+    ContentType: {
+        GET: 'application/json',
+        POST: 'application/json',
+        PATCH: 'application/json-patch+json',
+    },
     Patient : Patient.endPoints,
     Device: Device.endPoints,
     CareTeam : CareTeam.endPoints,
