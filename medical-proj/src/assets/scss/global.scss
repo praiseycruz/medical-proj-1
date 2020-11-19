@@ -56,7 +56,13 @@ body {
     }
 
     .form-control {
+        background-color: #353c48;
+        width: 100%;
+        max-width: 250px;
         color: #fff;
+        border: 1px solid #767a82;
+        font-size: 14px;
+        border-radius: 2px;
 
         &.is-invalid {
             border: 1px solid #ff2f2f;
