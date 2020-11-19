@@ -51,7 +51,7 @@ function findByPatientId(patientId) {
     function failure(error) { return { type: careTeamConstants.FIND_BY_PATIENTID_FAILURE, error } }
 }
 
-function appendPractitioner(careTeamId, currentParticipants, practitionerId) {
+function appendPractitioner(careTeamId, currentParticipants, practitionerId,practitionerRole) {
 
     return dispatch => {
 
@@ -60,7 +60,7 @@ function appendPractitioner(careTeamId, currentParticipants, practitionerId) {
         proceed()
 
         function proceed() {
-            careTeamService.appendPractitioner(careTeamId, currentParticipants, practitionerId).then( response => {
+            careTeamService.appendPractitioner(careTeamId, currentParticipants, practitionerId, practitionerRole).then( response => {
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))

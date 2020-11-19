@@ -24,7 +24,7 @@ function createCareTeam(patientId) {
                 reference: `Patient/${patientId}`,
                 type: "Patient"
             },
-            status: "proposed",
+            status: "active",
         })
     }
 
@@ -37,7 +37,7 @@ function createCareTeam(patientId) {
     })
 }
 
-function appendPractitioner(careTeamId, currentParticipantsData, practitionerId) {
+function appendPractitioner(careTeamId, currentParticipantsData, practitionerId, practitionerRole) {
     /*
         currentParticipantsData must be whatever is in `CareTeam.participant`
         Example:
@@ -76,6 +76,13 @@ function appendPractitioner(careTeamId, currentParticipantsData, practitionerId)
                 path: `/participant/-`,
                 value: [{
                     member: {
+                        role: [
+                            {
+                                // https://www.hl7.org/fhir/valueset-participant-role.html
+                                coding: "http://snomed.info/sct",
+                                test: practitionerRole,
+                            }
+                        ],
                         reference: `Practitioner/${practitionerId}`,
                         type: "Practitioner"
                     }
