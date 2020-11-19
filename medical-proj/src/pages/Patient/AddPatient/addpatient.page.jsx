@@ -74,7 +74,7 @@ class AddPatientPage extends React.Component {
                 },
                 {
                     "system": "email",
-                    "value": `${values.email}`
+                    "value": `${values.addemail}`
                 }
             ],
             "address": [
