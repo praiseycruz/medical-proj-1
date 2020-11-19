@@ -65,7 +65,7 @@ export function careteam(state = defaultState, action) {
                 ...otherState
             }
             return state
-        case patientConstants.FIND_BY_PATIENTID_REQUEST:
+        case careteamConstants.FIND_BY_PATIENTID_REQUEST:
             var {
                 findByPatientId,
                 ...otherState
@@ -79,7 +79,7 @@ export function careteam(state = defaultState, action) {
                 ...otherState
             }
             return state
-        case patientConstants.FIND_BY_PATIENTID_SUCCESS:
+        case careteamConstants.FIND_BY_PATIENTID_SUCCESS:
             var {
                 findByPatientId,
                 ...otherState
@@ -94,7 +94,7 @@ export function careteam(state = defaultState, action) {
                 ...otherState
             }
             return state
-        case patientConstants.FIND_BY_PATIENTID_FAILURE:
+        case careteamConstants.FIND_BY_PATIENTID_FAILURE:
             var {
                 findByPatientId,
                 ...otherState
