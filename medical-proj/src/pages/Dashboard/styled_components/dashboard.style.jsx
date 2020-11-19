@@ -14,7 +14,7 @@ export const DashboardWrapper = styled.div`
                     align-items: center;
 
                     .bg-primary {
-                        background-color: #5CA9F0 !important;
+                        background-color: #1689f3 !important;
                         color: #fff;
                         padding: 8px 15px;
                         border-radius: 2px;
@@ -130,6 +130,7 @@ export const DashboardWrapper = styled.div`
                 font-size: 22px;
                 border-radius: 2px;
                 border: none;
+                background-color: #2D333D;
             }
 
             .card-body {
