@@ -1,5 +1,6 @@
 import { Patient } from './Patient'
 import { Device } from './Device'
+import { CareTeam } from './CareTeam'
 import { Practitioner } from './Practitioner'
 
 
@@ -12,5 +13,6 @@ export const config = {
     },
     Patient : Patient.endPoints,
     Device: Device.endPoints,
+    CareTeam : CareTeam.endPoints,
     Practitioner : Practitioner.endPoints,
 }
