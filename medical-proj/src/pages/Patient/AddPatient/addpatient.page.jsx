@@ -8,6 +8,7 @@ import { TableComponent } from '../../../components/Table'
 import { patientAction, dashboardAction, practitionerAction, deviceAction } from '../../../actions'
 import iziToast from 'izitoast';
 import { RandNum } from '../../../helpers/misc'
+import { config } from '../../../config'
 
 class AddPatientPage extends React.Component {
     constructor(props) {
@@ -95,7 +96,10 @@ class AddPatientPage extends React.Component {
                     "system": "EXSYS"
                 }
             ],
-            "generalPractitioner": [],
+            "extension": [{
+                "url": config.apiGateway.URL + "/IsRemoteMonitored",
+                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
+            }]
         }
 
         dispatch(patientAction.create(patientData))
