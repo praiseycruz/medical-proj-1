@@ -5,6 +5,7 @@ export const deviceService = {
     assignPatientToDevice,
     findById,
     findUnassigned,
+    unassignDevice,
 }
 
 function assignPatientToDevice(deviceId, patientId) {
@@ -41,6 +42,53 @@ function assignPatientToDevice(deviceId, patientId) {
     }
 
     return fetch(config.apiGateway.URL + config.Device.assignPatient(deviceId), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
+function unassignDevice(deviceId, patientId) {
+    /*
+        Check if device is active => patient is
+        assigned. Check if patientId on server
+        is what is expected, and then remove,
+        and mard device as inactive
+    */
+    const requestOptions ={
+        method: 'PATCH',
+        headers: {
+            'Content-Type': config.ContentType.PATCH
+        },
+        body: JSON.stringify([
+            {
+                op: "test",
+                path: "/status",
+                value: "active"
+            },
+            {
+                op: "test",
+                path: "/patient",
+                value: {
+                    reference: `Patient/${patientId}`,
+                    type: "Patient"
+                }
+            },
+            {
+                op: "remove",
+                path: "/patient"
+            },
+            {
+                op: "replace",
+                path: "/status",
+                value: "inactive"
+            }
+        ])
+    }
+
+    return fetch(config.apiGateway.URL + config.Device.findById(deviceId), requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
