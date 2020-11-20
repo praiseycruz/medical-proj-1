@@ -408,6 +408,11 @@ class PatientReadingsPage extends React.Component {
                                                     type="submit"
                                                     className="btn btn-submit"
                                                 >Edit Patient</Button>
+
+                                                <Button
+                                                    type="submit"
+                                                    className="btn btn-submit ml-2"
+                                                >Notification</Button>
                                             </Col>
                                         </Row>
 

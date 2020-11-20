@@ -65,6 +65,11 @@ export const AddPatientWrapper = styled.div`
             display: flex;
             justify-content: flex-end;
             align-items: center;
+
+            button {
+                font-size: 14px;
+                border-radius: 2px;
+            }
         }
 
         .patient-info-content {
@@ -87,6 +92,11 @@ export const AddPatientWrapper = styled.div`
 
                 }
             }
+        }
+
+        button {
+            font-size: 14px;
+            border-radius: 2px;
         }
     }
 
