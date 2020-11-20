@@ -7,18 +7,11 @@ export const deviceService = {
     findUnassigned,
 }
 
-function assignPatientToDevice(deviceId, patientId, devicePatientData) {
+function assignPatientToDevice(deviceId, patientId) {
     /*
-        devicePatientData must be whatever is in `Device.patient`
-        Example:
-        devicePatientData = {
-            "reference": "Patient/1635625",
-            "type": "Patient"
-        }
-
-        If this is the data on the server under `Device.patient`, it replaces
-        patient under `Device.patient` else returns 400 bad request
-
+        Device status must be "inactive" for it to be
+        successfully assigned. On successful assignment,
+        device status is changed to "active"
     */
     const requestOptions ={
         method: 'PATCH',
@@ -26,11 +19,11 @@ function assignPatientToDevice(deviceId, patientId, devicePatientData) {
             'Content-Type': config.ContentType.PATCH
         },
         body: JSON.stringify([
-            // { // This doesn't work as of now
-            //     op: "test",
-            //     path: "/Patient",
-            //     value: devicePatientData
-            // },
+            {
+                op: "test",
+                path: "/status",
+                value: "inactive"
+            },
             {
                 op: "add",
                 path: "/patient",
@@ -38,6 +31,11 @@ function assignPatientToDevice(deviceId, patientId, devicePatientData) {
                     reference: `Patient/${patientId}`,
                     type: "Patient"
                 }
+            },
+            {
+                op: "replace",
+                path: "/status",
+                value: "active"
             }
         ])
     }
