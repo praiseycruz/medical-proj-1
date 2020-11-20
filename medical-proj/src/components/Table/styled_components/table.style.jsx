@@ -150,6 +150,16 @@ export const TableWrapper = styled.div`
                     &.pulse,
                     &.blood-pressure {
                         background-color: #2D3441;
+
+                        button {
+                            font-size: 14px;
+                            border-radius: 2px;
+                            padding: 3px 8px;
+
+                            &:first-child {
+                                margin-right: 5px;
+                            }
+                        }
                     }
                 }
             }
