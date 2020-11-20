@@ -15,7 +15,7 @@ function create(data) {
     const requestOptions ={
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.POST
         },
         body: JSON.stringify(data)
     }
@@ -34,7 +34,7 @@ function findById(id) {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
@@ -52,7 +52,7 @@ function getAll(count, skip) {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
@@ -69,7 +69,7 @@ function getPaginationLink(link, currentPage) {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
@@ -113,7 +113,7 @@ function searchByIdOrName(query, count) {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
@@ -151,7 +151,7 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
     const requestOptions ={
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.PATCH
         },
         body: JSON.stringify([
             {

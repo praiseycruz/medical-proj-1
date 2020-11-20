@@ -23,7 +23,7 @@ function assignPatientToDevice(deviceId, patientId, devicePatientData) {
     const requestOptions ={
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.PATCH
         },
         body: JSON.stringify([
             // { // This doesn't work as of now
@@ -56,7 +56,7 @@ function findById(id) {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
@@ -75,7 +75,7 @@ function findUnassigned() {
     const requestOptions = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 

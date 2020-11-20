@@ -9,7 +9,7 @@ function count() {
     const requestOptions ={
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': config.ContentType.GET
         }
     }
 
