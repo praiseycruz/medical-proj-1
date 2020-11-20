@@ -494,7 +494,10 @@ class DashboardPage extends React.Component {
                                             </Col>
 
                                             <Col sm={2} md={3} className="add-patient">
-                                                <Link to="/add-patients" className="bg-primary">Add patient</Link>
+                                                <Link to="/add-patients" className="bg-primary">
+                                                    <i className="fas fa-plus mr-2"></i>
+                                                    Add patient
+                                                </Link>
                                             </Col>
                                         </Row>
                                     </div>
