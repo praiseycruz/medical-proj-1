@@ -138,12 +138,13 @@ export const TableWrapper = styled.div`
 
                         h6 {
                             margin-bottom: 0;
-                            color: #ddd;
+                            color: #7e7e7e;
                             text-transform: capitalize;
                         }
 
                         p {
                             margin-bottom: 0;
+                            color: #fff;
                         }
                     }
 
