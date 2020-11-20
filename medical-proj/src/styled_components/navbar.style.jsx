@@ -21,6 +21,7 @@ export const NavbarWrapper = styled.div`
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                margin-left: 15px;
 
                 svg {
                     font-size: 20px;
@@ -58,24 +59,23 @@ export const NavbarWrapper = styled.div`
                     }
                 }
             }
+
+            .physician-wrapper {
+                background-color: #232A34;
+                min-width: 120px;
+                padding: 0 10px;
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+                margin-left: 25px;
+                border-radius: 2px;
+
+                p {
+                    margin-bottom: 0;
+                }
+            }
         }
     }
-
-    /* width: 100%;
-    margin: 0;
-    border: 0;
-    padding: 0;
-    min-height: 60px;
-    filter: none;
-    background-color: #353c48;
-
-    .navbar {
-        background-color: #353c48;
-        box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
-        padding: 0;
-
-
-    } */
 `
 
 export const NotificationBell = styled.div`

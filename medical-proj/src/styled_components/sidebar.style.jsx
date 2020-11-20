@@ -63,7 +63,7 @@ export const SideBarContent = styled.div`
                 color: #fff;
                 display: flex;
                 align-items: center;
-                font-size: 14px;
+                font-size: 16px;
                 text-decoration: none;
 
                 &.active {
@@ -108,7 +108,7 @@ export const SideBarContent = styled.div`
                         justify-content: space-between;
                         align-items: center;
                         width: 100%;
-                        font-size: 14px;
+                        font-size: 16px;
                         padding: 0;
 
                         &:focus {
