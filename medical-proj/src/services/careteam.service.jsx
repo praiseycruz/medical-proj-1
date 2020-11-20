@@ -2,9 +2,27 @@ import { config } from '../config'
 import { RandNum } from '../helpers'
 
 export const dashboardService = {
+    getAll,
     createCareTeam,
     appendPractitioner,
     findByPatientId,
+}
+
+function getAll(count, skip) {
+    const requestOptions = {
+        method: 'GET',
+        headers: {
+            'Content-Type': config.ContentType.GET
+        }
+    }
+
+    return fetch(config.apiGateway.URL + config.CareTeam.getAll(count, skip), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
 }
 
 function createCareTeam(patientId) {

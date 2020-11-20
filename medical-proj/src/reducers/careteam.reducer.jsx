@@ -1,6 +1,12 @@
 import { careteamConstants } from '../constants'
 
 var defaultState = {
+    getAll: {
+        loading: false,
+        careteams: {},
+        success: false,
+        error: null
+    },
     careTeamCreate: {
         loading: false,
         success: false,
@@ -24,6 +30,51 @@ var defaultState = {
 export function careteam(state = defaultState, action) {
     console.log("ACTION: ", action)
     switch (action.type) {
+        case careteamConstants.GET_ALL_REQUEST:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = true
+            getAll.error = null
+            getAll.success = false
+
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case careteamConstants.GET_ALL_SUCCESS:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = true
+            getAll.careteams = action.careteams
+
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case careteamConstants.GET_ALL_FAILURE:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = action.error
+            getAll.success = false
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
         case careteamConstants.CARETEAM_CREATE_REQUEST:
             var {
                 careTeamCreate,
