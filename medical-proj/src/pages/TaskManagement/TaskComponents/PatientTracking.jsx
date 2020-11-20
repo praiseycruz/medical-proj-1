@@ -486,7 +486,7 @@ class TaskPatientTracking extends React.Component {
         return (
             <Card>
                 <Card.Body>
-                    <Tabs defaultActiveKey="patientNum" transition={false} id="noanim-tab-example">
+                    <Tabs defaultActiveKey="rpmTracking" transition={false} id="noanim-tab-example">
                         <Tab eventKey="rpmTracking" title="RPM Tracking">
                             <TableComponent data={rpmAdded} cols={this.state.rpmCols} bordered={false} striped={false} removeThead={true} isTableFor={'rpmTracking'} />
                         </Tab>
