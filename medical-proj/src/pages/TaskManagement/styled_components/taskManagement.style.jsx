@@ -273,6 +273,11 @@ export const TaskManagementWrapper = styled.div`
 
     .search-patient {
         margin-top: 35px;
+
+        button {
+            font-size: 14px;
+            border-radius: 2px;
+        }
     }
 
     .card {
@@ -307,13 +312,30 @@ export const TaskManagementWrapper = styled.div`
                         }
                     }
 
+                    button {
+                        &.patient-location {
+                            border-radius: 2px;
+                            margin-left: 10px;
+                            font-size: 12px;
+                        }
+                    }
+
+                    .patient-info {
+                        color: #F67B56;
+
+                        span {
+                            color: #fff;
+                        }
+                    }
+
                     .rpm-conditions-wrapper {
                         margin-top: 25px;
 
                         .box-wrapper {
-                            background-color: #2f3641;
+                            background-color: #232A34;
                             border-radius: 2px;
                             border: 1px solid #29303a;
+                            min-height: 155px;
 
                             .conditions-content {
                                 padding: 15px;
@@ -321,10 +343,11 @@ export const TaskManagementWrapper = styled.div`
 
                                 h5 {
                                     margin-bottom: 8px;
+                                    color: #F67B56;
                                 }
 
                                 p {
-                                    background-color: #2a303a;
+                                    background-color: #2c394b;
                                     padding: 2px 10px;
                                     font-size: 14px;
                                     margin-bottom: 0;
@@ -345,14 +368,14 @@ export const TaskManagementWrapper = styled.div`
 
                         .box-button {
                             display: flex;
-                            justify-content: flex-start;
+                            justify-content: flex-end;
                             align-items: flex-end;
                             height: 100%;
                             padding: 15px 15px 15px 0;
 
                             button {
                                 font-size: 14px;
-                                background-color: transparent;
+                                /* background-color: transparent; */
                                 border-radius: 2px;
                                 padding: 1px 5px;
                                 min-width: 130px;
@@ -360,14 +383,83 @@ export const TaskManagementWrapper = styled.div`
                         }
                     }
                 }
+
+                .separator {
+                    width: 100%;
+                    border-bottom: 2px solid #888e99;
+                    margin-top: 20px;
+                }
             }
 
             .logged-wrapper {
+                .info-box {
+                    border-bottom-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                    min-height: 100px;
+                    background: #fff;
+                    width: 100%;
+                    box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
+                    -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
+                    /* margin-bottom: 20px; */
+                    padding: 15px;
+                    height: 100%;
+
+                    .info-box-icon {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        float: left;
+                        height: 70px;
+                        width: 70px;
+                        text-align: center;
+                        font-size: 30px;
+                        line-height: 74px;
+                        background: rgba(0, 0, 0, .2);
+                        border-radius: 100%;
+                        margin: 5px 0;
+                    }
+
+                    .info-box-content {
+                        /* padding: 10px 10px 10px 0; */
+                        padding: 0;
+                        margin-left: 90px;
+
+                        .info-box-text,
+                        .progress-description {
+                            display: block;
+                            font-size: 18px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            font-weight: 400;
+                            border-bottom: 1px solid #fff;
+                            margin-bottom: 5px;
+                        }
+
+                        .info-box-number {
+                            font-weight: 300;
+                            font-size: 21px;
+                        }
+                    }
+
+                    &.bg-blue {
+                        background-color: #3598dc;
+                    }
+
+                    &.bg-orange {
+                        background-color: #D56E13;
+                    }
+
+                    &.bg-purple {
+                        background-color: #8E44AD;
+                    }
+                }
+
                 .box-wrapper {
-                    display: flex;
+                    /* display: flex;
                     justify-content: center;
                     align-items: center;
-                    flex-direction: column;
+                    flex-direction: column; */
                     width: 100%;
                     min-height: 115px;
                     border: 1px solid #3c4452;
@@ -389,13 +481,19 @@ export const TaskManagementWrapper = styled.div`
                 }
 
                 h5 {
-                    text-align: center;
+                    /* text-align: center;
+                    font-size: 18px;
+                    text-transform: uppercase; */
+                    /* text-align: center; */
                     font-size: 18px;
                     text-transform: uppercase;
+                    border-bottom: 2px solid #bebebe;
+                    width: 100%;
+                    padding-bottom: 5px;
                 }
 
                 p {
-                    text-align: center;
+                    /* text-align: center; */
                     margin-bottom: 0;
                 }
 
@@ -582,6 +680,7 @@ export const TaskManagementWrapper = styled.div`
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
+                        margin-top: 15px;
 
                         button {
                             font-size: 14px;
