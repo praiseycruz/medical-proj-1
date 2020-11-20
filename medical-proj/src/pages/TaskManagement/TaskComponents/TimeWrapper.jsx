@@ -11,6 +11,8 @@ import iziToast from 'izitoast';
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { Line } from "react-chartjs-2";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUsers, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons"
 
 class TaskTimerWrapper extends React.Component {
     constructor(props) {
@@ -155,7 +157,53 @@ class TaskTimerWrapper extends React.Component {
             <Card>
                 <Card.Body>
                     <div className="logged-wrapper">
-                        <Row>
+                        <div className="state-overview">
+                            <div className="row">
+                                <div className="col-xl-4 col-md-6 col-12">
+                                    <div className="info-box bg-blue">
+                                        <span className="info-box-icon push-bottom">
+                                            <i className="far fa-clock"></i>
+                                        </span>
+
+                                        <div className="info-box-content">
+                                            <span className="info-box-text pt-1">Logged this month</span>
+                                            <span className="info-box-number">40:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-xl-4 col-md-6 col-12">
+                                    <div className="info-box bg-orange">
+                                        <span className="info-box-icon push-bottom">
+                                            <i className="fas fa-file-medical-alt"></i>
+                                        </span>
+
+                                        <div className="info-box-content">
+                                            <span className="info-box-text pt-1">Goal</span>
+                                            <span className="info-box-number">20:00 mins</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="col-xl-4 col-md-6 col-12">
+                                    <div className="info-box bg-purple">
+                                        <span className="info-box-icon push-bottom">
+                                            <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
+                                        </span>
+
+                                        <div className="info-box-content">
+                                            <span className="info-box-text">Care Team</span>
+                                            <span className="info-box-names">
+                                                <span>Care Manager: <span>Dr. Test Manager</span></span>
+                                                <span>PCP: <span>Dr. Test Physician</span></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/*<Row>
                             <Col sm={4}>
                                 <div className="logged-content box-wrapper">
                                     <h5>
@@ -183,7 +231,7 @@ class TaskTimerWrapper extends React.Component {
                                     <p>PCP: <span>Dr. Test Physician</span></p>
                                 </div>
                             </Col>
-                        </Row>
+                        </Row>*/}
 
                         <div className="timer-wrapper">
                             <Container>

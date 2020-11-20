@@ -37,11 +37,16 @@ class TaskPatientInfo extends React.Component {
                                     <h4>
                                         <i className="fas fa-male mr-2"></i>
                                         <span className="patient-name">Paul Degagne</span>
+                                        <Button
+                                            variant="primary"
+                                            className="patient-location">
+                                            <i className="fa fa-location-arrow" aria-hidden="true"></i>
+                                        </Button>
                                     </h4>
                                 </Col>
 
                                 <Col sm={3}>
-                                    <div>
+                                    <div className="patient-info">
                                         <p>
                                             DOB: <span>01/22/1952</span>
                                         </p>
@@ -50,21 +55,23 @@ class TaskPatientInfo extends React.Component {
                                 </Col>
 
                                 <Col sm={3}>
-                                    <div>
+                                    <div className="patient-info">
                                         <p>PHONE: <span>(702) 683-5453</span></p>
                                         <p>EMAIL: <span>p.degagne@gmail.com</span></p>
                                     </div>
                                 </Col>
 
                                 <Col sm={3}>
-                                    <div>
+                                    <div className="patient-info">
                                         <p>MEDICARE ID: <span>3JW8AF9TR38</span></p>
                                     </div>
                                 </Col>
                             </Row>
 
+                            <div className="separator"></div>
+
                             <Row className="rpm-conditions-wrapper">
-                                <Col sm={3} className="pr-0">
+                                <Col sm={4} className="pr-0">
                                     <div className="box-wrapper">
                                         <div className="conditions-content">
                                             <h5>RPM Conditions: 2</h5>
@@ -73,7 +80,7 @@ class TaskPatientInfo extends React.Component {
                                     </div>
                                 </Col>
 
-                                <Col sm={4} className="pr-0">
+                                <Col sm={4}>
                                     <div className="box-wrapper">
                                         <div className="conditions-content">
                                             <h5>Total Other Conditions: 5</h5>
@@ -81,16 +88,14 @@ class TaskPatientInfo extends React.Component {
                                             <span><i className="far fa-question-circle"></i></span>
                                             </p>
                                         </div>
+
+                                        <div className="box-button">
+                                            <Button variant="primary" className="btn-view">Show all</Button>
+                                        </div>
                                     </div>
                                 </Col>
 
-                                <Col sm={2} className="pr-0">
-                                    <div className="box-button">
-                                        <Button variant="primary" className="btn-view">View all</Button>
-                                    </div>
-                                </Col>
-
-                                <Col sm={3} className="pl-0">
+                                <Col sm={4} className="pl-0">
                                     <div className="box-wrapper">
                                         <div className="conditions-content">
                                             <h5>Patient Flags</h5>
