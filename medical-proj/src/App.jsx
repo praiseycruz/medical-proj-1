@@ -77,6 +77,12 @@ export default class App extends React.Component {
                                 <Nav.Link onClick={this._handleSidebar}>
                                     <FontAwesomeIcon size="sm" className="icon" icon={faBars} />
                                 </Nav.Link>
+
+                                <div className="physician-wrapper">
+                                    <div className="physician-name">
+                                        <p>John Doe, M.D</p>
+                                    </div>
+                                </div>
                             </Nav>
 
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
