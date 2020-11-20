@@ -588,7 +588,7 @@ class AddPatientPage extends React.Component {
                                                                 { isAddingNewPatientLoading ?
                                                                     <span className="ml-2">Adding Patient...</span>
                                                                     :
-                                                                    <>Add Patient</>
+                                                                    <>+ Add Patient</>
                                                                 }
                                                             </Button>
                                                         </div>
