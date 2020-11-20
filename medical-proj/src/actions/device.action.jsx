@@ -3,6 +3,7 @@ import { deviceConstants } from '../constants'
 
 export const deviceAction = {
     assignPatientToDevice,
+    unassignDevice,
     findUnassigned,
     findById,
 }
@@ -28,6 +29,29 @@ function assignPatientToDevice(deviceId, patientId) {
     function request() { return { type: deviceConstants.ASSIGN_REQUEST } }
     function success(device) { return { type: deviceConstants.ASSIGN_SUCCESS, device } }
     function failure(error) { return { type: deviceConstants.ASSIGN_FAILURE, error } }
+}
+
+function unassignDevice(deviceId, patientId) {
+
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            deviceService.unassignDevice(deviceId, patientId).then( response => {
+                // console.log(response)
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: deviceConstants.UNASSIGN_REQUEST } }
+    function success(device) { return { type: deviceConstants.UNASSIGN_SUCCESS, device } }
+    function failure(error) { return { type: deviceConstants.UNASSIGN_FAILURE, error } }
 }
 
 

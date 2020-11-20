@@ -7,6 +7,12 @@ var defaultState = {
         error: null,
         device: {}
     },
+    unassignDevice: {
+        loading: false,
+        success: false,
+        error: null,
+        device: {}
+    },
     unassignedDevices: {
         loading: false,
         success: false,
@@ -64,6 +70,50 @@ export function device(state = defaultState, action) {
 
             state = {
                 assignDevice,
+                ...otherState
+            }
+            return state
+        case deviceConstants.UNASSIGN_REQUEST:
+            var {
+                unassignDevice,
+                ...otherState
+            } = state
+            unassignDevice.success = false
+            unassignDevice.error = null
+            unassignDevice.loading = true
+
+            state = {
+                unassignDevice,
+                ...otherState
+            }
+
+            return state
+        case deviceConstants.UNASSIGN_SUCCESS:
+            var {
+                unassignDevice,
+                ...otherState
+            } = state
+            unassignDevice.success = true
+            unassignDevice.loading = false
+            unassignDevice.error = null
+            unassignDevice.device = action.device
+
+            state = {
+                unassignDevice,
+                ...otherState
+            }
+            return state
+        case deviceConstants.UNASSIGN_FAILURE:
+            var {
+                unassignDevice,
+                ...otherState
+            } = state
+            unassignDevice.loading = false
+            unassignDevice.success = false
+            unassignDevice.error = action.error
+
+            state = {
+                unassignDevice,
                 ...otherState
             }
             return state
