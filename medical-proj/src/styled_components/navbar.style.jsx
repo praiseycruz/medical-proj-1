@@ -7,11 +7,13 @@ export const NavbarWrapper = styled.div`
     padding: 0;
     min-height: 60px;
     filter: none;
-    background-color: #353c48;
+    background-color: #333a47;
+    /* background-color: #2C333F; */
 
     nav {
         height: 60px;
-        background-color: #353c48;
+        /* background-color: #2C333F; */
+        background-color: #333a47;
         box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
 
         .navbar-nav {

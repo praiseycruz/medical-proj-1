@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const PageLogoSection = styled.div`
-    background: #353c48;
+    background-color: #333a47;
     float: left;
     display: block;
     width: 220px;

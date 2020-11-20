@@ -43,6 +43,7 @@ export const MainWrapper = styled.div`
 
 export const MainContentWrapper = styled.div`
     background-color: #3c4452 !important;
+    /* background-color: #363c47 !important; */
     margin-left: 245px;
     padding: 20px 30px;
     min-height: calc(100vh - 60px);
