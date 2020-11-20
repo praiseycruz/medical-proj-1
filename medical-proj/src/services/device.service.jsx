@@ -33,7 +33,7 @@ function assignPatientToDevice(deviceId, patientId, devicePatientData) {
             // },
             {
                 op: "add",
-                path: "/Patient",
+                path: "/patient",
                 value: {
                     reference: `Patient/${patientId}`,
                     type: "Patient"
