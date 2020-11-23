@@ -80,7 +80,7 @@ class DashboardPage extends React.Component {
                     title: 'Practitioner Name',
                     key: 'name',
                     render: colData => {
-                        return <span>{ colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
+                        return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
                         // return <span>{ colData.resource.name }</span>;
                     }
                 },
@@ -244,7 +244,7 @@ class DashboardPage extends React.Component {
         // })
 
         this.props.history.push('/patient-readings')
-        localStorage.setItem('patient-details', patientData);
+        localStorage.setItem('patientDetails', patientData);
     }
 
     render() {

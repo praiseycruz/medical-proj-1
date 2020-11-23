@@ -56,6 +56,9 @@ class AddPatientPage extends React.Component {
             deviceValue: '',
             dob: new Date(),
             physicianValue: '',
+            devicesDataOnClick: [
+
+            ]
             // physicianLists: [
             //     {
             //         name: 'Dr. One Physician'
@@ -71,8 +74,6 @@ class AddPatientPage extends React.Component {
     }
 
     _handleSubmit = async (values) => {
-        // let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
-        // let { dob } = this.state
         const { dispatch } = this.props
 
         let s = document.getElementById("date_picker_id")
@@ -325,8 +326,26 @@ class AddPatientPage extends React.Component {
     _getDeviceName = (e) => {
         let { value } = e.target
 
+        var index = e.target.selectedIndex;
+        var optionElement = e.target.childNodes[index]
+        var optionId =  optionElement.getAttribute('data-id')
+        var optionType =  optionElement.getAttribute('data-type')
+        var optionSer =  optionElement.getAttribute('data-serial')
+        var optionMan =  optionElement.getAttribute('data-man')
+        var optionModel =  optionElement.getAttribute('data-model')
+
+        let devicesDataOnClick = [
+            {
+                "type": optionType,
+                "serial": optionSer,
+                "manufacturer": optionMan,
+                "model": optionModel
+            }
+        ]
+
         this.setState({
-            deviceValue: value
+            deviceValue: value,
+            devicesDataOnClick
         })
     }
 
@@ -345,8 +364,10 @@ class AddPatientPage extends React.Component {
     }
 
     render() {
-        let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists } = this.state
+        let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists, devicesDataOnClick } = this.state
         let { patient, practitioner } = this.props
+
+        console.log(this.state.devicesDataOnClick);
 
         let isAddingNewPatientLoading = false
         let patientId = null
@@ -354,6 +375,7 @@ class AddPatientPage extends React.Component {
         let patientData = null
         let optionDevicesLists = null
         let physicianOptions = []
+        let populateDeviceData = null
 
         if (typeof patient !== 'undefined' && patient !== null) {
             let { create } = patient
@@ -410,12 +432,6 @@ class AddPatientPage extends React.Component {
             }
         }
 
-        // let physicianOptions = physicianLists.map((item, key) => {
-        //     return (
-        //         <option key={key}>{item.name}</option>
-        //     )
-        // })
-
         if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
             optionDevicesLists = devicesLists.map((deviceItem, deviceKey) => {
                 let { resource } = deviceItem
@@ -425,11 +441,89 @@ class AddPatientPage extends React.Component {
 
                     if (typeof deviceName !== 'undefined' && deviceName !== null) {
                         return (
-                            <option key={deviceItem.resource.id} value={deviceItem.resource.id}> { deviceName[0].name } </option>
+                            <option
+                                key={deviceItem.resource.id}
+                                value={deviceName[0].name}
+                                data-id={deviceItem.resource.id}
+                                data-type={deviceName[0].type}
+                                data-man={deviceItem.resource.manufacturer}
+                                data-serial={deviceItem.resource.serialNumber}
+                                data-model={deviceItem.resource.modelNumber}>
+                                    { deviceName[0].name }
+                            </option>
                         )
                     }
                 }
             })
+        }
+
+        if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
+            populateDeviceData = devicesDataOnClick.map((item, key) => {
+
+                return (
+                    <div key={key}>
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Device Type</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.type}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Device Model</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.model}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.serial}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.manufacturer}</label>
+                            </div>
+                        </Form.Group>
+                    </div>
+                )
+            })
+        } else {
+            populateDeviceData = (
+                <div>
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Device Type</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Device Model</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+                </div>
+            )
         }
 
         return (
@@ -1097,14 +1191,15 @@ class AddPatientPage extends React.Component {
                                              <Form.Group className="devices-types">
                                                  <Form.Label className="col-sm-5">Device Name</Form.Label>
                                                  <div className="col-sm-7">
-                                                     <Field name="device" type="text">
+                                                     <Field name="device" type="select">
                                                          {({ input, meta, type }) => (
                                                              <>
                                                                  <Form.Control
                                                                       as="select"
                                                                       value={this.state.deviceValue}
-                                                                      onChange={(e) => { this._getDeviceName(e) }}>
-                                                                      {optionDevicesLists}
+                                                                      onChange={(e) => { this._getDeviceName(e) }} >
+                                                                      <option>-- SELECT A DEVICE --</option>
+                                                                      { optionDevicesLists }
                                                                  </Form.Control>
                                                              </>
                                                          )}
@@ -1112,33 +1207,7 @@ class AddPatientPage extends React.Component {
                                                  </div>
                                              </Form.Group>
 
-                                             <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Device Type</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <label>GlucoMeter Glucometer</label>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Device Model</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <label>Model model - Glucometer XD565</label>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Serial Number</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <label>AJ530365653</label>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Manufacturer</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <label>AJ530365653</label>
-                                                 </div>
-                                             </Form.Group>
+                                             { populateDeviceData }
                                          </div>
 
                                          <div className="device-limits">
