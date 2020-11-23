@@ -1,7 +1,7 @@
 import { config } from '../config'
 import { Method, headers, RandNum } from '../helpers'
 
-export const dashboardService = {
+export const careTeamService = {
     getAll,
     createCareTeam,
     appendPractitioner,

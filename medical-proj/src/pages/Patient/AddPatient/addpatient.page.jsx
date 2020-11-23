@@ -5,7 +5,7 @@ import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Modal, Card } from 'react-bootstrap'
 import { TableComponent } from '../../../components/Table'
-import { patientAction, dashboardAction, practitionerAction, deviceAction } from '../../../actions'
+import { patientAction, dashboardAction, practitionerAction, deviceAction, careTeamAction } from '../../../actions'
 import iziToast from 'izitoast';
 import { RandNum } from '../../../helpers/misc'
 import { config } from '../../../config'
