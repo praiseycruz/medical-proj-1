@@ -40,7 +40,7 @@ function createWithPractitioner(patientId, practitionerId, practitionerRole) {
         proceed()
 
         function proceed() {
-            careTeamService.createCareTeam(patientId, practitionerId, practitionerRole).then( response => {
+            careTeamService.createCareTeamWithPractitioner(patientId, practitionerId, practitionerRole).then( response => {
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
