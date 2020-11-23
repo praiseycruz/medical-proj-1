@@ -259,7 +259,8 @@ class PatientReadingsPage extends React.Component {
                         return <>{colData.actions}</>
                     }
                 }
-            ]
+            ],
+            showEditPatientModal: false
         }
     }
 
@@ -319,6 +320,26 @@ class PatientReadingsPage extends React.Component {
         })
     }
 
+    _showEditPatient = () => {
+        this.setState({
+            showEditPatientModal: true
+        })
+    }
+
+    _closeModal = () => {
+        this.setState({
+            showEditPatientModal: false
+        })
+    }
+
+    _handleSubmitPatientEdit = () => {
+
+    }
+
+    _handleValidatePatientEdit = () => {
+
+    }
+
     render() {
         let {
             diagnosisCode,
@@ -328,7 +349,8 @@ class PatientReadingsPage extends React.Component {
             conditionsAdded,
             alertLists,
             devicesLists,
-            patientDevicesLists
+            patientDevicesLists,
+            showEditPatientModal
         } = this.state
 
         let diagnosisCodeOption = diagnosisCode.map((item, key) => {
@@ -361,7 +383,7 @@ class PatientReadingsPage extends React.Component {
 
                 <Row>
                     <Col sm={12} md={12} lg={12} xl={12}>
-                        <div className="patient-info">
+                        <div className="patient-reading-wrapper mt-4">
                             <Card>
                                 <Card.Body className="patient-readings">
                                     <div>
@@ -407,6 +429,7 @@ class PatientReadingsPage extends React.Component {
                                                 <Button
                                                     type="submit"
                                                     className="btn btn-submit"
+                                                    onClick={() => { this._showEditPatient() }}
                                                 >Edit Patient</Button>
 
                                                 <Button
@@ -416,8 +439,8 @@ class PatientReadingsPage extends React.Component {
                                             </Col>
                                         </Row>
 
-                                        <div className="patient-data">
-                                            <FormFinal
+                                        <div className="patient-data-wrapper">
+                                            {/*<FormFinal
                                                 initialValues={{
 
                                                 }}
@@ -523,7 +546,6 @@ class PatientReadingsPage extends React.Component {
                                                                             </Form.Group>
                                                                         </Col>
 
-                                                                        {/* SECOND COL */}
                                                                         <Col sm={4}>
                                                                             <Form.Group className="email">
                                                                                 <Row>
@@ -595,7 +617,6 @@ class PatientReadingsPage extends React.Component {
                                                                             </Form.Group>
                                                                         </Col>
 
-                                                                        {/* THIRD COL */}
                                                                         <Col sm={4}>
                                                                             <Form.Group className="dob">
                                                                                 <Row>
@@ -707,7 +728,131 @@ class PatientReadingsPage extends React.Component {
                                                             </Card>
                                                         </div>
                                                     </Form>
-                                                )} />
+                                                )} />*/}
+
+                                            <div className="mt-3">
+                                                <Form.Label className="patient-name">
+                                                    <i class="fas fa-male mr-2"></i> <span>Paul Degagne</span>
+                                                </Form.Label>
+
+                                                <Row className="patient-data">
+                                                    <Col sm={4}>
+                                                        <Form.Group className="care-manager">
+                                                            <Row>
+                                                                <Col sm={12}>
+                                                                    <Form.Label className="">Primary Care Manager:</Form.Label>
+                                                                    <div className="">
+                                                                        <span className="value">McEwen, Sherry</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="primary-physician">
+                                                            <Row>
+                                                                <Col sm={12}>
+                                                                    <Form.Label className="">Primary Physician:</Form.Label>
+                                                                    <div className="">
+                                                                        <span className="value">Tagdiri, Keven</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col sm={4}>
+                                                        <Form.Group className="email">
+                                                            <Row>
+                                                                <Col sm={12}>
+                                                                    <Form.Label className="">Email:</Form.Label>
+                                                                    <div className="">
+                                                                        <span className="value">p.degagne@gmail.com</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="address">
+                                                            <Row>
+                                                                <Col sm={12}>
+                                                                    <Form.Label className="">Address:</Form.Label>
+                                                                    <div className="">
+                                                                        <span className="value">ASD 34, J St. ASD 34, J St.</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="medicareId">
+                                                            <Row>
+                                                                <Col sm={12}>
+                                                                    <Form.Label className="">Medicare ID:</Form.Label>
+                                                                    <div className="">
+                                                                        <span className="value">3216547879654</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+
+                                                    <Col sm={4}>
+                                                        <Form.Group className="dob">
+                                                            <Row>
+                                                                <Col sm={12} className="group-inline">
+                                                                    <Form.Label className="col-sm-4">DOB:</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <span className="value">01/22/1952</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="age">
+                                                            <Row>
+                                                                <Col sm={12} className="group-inline">
+                                                                    <Form.Label className="col-sm-4">Age:</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <span className="value">68 years old</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="gender">
+                                                            <Row>
+                                                                <Col sm={12} className="group-inline">
+                                                                    <Form.Label className="col-sm-4">Gender:</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <span className="value">Male</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="mobile">
+                                                            <Row>
+                                                                <Col sm={12} className="group-inline">
+                                                                    <Form.Label className="col-sm-4">Mobile:</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <span className="value">(702) 683-5453</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        <Form.Group className="account-status">
+                                                            <Row>
+                                                                <Col sm={12} className="group-inline">
+                                                                    <Form.Label className="col-sm-4">Status:</Form.Label>
+                                                                    <div className="col-sm-8">
+                                                                        <span className="value">Active</span>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+                                            </div>
                                         </div>
                                     </div>
                                 </Card.Body>
@@ -860,6 +1005,64 @@ class PatientReadingsPage extends React.Component {
                             </Card>
                         </div>
                     </Col>
+
+                    <FormFinal
+                        onSubmit={this._handleSubmitSearch}
+                        validate={this._handleValidate}
+                        render={({values, initialValues, pristine, submitting, handleSubmit }) => (
+                            <Form onSubmit={handleSubmit}>
+                                <Modal
+                                    show={showEditPatientModal}
+                                    size="md"
+                                    aria-labelledby="contained-modal-title-vcenter"
+                                    centered
+                                    onHide={this._closeModal}
+                                    >
+                                    <Modal.Header closeButton>
+                                       <h5>Update Patient Data for <span className="patient-name">Paul Degagne</span></h5>
+                                    </Modal.Header>
+
+                                    <Modal.Body>
+                                        <div className="update-patient-wrapper">
+                                            <Row>
+                                                <Col sm={6}>
+                                                    <Form.Group as={Row} controlId="searchPatients">
+                                                        <Form.Label className="mb-0 px-3">
+                                                            Search patients
+                                                        </Form.Label>
+
+                                                        <div className="px-2">
+                                                            <Field name="searchPatient" type="text">
+                                                                {({ input, meta, type }) => (
+                                                                    <>
+                                                                        <Form.Control
+                                                                            type={type}
+                                                                            placeholder="Search by name or ID"
+                                                                            autoComplete="off"
+                                                                            {...input}
+                                                                        />
+                                                                    </>
+                                                                )}
+                                                            </Field>
+                                                        </div>
+                                                    </Form.Group>
+                                                </Col>
+                                            </Row>
+                                        </div>
+
+                                        <div className="device-limits">
+                                            <h5>Provider and Care Team</h5>
+
+                                        </div>
+                                    </Modal.Body>
+
+                                    <Modal.Footer>
+
+                                    </Modal.Footer>
+                                </Modal>
+                            </Form>
+                        )}
+                    />
                 </Row>
 
             </AddPatientWrapper>

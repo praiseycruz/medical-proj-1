@@ -10,6 +10,10 @@ import iziToast from 'izitoast';
 import { RandNum } from '../../../helpers/misc'
 import { config } from '../../../config'
 
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import moment from 'moment'
+
 class AddPatientPage extends React.Component {
     constructor(props) {
         super(props)
@@ -50,6 +54,7 @@ class AddPatientPage extends React.Component {
             isPatientCreated: false,
             hasPatientCreated: false,
             deviceValue: '',
+            dob: new Date(),
             physicianValue: '',
             physicianLists: [
                 {
@@ -67,7 +72,11 @@ class AddPatientPage extends React.Component {
 
     _handleSubmit = async (values) => {
         // let { firstname, lastname, addemail: email, gender, ssn, address, zipcode, phoneNum, monitor } = values
+        // let { dob } = this.state
         const { dispatch } = this.props
+
+        let s = document.getElementById("date_picker_id")
+        let dobFormat = moment(s.value).format("yyyy-MM-DD")
 
         let patientData = {
             "resourceType": "Patient",
@@ -79,6 +88,7 @@ class AddPatientPage extends React.Component {
                 }
             ],
             "gender": `${values.gender}`,
+            "birthDate": `${dobFormat}`,
             "telecom": [
                 {
                     "value": `${values.phoneNum}`,
@@ -115,6 +125,8 @@ class AddPatientPage extends React.Component {
         }
 
         dispatch(patientAction.create(patientData))
+
+        // console.log(dobFormat);
     }
 
     _handleValidate = values => {
@@ -176,22 +188,22 @@ class AddPatientPage extends React.Component {
     _openModal = () => {
         let { isPatientCreated } = this.state
 
-        // this.setState({
-        //     showModal: true
-        // })
+        this.setState({
+            showModal: true
+        })
 
-        if (isPatientCreated) {
-            this.setState({
-                showModal: true
-            })
-        } else {
-            iziToast.warning({
-                position: 'topRight',
-                title: 'Warning',
-                displayMode: 1,
-                message: 'Please register Patient first before assigning a Device',
-            });
-        }
+        // if (isPatientCreated) {
+        //     this.setState({
+        //         showModal: true
+        //     })
+        // } else {
+        //     iziToast.warning({
+        //         position: 'topRight',
+        //         title: 'Warning',
+        //         displayMode: 1,
+        //         message: 'Please register Patient first before assigning a Device',
+        //     });
+        // }
     }
 
     _closeModal = () => {
@@ -261,8 +273,8 @@ class AddPatientPage extends React.Component {
         let { hasPatientCreated, isPatientCreated } = this.state
         const { dispatch } = this.props
 
-        if (typeof patient !== 'undefined' && patient !== null) {
-            let { create } = patient
+        if (prevProps.patient !== 'undefined' && this.props.patient !== null) {
+            let { create } = this.props.patient
 
             if (typeof create !== 'undefined' && create !== null) {
                 let { success, patient } = create
@@ -270,19 +282,18 @@ class AddPatientPage extends React.Component {
                 if (success) {
                     if ( typeof patient !== 'undefined' && patient !== null) {
                         if (!hasPatientCreated) {
-
                             this.setState({
                                 isPatientCreated: true,
                                 hasPatientCreated: true,
                                 patientData: patient
                             })
 
-                            iziToast.success({
-                                position: 'topRight',
-                                title: 'Success',
-                                displayMode: 1,
-                                message: 'Patient registered successfully!',
-                            })
+                            // iziToast.success({
+                            //     position: 'topRight',
+                            //     title: 'Success',
+                            //     displayMode: 1,
+                            //     message: 'Patient registered successfully!',
+                            // })
 
                             dispatch(dashboardAction.count())
                             dispatch(patientAction.getAll(10, 0))
@@ -324,6 +335,12 @@ class AddPatientPage extends React.Component {
         })
     }
 
+    _setDob = date => {
+        this.setState({
+            dob: date
+        });
+    }
+
     render() {
         let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists } = this.state
         let { patient } = this.props
@@ -363,6 +380,26 @@ class AddPatientPage extends React.Component {
                 <option key={key}>{item.name}</option>
             )
         })
+
+        if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
+            devicesLists.map((deviceItem, deviceKey) => {
+                let { resource } = deviceItem
+
+                if (typeof resource !== 'undefined' && resource !== null) {
+                    let { deviceName, manufacturer } = resource
+
+                    if (typeof deviceName !== 'undefined' && deviceName !== null) {
+                        optionDevicesLists = deviceName.map((item, index) => {
+
+                            console.log(item.name);
+                            return (
+                                <option key={index}>{item.name}</option>
+                            )
+                        })
+                    }
+                }
+            })
+        }
 
         return (
             <AddPatientWrapper>
@@ -761,6 +798,26 @@ class AddPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
+                                                    {/*<Form.Group className="patient-physician">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Assign Physician</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="patientPhysician" type="select">
+                                                                        {({ input, meta, type }) => (
+                                                                            <Form.Control
+                                                                                 as="select"
+                                                                                 value={physicianValue}
+                                                                                 onChange={(e) => { this._getPhysicianValue(e) }}>
+                                                                                 {physicianOptions}
+                                                                            </Form.Control>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>*/}
+
                                                     <Form.Group className="monitoring">
                                                         <Row>
                                                             <Col sm={12}>
@@ -816,6 +873,29 @@ class AddPatientPage extends React.Component {
                                                                         </Field>
                                                                         <span>Female</span>
                                                                     </label>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="dob">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">DOB</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="dob" type="select">
+                                                                        {({ input, meta, type }) => (
+                                                                            <DatePicker
+                                                                              selected={this.state.dob}
+                                                                              onChange={date => this._setDob(date)}
+                                                                              isClearable
+                                                                              placeholderText="YYYY-MM-DD"
+                                                                              dateFormat="yyyy-MM-dd"
+                                                                              value={this.state.dob}
+                                                                              id="date_picker_id"
+                                                                            />
+                                                                        )}
+                                                                    </Field>
                                                                 </div>
                                                             </Col>
                                                         </Row>
@@ -984,18 +1064,11 @@ class AddPatientPage extends React.Component {
                                              </Form.Group>*/}
 
                                              <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Device</Form.Label>
+                                                 <Form.Label className="col-sm-5">Device Name</Form.Label>
                                                  <div className="col-sm-7">
                                                      <Field name="device" type="text">
                                                          {({ input, meta, type }) => (
                                                              <>
-                                                                 {/*<Form.Control
-                                                                     type={type}
-                                                                     placeholder="Device"
-                                                                     autoComplete="off"
-                                                                     {...input}
-                                                                 />*/}
-
                                                                  <Form.Control
                                                                       as="select"
                                                                       value={this.state.deviceValue}
@@ -1009,7 +1082,7 @@ class AddPatientPage extends React.Component {
                                              </Form.Group>
 
                                              <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Device Name</Form.Label>
+                                                 <Form.Label className="col-sm-5">Device Type</Form.Label>
                                                  <div className="col-sm-7">
                                                      <label>GlucoMeter Glucometer</label>
                                                  </div>
@@ -1024,6 +1097,13 @@ class AddPatientPage extends React.Component {
 
                                              <Form.Group className="devices-types">
                                                  <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <label>AJ530365653</label>
+                                                 </div>
+                                             </Form.Group>
+
+                                             <Form.Group className="devices-types">
+                                                 <Form.Label className="col-sm-5">Manufacturer</Form.Label>
                                                  <div className="col-sm-7">
                                                      <label>AJ530365653</label>
                                                  </div>

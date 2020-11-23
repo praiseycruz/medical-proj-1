@@ -98,6 +98,96 @@ export const AddPatientWrapper = styled.div`
             font-size: 15px;
             border-radius: 2px;
         }
+
+        .react-datepicker-wrapper {
+            /* width: 100%; */
+
+            input {
+                background-color: #353c48;
+                width: 100%;
+                max-width: 250px;
+                color: #fff;
+                border: 1px solid #464e5b;
+                font-size: 15px;
+                border-radius: 2px;
+                padding: 6px 12px;
+            }
+        }
+    }
+
+    .patient-reading-wrapper {
+        /* margin-top: 30px; */
+
+        .patient-readings {
+            .form-group {
+                .from-label {
+                    font-size: 15px;
+                }
+
+                .form-control {
+                    font-size: 15px;
+                }
+            }
+
+            label {
+                margin-bottom: 0;
+            }
+
+            .edit-patient {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+
+                button {
+                    font-size: 15px;
+                    border-radius: 2px;
+                }
+            }
+
+            button {
+                font-size: 15px;
+                border-radius: 2px;
+            }
+
+            .patient-data-wrapper {
+                margin-top: 25px;
+
+                .patient-name {
+                    display: block;
+                    font-size: 22px;
+                    margin: 0 0px 25px;
+                    color: #fff !important;
+                    border-top: 2px solid #3C4452;
+                    padding: 15px 0 0;
+                }
+
+                .patient-data {
+                    label {
+                        color: #56bbf6;
+                        text-transform: uppercase;
+                    }
+
+                    span {
+                        &.value {
+                            color: #fff !important;
+                        }
+                    }
+
+                    .care-manager,
+                    .primary-physician {
+                        label {
+                            font-size: 18px;
+                        }
+                    }
+
+                    .group-inline {
+                        display: flex;
+                        justify-content: flex-start;
+                        align-items: center;
+                    }
+                }
+            }
+        }
     }
 
     .device-wrapper {
@@ -217,5 +307,9 @@ export const AddPatientWrapper = styled.div`
                 }
             }
         }
+    }
+
+    .update-patient-wrapper {
+
     }
 `
