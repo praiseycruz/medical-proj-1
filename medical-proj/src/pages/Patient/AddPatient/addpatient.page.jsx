@@ -56,17 +56,17 @@ class AddPatientPage extends React.Component {
             deviceValue: '',
             dob: new Date(),
             physicianValue: '',
-            physicianLists: [
-                {
-                    name: 'Dr. One Physician'
-                },
-                {
-                    name: 'Dr. Two Physician'
-                },
-                {
-                    name: 'Dr. Three Physician'
-                }
-            ]
+            // physicianLists: [
+            //     {
+            //         name: 'Dr. One Physician'
+            //     },
+            //     {
+            //         name: 'Dr. Two Physician'
+            //     },
+            //     {
+            //         name: 'Dr. Three Physician'
+            //     }
+            // ]
         }
     }
 
@@ -125,8 +125,6 @@ class AddPatientPage extends React.Component {
         }
 
         dispatch(patientAction.create(patientData))
-
-        // console.log(dobFormat);
     }
 
     _handleValidate = values => {
@@ -266,6 +264,7 @@ class AddPatientPage extends React.Component {
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
+        dispatch(practitionerAction.getAll(10, 0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -323,8 +322,12 @@ class AddPatientPage extends React.Component {
         }
     }
 
-    _getDeviceName = () => {
+    _getDeviceName = (e) => {
+        let { value } = e.target
 
+        this.setState({
+            deviceValue: value
+        })
     }
 
     _getPhysicianValue = (e) => {
@@ -343,13 +346,14 @@ class AddPatientPage extends React.Component {
 
     render() {
         let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists } = this.state
-        let { patient } = this.props
+        let { patient, practitioner } = this.props
 
         let isAddingNewPatientLoading = false
         let patientId = null
         let patientName = null
         let patientData = null
         let optionDevicesLists = null
+        let physicianOptions = []
 
         if (typeof patient !== 'undefined' && patient !== null) {
             let { create } = patient
@@ -375,11 +379,43 @@ class AddPatientPage extends React.Component {
             }
         }
 
-        let physicianOptions = physicianLists.map((item, key) => {
-            return (
-                <option key={key}>{item.name}</option>
-            )
-        })
+        if (typeof practitioner !== 'undefined' && practitioner !== null) {
+            let { getAll } = practitioner
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { practitioners } = getAll
+
+                if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    let { entry } = practitioners
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        physicianOptions = entry.map((physician, index) => {
+                            let { resource } = physician
+
+                            if (typeof resource !== 'undefined' && resource !== null) {
+                                let { name } = resource
+
+                                if (typeof name !== 'undefined' && name !== null) {
+                                    let physicianName = physician[0].prefix + ' ' + physician[0].given + ' ' + physician[0].family
+
+                                    console.log(physicianName);
+
+                                    return (
+                                        <option key={physician.resource.id} value={physician.resource.id}> {physicianName} </option>
+                                    )
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        }
+
+        // let physicianOptions = physicianLists.map((item, key) => {
+        //     return (
+        //         <option key={key}>{item.name}</option>
+        //     )
+        // })
 
         if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
             optionDevicesLists = devicesLists.map((deviceItem, deviceKey) => {
@@ -389,7 +425,9 @@ class AddPatientPage extends React.Component {
                     let { deviceName, manufacturer } = resource
 
                     if (typeof deviceName !== 'undefined' && deviceName !== null) {
-                        return <option key={deviceItem.resource.id} value={deviceItem.resource.id}> { deviceName[0].name } </option>
+                        return (
+                            <option key={deviceItem.resource.id} value={deviceItem.resource.id}> { deviceName[0].name } </option>
+                        )
                     }
                 }
             })
@@ -792,7 +830,7 @@ class AddPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
-                                                    {/*<Form.Group className="patient-physician">
+                                                    <Form.Group className="patient-physician">
                                                         <Row>
                                                             <Col sm={12}>
                                                                 <Form.Label className="col-sm-4">Assign Physician</Form.Label>
@@ -810,7 +848,7 @@ class AddPatientPage extends React.Component {
                                                                 </div>
                                                             </Col>
                                                         </Row>
-                                                    </Form.Group>*/}
+                                                    </Form.Group>
 
                                                     <Form.Group className="monitoring">
                                                         <Row>
