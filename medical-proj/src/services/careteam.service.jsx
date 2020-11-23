@@ -35,7 +35,7 @@ function createCareTeam(patientId) {
             },
             status: "active",
         }),
-        [ {'If-None-Exist': `subject=${patientId}`} ]
+        {'If-None-Exist': `subject=${patientId}`}
     )
 
     return fetch(config.apiGateway.URL + config.CareTeam.create, requestOptions)
