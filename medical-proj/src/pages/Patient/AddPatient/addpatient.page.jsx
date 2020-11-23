@@ -445,7 +445,7 @@ class AddPatientPage extends React.Component {
                                 key={deviceItem.resource.id}
                                 value={deviceName[0].name}
                                 data-id={deviceItem.resource.id}
-                                data-type={deviceName[0].type}
+                                data-type={deviceItem.resource.type.text}
                                 data-man={deviceItem.resource.manufacturer}
                                 data-serial={deviceItem.resource.serialNumber}
                                 data-model={deviceItem.resource.modelNumber}>
