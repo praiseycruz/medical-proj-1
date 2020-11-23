@@ -260,25 +260,27 @@ class PatientReadingsPage extends React.Component {
                     }
                 }
             ],
-            showEditPatientModal: false
+            showEditPatientModal: false,
         }
     }
 
     componentDidMount() {
-        let { data } = this.props.location
+        // let { data } = this.props.location
+        //
+        // if (typeof data !== 'undefined' && data !== null) {
+        //     console.log(data);
+        // }
+        let patientDetails = localStorage.getItem("patientDetails")
 
-        if (typeof data !== 'undefined' && data !== null) {
-            console.log(data);
-        }
+        console.log(patientDetails);
     }
 
     componentDidUpdate(prevProps, prevState) {
+        let patientDetails = localStorage.getItem("patientDetails")
 
+        console.log(patientDetails);
     }
 
-    _getDeviceName = () => {
-
-    }
 
     _handleSubmitSearch = () => {
 
@@ -930,7 +932,7 @@ class PatientReadingsPage extends React.Component {
                                                                                         </label>
                                                                                     </div>
 
-                                                                                    <div>
+                                                                                    {/*<div>
                                                                                         <label className="programs-label">
                                                                                             <Field name="programs-ccm" type="checkbox" value="ccm">
                                                                                                 {({ input, meta, type }) => (
@@ -944,7 +946,7 @@ class PatientReadingsPage extends React.Component {
                                                                                             </Field>
                                                                                             <span>CCM</span>
                                                                                         </label>
-                                                                                    </div>
+                                                                                    </div>*/}
                                                                                 </div>
                                                                             </Col>
 

@@ -56,9 +56,9 @@ class AddPatientPage extends React.Component {
             deviceValue: '',
             dob: new Date(),
             physicianValue: '',
-            devicesDataOnClick: [
-
-            ]
+            devicesDataOnClick: [],
+            physicianData: [],
+            isPhysicianAdded: false
             // physicianLists: [
             //     {
             //         name: 'Dr. One Physician'
@@ -270,10 +270,10 @@ class AddPatientPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         let { patient } = this.props
-        let { hasPatientCreated, isPatientCreated } = this.state
+        let { hasPatientCreated, isPatientCreated, physicianData, isPhysicianAdded } = this.state
         const { dispatch } = this.props
 
-        if (prevProps.patient !== 'undefined' && this.props.patient !== null) {
+        if (prevProps.patient !== this.props.patient) {
             let { create } = this.props.patient
 
             if (typeof create !== 'undefined' && create !== null) {
@@ -281,12 +281,49 @@ class AddPatientPage extends React.Component {
 
                 if (success) {
                     if ( typeof patient !== 'undefined' && patient !== null) {
+                        let patientId = patient.id
+
                         if (!hasPatientCreated) {
-                            this.setState({
-                                isPatientCreated: true,
-                                hasPatientCreated: true,
-                                patientData: patient
-                            })
+                            if (physicianData !== 'undefined' && physicianData !== null && physicianData.length > 0) {
+                                if (!isPhysicianAdded) {
+                                    let id = null
+                                    let role = null
+
+                                    physicianData.map((physician, index) => {
+                                        id = physician.id
+                                        role = physician.role
+                                    })
+
+                                    if (id !== null && role !== null) {
+                                        iziToast.success({
+                                            position: 'topRight',
+                                            title: 'Success',
+                                            displayMode: 1,
+                                            message: 'Patient registered successfully!',
+                                        })
+
+                                        dispatch(dashboardAction.count())
+                                        dispatch(patientAction.getAll(10, 0))
+                                        dispatch(practitionerAction.getAll(10, 0))
+                                        // dispatch(careTeamAction.createWithPractitioner(patientId, id, role))
+                                        // console.log(patientId, id, role, 'in here');
+                                    }
+
+                                    this.setState({
+                                        isPatientCreated: true,
+                                        hasPatientCreated: true,
+                                        patientData: patient,
+                                        isPhysicianAdded: true
+                                    })
+                                }
+                            }
+
+                            // this.setState({
+                            //     isPatientCreated: true,
+                            //     hasPatientCreated: true,
+                            //     patientData: patient,
+                            //     isPhysicianAdded: true
+                            // })
 
                             // iziToast.success({
                             //     position: 'topRight',
@@ -294,10 +331,10 @@ class AddPatientPage extends React.Component {
                             //     displayMode: 1,
                             //     message: 'Patient registered successfully!',
                             // })
-
-                            dispatch(dashboardAction.count())
-                            dispatch(patientAction.getAll(10, 0))
-                            dispatch(practitionerAction.getAll(10, 0))
+                            //
+                            // dispatch(dashboardAction.count())
+                            // dispatch(patientAction.getAll(10, 0))
+                            // dispatch(practitionerAction.getAll(10, 0))
                         }
                     }
                 }
@@ -352,9 +389,23 @@ class AddPatientPage extends React.Component {
     _getPhysicianValue = (e) => {
         let { value } = e.target
 
+        var index = e.target.selectedIndex;
+        var optionElement = e.target.childNodes[index]
+        var optionId =  optionElement.getAttribute('data-id')
+
+        let physicianData = [
+            {
+                "id": optionId,
+                "role": "Primary Physician"
+            }
+        ]
+
         this.setState({
-            physicianValue: value
+            physicianValue: value,
+            physicianData
         })
+
+        console.log(physicianData);
     }
 
     _setDob = date => {
@@ -366,8 +417,6 @@ class AddPatientPage extends React.Component {
     render() {
         let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists, devicesDataOnClick } = this.state
         let { patient, practitioner } = this.props
-
-        console.log(this.state.devicesDataOnClick);
 
         let isAddingNewPatientLoading = false
         let patientId = null
@@ -422,7 +471,12 @@ class AddPatientPage extends React.Component {
                                     let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
 
                                     return (
-                                        <option key={physician.resource.id} value={physician.resource.id}> {physicianName} </option>
+                                        <option
+                                            key={physician.resource.id}
+                                            value={physician.resource.id}
+                                            data-id={physician.resource.id}>
+                                                {physicianName}
+                                        </option>
                                     )
                                 }
                             }
@@ -934,6 +988,7 @@ class AddPatientPage extends React.Component {
                                                                                  as="select"
                                                                                  value={physicianValue}
                                                                                  onChange={(e) => { this._getPhysicianValue(e) }}>
+                                                                                 <option>-- SELECT A PHYSICIAN --</option>
                                                                                  {physicianOptions}
                                                                             </Form.Control>
                                                                         )}
