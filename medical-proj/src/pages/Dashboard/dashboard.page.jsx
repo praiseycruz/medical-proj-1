@@ -36,6 +36,7 @@ class DashboardPage extends React.Component {
                     key: 'name',
                     render: colData => {
                         return <span>{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
+                        // return <span>{ colData.resource.name }</span>;
                     }
                 },
                 {
@@ -80,6 +81,7 @@ class DashboardPage extends React.Component {
                     key: 'name',
                     render: colData => {
                         return <span>{ colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
+                        // return <span>{ colData.resource.name }</span>;
                     }
                 },
                 {
