@@ -396,9 +396,8 @@ class AddPatientPage extends React.Component {
                                 let { name } = resource
 
                                 if (typeof name !== 'undefined' && name !== null) {
-                                    let physicianName = physician[0].prefix + ' ' + physician[0].given + ' ' + physician[0].family
 
-                                    console.log(physicianName);
+                                    let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
 
                                     return (
                                         <option key={physician.resource.id} value={physician.resource.id}> {physicianName} </option>
@@ -1310,10 +1309,12 @@ class AddPatientPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { patient, device } = state
+    const { patient, practitioner, device, careTeam } = state
     return {
         patient,
-        device
+        device,
+        careTeam,
+        practitioner,
     }
 }
 
