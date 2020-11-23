@@ -1,5 +1,6 @@
 import React from 'react'
 import { config } from '../config'
+import { Method, RandNum } from '../helpers'
 
 export const practitionerService = {
     create,
@@ -10,13 +11,7 @@ export const practitionerService = {
 }
 
 function create(data) {
-    const requestOptions ={
-        method: 'POST',
-        headers: {
-            'Content-Type': config.ContentType.POST
-        },
-        body: JSON.stringify(data)
-    }
+    const requestOptions = headers(Method.POST, JSON.stringify(data))
 
     return fetch(config.apiGateway.URL + `/Practitioner`, requestOptions)
     .then(handleResponse)
@@ -28,12 +23,7 @@ function create(data) {
 }
 
 function getAll(count, skip) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.Practitioner.getAll(count, skip), requestOptions)
     .then(handleResponse)
@@ -45,13 +35,7 @@ function getAll(count, skip) {
 }
 
 function findById(id) {
-
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.practitioner.findById(id), requestOptions)
     .then(handleResponse)
@@ -64,12 +48,7 @@ function findById(id) {
 }
 
 function searchByIdOrName(query, count) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     const filterParam = Number.isNaN(parseInt(query)) ? `name co ${query}` : `identifier co http://hl7.org/fhir/sid/us-ssn|${query}`
 
@@ -84,12 +63,7 @@ function searchByIdOrName(query, count) {
 
 
 function getPaginationLink(link, currentPage) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     //number of itemss per page
     let numItems = 10

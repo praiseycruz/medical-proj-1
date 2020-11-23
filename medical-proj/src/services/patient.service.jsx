@@ -1,5 +1,6 @@
 import React from 'react'
 import { config } from '../config'
+import { Method, headers } from '../helpers'
 
 export const patientService = {
     create,
@@ -12,13 +13,7 @@ export const patientService = {
 }
 
 function create(data) {
-    const requestOptions ={
-        method: 'POST',
-        headers: {
-            'Content-Type': config.ContentType.POST
-        },
-        body: JSON.stringify(data)
-    }
+    const requestOptions = headers(Method.POST, JSON.stringify(data))
 
     return fetch(config.apiGateway.URL + `/Patient`, requestOptions)
     .then(handleResponse)
@@ -31,12 +26,7 @@ function create(data) {
 
 function findById(id) {
 
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.Patient.findById(id), requestOptions)
     .then(handleResponse)
@@ -49,12 +39,7 @@ function findById(id) {
 }
 
 function getAll(count, skip) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.Patient.getAll(count, skip), requestOptions)
     .then(handleResponse)
@@ -66,12 +51,7 @@ function getAll(count, skip) {
 }
 
 function getPaginationLink(link, currentPage) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     //number of itemss per page
     let numItems = 10
@@ -110,12 +90,7 @@ function getPaginationLink(link, currentPage) {
 }
 
 function searchByIdOrName(query, count) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     const filterParam = Number.isNaN(parseInt(query)) ? `name co ${query}` : `identifier co http://hl7.org/fhir/sid/us-ssn|${query}`
 
@@ -148,12 +123,9 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
         practitioner under patient.generalPractitioner else returns 400 bad request
 
     */
-    const requestOptions ={
-        method: 'PATCH',
-        headers: {
-            'Content-Type': config.ContentType.PATCH
-        },
-        body: JSON.stringify([
+    const requestOptions = headers(
+        Method.PATCH,
+        JSON.stringify([
             {
                 op: "test",
                 path: "/generalPractitioner",
@@ -168,7 +140,7 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
                 }]
             }
         ])
-    }
+    )
 
     return fetch(config.apiGateway.URL + config.Patient.appendPractitioner(patientId), requestOptions)
     .then(handleResponse)

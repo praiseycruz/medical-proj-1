@@ -1,5 +1,6 @@
 import React from 'react'
 import { config } from '../config'
+import { Method, headers } from '../helpers'
 
 export const deviceService = {
     assignPatientToDevice,
@@ -14,12 +15,9 @@ function assignPatientToDevice(deviceId, patientId) {
         successfully assigned. On successful assignment,
         device status is changed to "active"
     */
-    const requestOptions ={
-        method: 'PATCH',
-        headers: {
-            'Content-Type': config.ContentType.PATCH
-        },
-        body: JSON.stringify([
+    const requestOptions = headers(
+        Method.PATCH,
+        JSON.stringify([
             {
                 op: "test",
                 path: "/status",
@@ -39,7 +37,7 @@ function assignPatientToDevice(deviceId, patientId) {
                 value: "active"
             }
         ])
-    }
+    )
 
     return fetch(config.apiGateway.URL + config.Device.assignPatient(deviceId), requestOptions)
     .then(handleResponse)
@@ -57,12 +55,9 @@ function unassignDevice(deviceId, patientId) {
         is what is expected, and then remove,
         and mard device as inactive
     */
-    const requestOptions ={
-        method: 'PATCH',
-        headers: {
-            'Content-Type': config.ContentType.PATCH
-        },
-        body: JSON.stringify([
+    const requestOptions = headers(
+        Method.PATCH,
+        JSON.stringify([
             {
                 op: "test",
                 path: "/status",
@@ -86,7 +81,7 @@ function unassignDevice(deviceId, patientId) {
                 value: "inactive"
             }
         ])
-    }
+    )
 
     return fetch(config.apiGateway.URL + config.Device.findById(deviceId), requestOptions)
     .then(handleResponse)
@@ -99,12 +94,7 @@ function unassignDevice(deviceId, patientId) {
 
 function findById(id) {
 
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.Device.findById(id), requestOptions)
     .then(handleResponse)
@@ -117,13 +107,7 @@ function findById(id) {
 }
 
 function findUnassigned() {
-
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.Device.findUnassigned, requestOptions)
     .then(handleResponse)

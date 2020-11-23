@@ -1,5 +1,5 @@
 import { config } from '../config'
-import { RandNum } from '../helpers'
+import { Method, RandNum } from '../helpers'
 
 export const dashboardService = {
     getAll,
@@ -9,12 +9,7 @@ export const dashboardService = {
 }
 
 function getAll(count, skip) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.CareTeam.getAll(count, skip), requestOptions)
     .then(handleResponse)
@@ -26,13 +21,9 @@ function getAll(count, skip) {
 }
 
 function createCareTeam(patientId) {
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Content-Type': config.ContentType.POST,
-            'If-None-Exist': `subject=${patientId}`
-        },
-        body: JSON.stringify({
+    const requestOptions = headers(
+        Method.POST,
+        JSON.stringify({
             resourceType: "CareTeam",
             identifier: [{
                 "value": RandNum("CT"),
@@ -43,8 +34,9 @@ function createCareTeam(patientId) {
                 type: "Patient"
             },
             status: "active",
-        })
-    }
+        }),
+        [ {'If-None-Exist': `subject=${patientId}`} ]
+    )
 
     return fetch(config.apiGateway.URL + config.CareTeam.create, requestOptions)
     .then(handleResponse)
@@ -78,12 +70,9 @@ function appendPractitioner(careTeamId, currentParticipantsData, practitionerId,
         If this is the data on the server under CareTeam.participant, it adds a new
         practitioner under CareTeam.participant else returns 400 bad request
     */
-    const requestOptions = {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': config.ContentType.PATCH,
-        },
-        body: JSON.stringify([
+    const requestOptions = headers(
+        Method.PATCH,
+        JSON.stringify([
             {
                 op: "test",
                 path: "/participant",
@@ -107,7 +96,7 @@ function appendPractitioner(careTeamId, currentParticipantsData, practitionerId,
                 }]
             }
         ])
-    }
+    )
 
     return fetch(config.apiGateway.URL + config.CareTeam.appendPractitioner(careTeamId), requestOptions)
     .then(handleResponse)
@@ -120,12 +109,7 @@ function appendPractitioner(careTeamId, currentParticipantsData, practitionerId,
 
 
 function findByPatientId(patientId) {
-    const requestOptions = {
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET,
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + config.CareTeam.findByPatientId(patientId), requestOptions)
     .then(handleResponse)

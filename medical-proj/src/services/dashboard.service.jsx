@@ -1,17 +1,13 @@
 import React from 'react'
 import { config } from '../config'
+import { Method, RandNum } from '../helpers'
 
 export const dashboardService = {
     count
 }
 
 function count() {
-    const requestOptions ={
-        method: 'GET',
-        headers: {
-            'Content-Type': config.ContentType.GET
-        }
-    }
+    const requestOptions = headers(Method.GET)
 
     return fetch(config.apiGateway.URL + `/Patient?_summary=count&identifier=EXSYS|`, requestOptions)
     .then(handleResponse)
