@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect , NavLink} from 'react-router-dom'
-import { DashboardPage, PhysicianPage, CareManagerPage, TaskManagementPage, ReportsPage } from './pages'
+import { DashboardPage, PhysicianPage, CareManagerPage, TaskManagementPage, ReportsPage, AddNewDevicePage } from './pages'
 import { AddPatientPage, PatientReadingsPage  } from './pages/Patient'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
@@ -170,7 +170,7 @@ export default class App extends React.Component {
                                             <Accordion.Toggle as={Button} variant="link" eventKey="1" onClick={this._caretOpen}>
                                                 <span>
                                                     <i className="far fa-building"></i>
-                                                    <span>Office setup</span>
+                                                    <span className="link-text">Office setup</span>
                                                 </span>
 
                                                 <FontAwesomeIcon size="sm" className="icon" icon={officeSetup ? faCaretDown : faCaretRight} />
@@ -193,6 +193,11 @@ export default class App extends React.Component {
                                                     <NavLink to="/task-management" className="card-links" activeClassName="active">
                                                         <i className="fas fa-tasks"></i>
                                                         Tasks
+                                                    </NavLink>
+
+                                                    <NavLink to="/add-device" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-tasks"></i>
+                                                        Add New Device
                                                     </NavLink>
                                                 </li>
                                             </ul>
@@ -221,6 +226,7 @@ export default class App extends React.Component {
                             <Route exact path="/care-manager" component={CareManagerPage} />
                             <Route exact path="/reports" component={ReportsPage} />
                             <Route exact path="/task-management" component={TaskManagementPage} />
+                            <Route exact path="/add-device" component={AddNewDevicePage} />
                         </Switch>
                     </MainContentWrapper>
         		</MainWrapper>
