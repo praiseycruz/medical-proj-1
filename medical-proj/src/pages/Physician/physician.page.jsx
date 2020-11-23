@@ -8,6 +8,10 @@ import { practitionerAction, dashboardAction, patientAction } from '../../action
 import iziToast from 'izitoast';
 import { RandNum } from '../../helpers'
 
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import moment from 'moment'
+
 class PhysicianPage extends React.Component {
     constructor(props) {
         super(props)
@@ -45,7 +49,8 @@ class PhysicianPage extends React.Component {
             ],
             isPractitionerCreated: false,
             hasPractitionerCreated: false,
-            practitionerData: {}
+            practitionerData: {},
+            dob: new Date(),
         }
     }
 
@@ -93,15 +98,20 @@ class PhysicianPage extends React.Component {
     _handleSubmit = async values => {
         const { dispatch } = this.props
 
+        let s = document.getElementById("date_picker_id")
+        let dobFormat = moment(s.value).format("yyyy-MM-DD")
+
         let practitionerData = {
             "resourceType": "Practitioner",
             "name": [
                 {
                     "use": "official",
                     "given": [`${values.firstname}`],
-                    "family": `${values.lastname}`
+                    "family": `${values.lastname}`,
+                    "prefix": [`${values.prefix}`]
                 }
             ],
+            "birthDate": `${dobFormat}`,
             "gender": `${values.gender}`,
             "telecom": [
                 {
@@ -139,6 +149,7 @@ class PhysicianPage extends React.Component {
 
     _handleValidate = values => {
         const errors = {}
+        let prefix = []
 		let firstname = []
         let lastname = []
 		let addemail = []
@@ -146,6 +157,9 @@ class PhysicianPage extends React.Component {
         let address = []
         let zipcode = []
         let phoneNum = []
+
+        if (!values.prefix)
+			firstname.push("Physician Prefix is required")
 
 		if (!values.firstname)
 			firstname.push("Firstname is required")
@@ -191,6 +205,12 @@ class PhysicianPage extends React.Component {
             errors.phoneNum = phoneNum
 
 		return errors
+    }
+
+    _setDob = date => {
+        this.setState({
+            dob: date
+        });
     }
 
     render() {
@@ -461,6 +481,29 @@ class PhysicianPage extends React.Component {
                                         <div className="physician-info">
                                             <Row>
                                                 <Col sm={6}>
+                                                    <Form.Group className="physician-prefix">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Prefix</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="prefix" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Physician Prefix"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
                                                     <Form.Group className="physician-firstname">
                                                         <Row>
                                                             <Col sm={12}>
@@ -586,6 +629,29 @@ class PhysicianPage extends React.Component {
                                                                         </Field>
                                                                         <span>Female</span>
                                                                     </label>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="dob">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">DOB</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="dob" type="select">
+                                                                        {({ input, meta, type }) => (
+                                                                            <DatePicker
+                                                                              selected={this.state.dob}
+                                                                              onChange={date => this._setDob(date)}
+                                                                              isClearable
+                                                                              placeholderText="YYYY-MM-DD"
+                                                                              dateFormat="yyyy-MM-dd"
+                                                                              value={this.state.dob}
+                                                                              id="date_picker_id"
+                                                                            />
+                                                                        )}
+                                                                    </Field>
                                                                 </div>
                                                             </Col>
                                                         </Row>
