@@ -382,20 +382,14 @@ class AddPatientPage extends React.Component {
         })
 
         if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
-            devicesLists.map((deviceItem, deviceKey) => {
+            optionDevicesLists = devicesLists.map((deviceItem, deviceKey) => {
                 let { resource } = deviceItem
 
                 if (typeof resource !== 'undefined' && resource !== null) {
                     let { deviceName, manufacturer } = resource
 
                     if (typeof deviceName !== 'undefined' && deviceName !== null) {
-                        optionDevicesLists = deviceName.map((item, index) => {
-
-                            console.log(item.name);
-                            return (
-                                <option key={index}>{item.name}</option>
-                            )
-                        })
+                        return <option key={deviceItem.resource.id} value={deviceItem.resource.id}> { deviceName[0].name } </option>
                     }
                 }
             })
