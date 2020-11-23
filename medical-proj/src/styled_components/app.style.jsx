@@ -29,14 +29,14 @@ export const MainWrapper = styled.div`
             display: flex;
             justify-content: center;
             align-items: center;
+        }
 
-            .link-text {
-                display: none !important;
-            }
+        .link-text {
+            display: none !important;
+        }
 
-            img, i {
-                margin-right: 0 !important;
-            }
+        img, i {
+            margin-right: 0 !important;
         }
     }
 `
