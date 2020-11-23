@@ -6,9 +6,10 @@ export const careTeamAction = {
     getAll,
     findByPatientId,
     appendPractitioner,
+    createWithPractitioner,
 }
 
-function create() {
+function create(patientId) {
 
     return dispatch => {
 
@@ -17,7 +18,29 @@ function create() {
         proceed()
 
         function proceed() {
-            careTeamService.create().then( response => {
+            careTeamService.createCareTeam(patientId).then( response => {
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: careTeamConstants.CARETEAM_CREATE_REQUEST } }
+    function success(careTeam) { return { type: careTeamConstants.CARETEAM_CREATE_SUCCESS, careTeam } }
+    function failure(error) { return { type: careTeamConstants.CARETEAM_CREATE_FAILURE, error } }
+}
+
+function createWithPractitioner(patientId, practitionerId, practitionerRole) {
+
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            careTeamService.createCareTeam(patientId, practitionerId, practitionerRole).then( response => {
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
@@ -75,7 +98,7 @@ function findByPatientId(patientId) {
     function failure(error) { return { type: careTeamConstants.FIND_BY_PATIENTID_FAILURE, error } }
 }
 
-function appendPractitioner(careTeamId, currentParticipants, practitionerId,practitionerRole) {
+function appendPractitioner(careTeamId, currentParticipants, practitionerId, practitionerRole) {
 
     return dispatch => {
 

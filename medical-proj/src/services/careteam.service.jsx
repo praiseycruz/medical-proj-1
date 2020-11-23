@@ -6,6 +6,7 @@ export const dashboardService = {
     createCareTeam,
     appendPractitioner,
     findByPatientId,
+    createCareTeamWithPractitioner,
 }
 
 function getAll(count, skip) {
@@ -33,6 +34,45 @@ function createCareTeam(patientId) {
                 reference: `Patient/${patientId}`,
                 type: "Patient"
             },
+            status: "active",
+        }),
+        {'If-None-Exist': `subject=${patientId}`}
+    )
+
+    return fetch(config.apiGateway.URL + config.CareTeam.create, requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
+
+function createCareTeamWithPractitioner(patientId, practitionerId, practitionerRole) {
+    const requestOptions = headers(
+        Method.POST,
+        JSON.stringify({
+            resourceType: "CareTeam",
+            identifier: [{
+                "value": RandNum("CT"),
+                "system": "EXSYS"
+            }],
+            subject: {
+                reference: `Patient/${patientId}`,
+                type: "Patient"
+            },
+            participant: [{
+                role: [{
+                    // https://www.hl7.org/fhir/valueset-participant-role.html
+                    coding: "http://snomed.info/sct",
+                    text: `${practitionerRole}`,
+                }],
+                member: {
+                    reference: `Practitioner/${practitionerId}`,
+                    type: "Practitioner"
+                }
+            }],
             status: "active",
         }),
         {'If-None-Exist': `subject=${patientId}`}
@@ -82,14 +122,12 @@ function appendPractitioner(careTeamId, currentParticipantsData, practitionerId,
                 op: "add",
                 path: `/participant/-`,
                 value: [{
+                    role: [{
+                        // https://www.hl7.org/fhir/valueset-participant-role.html
+                        coding: "http://snomed.info/sct",
+                        text: `${practitionerRole}`,
+                    }],
                     member: {
-                        role: [
-                            {
-                                // https://www.hl7.org/fhir/valueset-participant-role.html
-                                coding: "http://snomed.info/sct",
-                                test: practitionerRole,
-                            }
-                        ],
                         reference: `Practitioner/${practitionerId}`,
                         type: "Practitioner"
                     }
