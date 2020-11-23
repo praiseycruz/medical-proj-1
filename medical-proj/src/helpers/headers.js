@@ -9,6 +9,9 @@ export function headers(method, body = {}, extraHeaders = []){
     }
 }
 
+const commonHeaders = [
+    { "Accept": "application/json" },
+]
 
 export const Method = {
     POST:   {
@@ -47,7 +50,3 @@ export const Method = {
         ]
     },
 }
-
-const commonHeaders = [
-    { "Accept": "application/json" },
-]
