@@ -28,9 +28,9 @@ export const AddPatientWrapper = styled.div`
     }
 
     .patient-info {
-        margin-top: 30px;
+        /* margin-top: 30px; */
 
-        .col-sm-6 {
+        .col-sm-12 {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -38,7 +38,7 @@ export const AddPatientWrapper = styled.div`
 
         .form-group {
             .from-label {
-                font-size: 14px;
+                font-size: 15px;
             }
 
             .gender-label {
@@ -52,13 +52,13 @@ export const AddPatientWrapper = styled.div`
             }
 
             .form-control {
-                font-size: 14px;
+                font-size: 15px;
             }
         }
 
         label {
             margin-bottom: 0;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .edit-patient {
@@ -67,7 +67,7 @@ export const AddPatientWrapper = styled.div`
             align-items: center;
 
             button {
-                font-size: 14px;
+                font-size: 15px;
                 border-radius: 2px;
             }
         }
@@ -95,7 +95,7 @@ export const AddPatientWrapper = styled.div`
         }
 
         button {
-            font-size: 14px;
+            font-size: 15px;
             border-radius: 2px;
         }
     }

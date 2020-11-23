@@ -27,7 +27,7 @@ export const DashboardWrapper = styled.div`
                 }
 
                 button {
-                    font-size: 14px;
+                    font-size: 15px;
                 }
             }
 
@@ -48,7 +48,7 @@ export const DashboardWrapper = styled.div`
                         color: #fff;
                         /* border-radius: 30px; */
                         border: 1px solid #767a82;
-                        font-size: 14px;
+                        font-size: 15px;
                     }
                 }
             }
@@ -92,7 +92,7 @@ export const DashboardWrapper = styled.div`
                         .info-box-text,
                         .progress-description {
                             display: block;
-                            font-size: 16px;
+                            font-size: 15px;
                             white-space: nowrap;
                             overflow: hidden;
                             text-overflow: ellipsis;
@@ -158,11 +158,11 @@ export const DashboardWrapper = styled.div`
                             flex-direction: row-reverse;
 
                             span {
-                                font-size: 14px;
+                                font-size: 15px;
                             }
 
                             button {
-                                font-size: 14px;
+                                font-size: 15px;
                                 padding: 5px 10px;
                                 border-radius: 2px;
                                 width: 100px;

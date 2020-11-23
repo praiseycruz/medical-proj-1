@@ -53,7 +53,7 @@ export const TaskManagementWrapper = styled.div`
                         p {
                             background-color: #333a46;
                             padding: 2px 10px;
-                            font-size: 14px;
+                            font-size: 15px;
                             margin-bottom: 0;
                             border-radius: 2px;
                             display: flex;
@@ -72,7 +72,7 @@ export const TaskManagementWrapper = styled.div`
                             margin: 28px 0 0 10px;
 
                             button {
-                                font-size: 14px;
+                                font-size: 15px;
                                 background-color: transparent;
                                 border-radius: 2px;
                                 padding: 1px 5px;
@@ -201,14 +201,14 @@ export const TaskManagementWrapper = styled.div`
                                         max-width: 250px;
                                         color: #fff;
                                         border: 1px solid #767a82;
-                                        font-size: 14px;
+                                        font-size: 15px;
                                         border-radius: 2px;
                                         padding: 6px 12px;
                                     }
                                 }
 
                                 button {
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     border-radius: 2px;
                                 }
                             }
@@ -261,7 +261,7 @@ export const TaskManagementWrapper = styled.div`
 
                         button {
                             border-radius: 2px;
-                            font-size: 14px;
+                            font-size: 15px;
                         }
                     }
                 }
@@ -275,7 +275,7 @@ export const TaskManagementWrapper = styled.div`
         margin-top: 35px;
 
         button {
-            font-size: 14px;
+            font-size: 15px;
             border-radius: 2px;
         }
     }
@@ -349,7 +349,7 @@ export const TaskManagementWrapper = styled.div`
                                 p {
                                     background-color: #2c394b;
                                     padding: 2px 10px;
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     margin-bottom: 0;
                                     border-radius: 2px;
                                     display: flex;
@@ -374,7 +374,7 @@ export const TaskManagementWrapper = styled.div`
                             padding: 15px 15px 15px 0;
 
                             button {
-                                font-size: 14px;
+                                font-size: 15px;
                                 /* background-color: transparent; */
                                 border-radius: 2px;
                                 padding: 1px 5px;
@@ -579,14 +579,14 @@ export const TaskManagementWrapper = styled.div`
                                         max-width: 250px;
                                         color: #fff;
                                         border: 1px solid #464e5b;
-                                        font-size: 14px;
+                                        font-size: 15px;
                                         border-radius: 2px;
                                         padding: 6px 12px;
                                     }
                                 }
 
                                 button {
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     border-radius: 2px;
                                 }
                             }
@@ -644,7 +644,7 @@ export const TaskManagementWrapper = styled.div`
 
                         button {
                             border-radius: 2px;
-                            font-size: 14px;
+                            font-size: 15px;
                         }
                     }
 
@@ -683,7 +683,7 @@ export const TaskManagementWrapper = styled.div`
                         margin-top: 15px;
 
                         button {
-                            font-size: 14px;
+                            font-size: 15px;
                             border-radius: 2px;
                         }
                     }
@@ -710,7 +710,7 @@ export const TaskManagementWrapper = styled.div`
                                     align-items: center;
 
                                     button {
-                                        font-size: 14px;
+                                        font-size: 15px;
                                         border-radius: 2px;
                                     }
                                 }
@@ -723,7 +723,7 @@ export const TaskManagementWrapper = styled.div`
                                     max-width: 100%;
                                     color: #fff;
                                     border: 1px solid #464e5b;
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     border-radius: 2px;
                                     padding: 6px 12px;
                                     margin-top: 5px;
@@ -736,7 +736,7 @@ export const TaskManagementWrapper = styled.div`
                                     margin-top: 15px;
 
                                     button {
-                                        font-size: 14px;
+                                        font-size: 15px;
                                         border-radius: 2px;
                                         min-width: 100px;
                                     }
@@ -749,7 +749,7 @@ export const TaskManagementWrapper = styled.div`
                                 align-items: center;
 
                                 button {
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     border-radius: 2px;
                                     background-color: transparent;
                                 }
@@ -761,7 +761,7 @@ export const TaskManagementWrapper = styled.div`
                                 }
 
                                 button {
-                                    font-size: 14px;
+                                    font-size: 15px;
                                     border-radius: 2px;
                                 }
 

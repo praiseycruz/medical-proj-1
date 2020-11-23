@@ -38,7 +38,7 @@ export const AddPatientWrapper = styled.div`
 
         .form-group {
             .from-label {
-                font-size: 14px;
+                font-size: 15px;
             }
 
             .gender-label {
@@ -52,13 +52,13 @@ export const AddPatientWrapper = styled.div`
             }
 
             .form-control {
-                font-size: 14px;
+                font-size: 15px;
             }
         }
 
         label {
             margin-bottom: 0;
-            font-size: 14px;
+            font-size: 15px;
         }
     }
 
