@@ -60,6 +60,19 @@ export const AddPhysicianWrapper = styled.div`
                         margin-right: 5px;
                     }
                 }
+
+                .react-datepicker-wrapper {
+                    input {
+                        background-color: #353c48;
+                        width: 100%;
+                        max-width: 250px;
+                        color: #fff;
+                        border: 1px solid #464e5b;
+                        font-size: 15px;
+                        border-radius: 2px;
+                        padding: 6px 12px;
+                    }
+                }
             }
         }
     }
