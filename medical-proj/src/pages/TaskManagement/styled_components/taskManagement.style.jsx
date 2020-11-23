@@ -321,7 +321,8 @@ export const TaskManagementWrapper = styled.div`
                     }
 
                     .patient-info {
-                        color: #F67B56;
+                        color: #56bbf6;
+                        /* color: #F67B56; */
 
                         span {
                             color: #fff;
@@ -343,7 +344,8 @@ export const TaskManagementWrapper = styled.div`
 
                                 h5 {
                                     margin-bottom: 8px;
-                                    color: #F67B56;
+                                    color: #56bbf6;
+                                    /* color: #F67B56; */
                                 }
 
                                 p {
