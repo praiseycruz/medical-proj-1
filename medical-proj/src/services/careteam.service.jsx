@@ -1,5 +1,5 @@
 import { config } from '../config'
-import { Method, RandNum } from '../helpers'
+import { Method, headers, RandNum } from '../helpers'
 
 export const dashboardService = {
     getAll,

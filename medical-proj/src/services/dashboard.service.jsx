@@ -1,6 +1,6 @@
 import React from 'react'
 import { config } from '../config'
-import { Method, RandNum } from '../helpers'
+import { Method, headers } from '../helpers'
 
 export const dashboardService = {
     count
