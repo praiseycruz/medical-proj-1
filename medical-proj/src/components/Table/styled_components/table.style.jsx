@@ -7,7 +7,7 @@ export const TableWrapper = styled.div`
         border-collapse: separate;
         border-spacing: 0;
         color: #4a4a4d;
-        font-size: 14px;
+        font-size: 16px;
         width: 100%;
 
         tr {
@@ -21,7 +21,7 @@ export const TableWrapper = styled.div`
         }
 
         thead {
-            font-size: 14px;
+            font-size: 16px;
             line-height: 24px;
             border: 1px solid transparent;
             max-width: 100%;
@@ -51,6 +51,20 @@ export const TableWrapper = styled.div`
             &.blood-pressure {
                 background-color: #272D38;
             }
+
+            button {
+                &.sort-button {
+                    background-color: transparent !important;
+                    border: none !important;
+                    padding: 0 15px 5px;
+
+                    &:focus {
+                        box-shadow: none !important;
+                        background-color: transparent !important;
+                        border: none !important;
+                    }
+                }
+            }
         }
 
         tbody {
@@ -78,7 +92,7 @@ export const TableWrapper = styled.div`
                         }
 
                         button {
-                            font-size: 14px;
+                            font-size: 16px;
                             padding: 5px 20px;
                         }
                     }
@@ -118,7 +132,7 @@ export const TableWrapper = styled.div`
                         }
 
                         button {
-                            font-size: 14px;
+                            font-size: 16px;
                             border-radius: 2px;
                         }
                     }
@@ -153,7 +167,7 @@ export const TableWrapper = styled.div`
                         background-color: #2D3441;
 
                         button {
-                            font-size: 14px;
+                            font-size: 16px;
                             border-radius: 2px;
                             padding: 3px 8px;
 

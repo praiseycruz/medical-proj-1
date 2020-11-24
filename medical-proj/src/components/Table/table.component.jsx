@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Spinner } from 'react-bootstrap'
+import { Table, Spinner, Button } from 'react-bootstrap'
 import { TableWrapper } from './styled_components/table.style'
 
 export class TableComponent extends React.Component {
@@ -9,10 +9,6 @@ export class TableComponent extends React.Component {
 
     render() {
         let { data, cols, bordered, striped, removeThead, isTableFor, loading, total } = this.props
-
-        // let a = data.map((s, key) => {
-        //     console.log(s);
-        // })
 
         return (
             <TableWrapper>
@@ -59,9 +55,21 @@ export class TableComponent extends React.Component {
                                 className={`${bordered ? 'table-bordered' : 'table-borderless'} ${striped ? 'table-striped' : ''}`}>
                                 <thead className={`${isTableFor} ${removeThead ? 'd-none' : ''}`}>
                                     <tr>
-                                        {cols.map((headerItem, index) => (
-                                            <th key={index}>{headerItem.title}</th>
-                                        ))}
+                                        {cols.map((headerItem, index) => {
+                                            let lastItem = cols.length - 1
+
+                                            return (
+                                                <th key={index}>
+                                                    {headerItem.title}
+
+                                                    { index !== lastItem &&
+                                                        <Button className="sort-button">
+                                                            <i className="fas fa-sort"></i>
+                                                        </Button>
+                                                    }
+                                                </th>
+                                            )
+                                        })}
                                     </tr>
                                 </thead>
 
