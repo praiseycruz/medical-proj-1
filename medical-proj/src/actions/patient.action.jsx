@@ -10,7 +10,7 @@ export const patientAction = {
     // getPreviousPage
 }
 
-function create(data) {
+function create({patientData, physicianId, careManagerId, deviceIds}) {
 
     return dispatch => {
 
@@ -19,7 +19,7 @@ function create(data) {
         proceed()
 
         function proceed() {
-            patientService.create(data).then( response => {
+            patientService.create(patientData, physicianId, careManagerId, deviceIds).then( response => {
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))

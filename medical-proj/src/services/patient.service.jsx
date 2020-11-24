@@ -1,6 +1,6 @@
 import React from 'react'
 import { config } from '../config'
-import { Method, headers } from '../helpers'
+import { Method, headers, RandNum } from '../helpers'
 
 export const patientService = {
     create,
@@ -12,17 +12,17 @@ export const patientService = {
     // getPreviousPage
 }
 
-function create(data) {
-    const requestOptions = headers(Method.POST, JSON.stringify(data))
+// function create(data) {
+//     const requestOptions = headers(Method.POST, JSON.stringify(data))
 
-    return fetch(config.apiGateway.URL + `/Patient`, requestOptions)
-    .then(handleResponse)
-    .then(response => {
-        return Promise.resolve(response)
-    }).catch(error => {
-        return Promise.reject(error)
-    })
-}
+//     return fetch(config.apiGateway.URL + `/Patient`, requestOptions)
+//     .then(handleResponse)
+//     .then(response => {
+//         return Promise.resolve(response)
+//     }).catch(error => {
+//         return Promise.reject(error)
+//     })
+// }
 
 function findById(id) {
 
@@ -143,6 +143,85 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
     )
 
     return fetch(config.apiGateway.URL + config.Patient.appendPractitioner(patientId), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
+function create(patientData, physicianId, careManagerId, deviceIds) {
+    const requestOptions = headers(Method.GET)
+
+    let tempPatientId = RandNum('')
+
+    // TODO: Use sonmed code role
+    // https://www.hl7.org/fhir/valueset-participant-role.html
+
+    let deviceTemplate = (deviceId, patientId) => {
+        return {
+            "status": "active",
+            "subject": {
+                reference: `Patient/${patientId}`,
+                type: "Patient"
+            },
+            "request": {
+                "method": "PATCH",
+                "ifNoneExist": `status=active&_id=${deviceId}`,
+            }
+        }
+    }
+
+    let reqBody = {
+        "resourceType": "Bundle",
+        "type": "transaction",
+        "entry": [
+            {
+                "id": `${tempPatientId}`,
+                ...patientData,
+                "request": { "method": "POST" }
+            },
+            {
+                "resourceType": "CareTeam",
+                "identifier": [{
+                    "value": RandNum("CT"),
+                    "system": "EXSYS"
+                }],
+                "subject": {
+                    "reference": `Patient/${tempPatientId}`,
+                    "type": "Patient"
+                },
+                "participant": [
+                    {
+                        "role": [{
+                            "coding": "http://snomed.info/sct",
+                            "text": "Primary Physician",
+                        }],
+                        "member": {
+                            "reference": `Practitioner/${physicianId}`,
+                            "type": "Practitioner"
+                        }
+                    },
+                    {
+                        "role": [{
+                            "coding": "http://snomed.info/sct",
+                            "text": "Primary Care Manager",
+                        }],
+                        "member": {
+                            "reference": `Practitioner/${careManagerId}`,
+                            "type": "Practitioner"
+                        }
+                    }
+                ],
+                "status": "active",
+                "request": { "method": "POST" }
+            },
+            ...deviceIds.map(id => deviceTemplate(id, tempPatientId))
+        ]
+    }
+
+    return fetch(config.apiGateway.URL, requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
