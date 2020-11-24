@@ -48,9 +48,9 @@ function createWithPractitioner(patientId, practitionerId, practitionerRole) {
         }
     }
 
-    function request() { return { type: careTeamConstants.CARETEAM_CREATE_REQUEST } }
-    function success(careTeam) { return { type: careTeamConstants.CARETEAM_CREATE_SUCCESS, careTeam } }
-    function failure(error) { return { type: careTeamConstants.CARETEAM_CREATE_FAILURE, error } }
+    function request() { return { type: careTeamConstants.CREATE_REQUEST } }
+    function success(careTeam) { return { type: careTeamConstants.CREATE_SUCCESS, careTeam } }
+    function failure(error) { return { type: careTeamConstants.CREATE_FAILURE, error } }
 }
 
 function getAll(count, skip) {
