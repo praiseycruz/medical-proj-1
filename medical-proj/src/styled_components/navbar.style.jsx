@@ -59,21 +59,6 @@ export const NavbarWrapper = styled.div`
                     }
                 }
             }
-
-            .physician-wrapper {
-                background-color: #232A34;
-                min-width: 120px;
-                padding: 0 10px;
-                display: flex;
-                justify-content: flex-start;
-                align-items: center;
-                margin-left: 25px;
-                border-radius: 2px;
-
-                p {
-                    margin-bottom: 0;
-                }
-            }
         }
     }
 `
