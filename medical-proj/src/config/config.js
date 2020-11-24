@@ -6,8 +6,8 @@ import { Practitioner } from './Practitioner'
 
 export const config = {
     apiGateway: {
-        // URL: 'https://hapi.fhir.org/baseR4'
-        URL: 'https://r4.test.pyrohealth.net/fhir'
+        URL: 'https://hapi.fhir.org/baseR4'
+        // URL: 'https://r4.test.pyrohealth.net/fhir'
     },
     sessionGateway: {
         URL: 'http://medtrackswp.azurewebsites.net'

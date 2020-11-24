@@ -59,17 +59,6 @@ class AddPatientPage extends React.Component {
             devicesDataOnClick: [],
             physicianData: [],
             isPhysicianAdded: false
-            // physicianLists: [
-            //     {
-            //         name: 'Dr. One Physician'
-            //     },
-            //     {
-            //         name: 'Dr. Two Physician'
-            //     },
-            //     {
-            //         name: 'Dr. Three Physician'
-            //     }
-            // ]
         }
     }
 
@@ -499,7 +488,7 @@ class AddPatientPage extends React.Component {
                                 key={deviceItem.resource.id}
                                 value={deviceName[0].name}
                                 data-id={deviceItem.resource.id}
-                                data-type={deviceItem.resource.type.text}
+                                data-type={deviceItem.resource.type}
                                 data-man={deviceItem.resource.manufacturer}
                                 data-serial={deviceItem.resource.serialNumber}
                                 data-model={deviceItem.resource.modelNumber}>
@@ -1167,7 +1156,7 @@ class AddPatientPage extends React.Component {
                         </Card.Body>
                     </Card>
 
-                    <FormFinal
+                    {/*<FormFinal
                          initialValues={{
 
                          }}
@@ -1225,24 +1214,6 @@ class AddPatientPage extends React.Component {
 
                                      <Modal.Body>
                                          <div className="adding-new">
-                                            {/* <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">Device type</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <Field name="device-type" type="text">
-                                                         {({ input, meta, type }) => (
-                                                             <>
-                                                                 <Form.Control
-                                                                     type={type}
-                                                                     placeholder="Device type"
-                                                                     autoComplete="off"
-                                                                     {...input}
-                                                                 />
-                                                             </>
-                                                         )}
-                                                     </Field>
-                                                 </div>
-                                             </Form.Group>*/}
-
                                              <Form.Group className="devices-types">
                                                  <Form.Label className="col-sm-5">Device Name</Form.Label>
                                                  <div className="col-sm-7">
@@ -1425,7 +1396,7 @@ class AddPatientPage extends React.Component {
                                      </Modal.Footer>
                                  </Modal>
                              </Form>
-                     )} />
+                     )} />*/}
                 </div>
             </AddPatientWrapper>
         )

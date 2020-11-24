@@ -145,14 +145,14 @@ export default class App extends React.Component {
                                         <span className="link-text">Dashboard</span>
                                     </NavLink>
 
+                                    <NavLink to="/patient-readings" activeClassName="active" className="card-links">
+                                        <i className="fas fa-book-open"></i>
+                                        <span className="link-text">Patients Management</span>
+                                    </NavLink>
+
                                     <NavLink to="/add-patients" activeClassName="active" className="card-links">
                                         <i className="fas fa-info-circle"></i>
                                         <span className="link-text">Patients Details</span>
-                                    </NavLink>
-
-                                    <NavLink to="/patient-readings" activeClassName="active" className="card-links">
-                                        <i className="fas fa-book-open"></i>
-                                        <span className="link-text">Patients Readings</span>
                                     </NavLink>
 
                                     {/*<Link to="#" className="card-links">

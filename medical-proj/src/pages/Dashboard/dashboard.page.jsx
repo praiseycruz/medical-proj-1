@@ -61,19 +61,19 @@ class DashboardPage extends React.Component {
                     }
                 },
                 {
-                    title: 'PCP',
-                    key: 'pcp',
-                    render: colData => {
-                        return <span>{colData.pcp}</span>;
-                    }
-                },
-                {
                     title: 'Actions',
                     key: 'button',
                     render: colData => {
                         return <span><button className="btn btn-primary edit" onClick={(e, data) => { this._getPatientData(e, colData.resource)} }><i className="fas fa-pencil-alt"></i></button></span>;
                     }
-                }
+                }                
+                /*{
+                    title: 'PCP',
+                    key: 'pcp',
+                    render: colData => {
+                        return <span>{colData.pcp}</span>;
+                    }
+                },*/
             ],
             practitionerCols: [
                 {
@@ -382,74 +382,6 @@ class DashboardPage extends React.Component {
                         </div>
                     </div>
 
-                    {/*<div className="form-wrapper patients-content">
-                        <Row>
-                            <Col sm={10} md={9} className="column-content">
-                                <Form>
-                                    <Form.Group as={Row} controlId="searchPatients">
-                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
-                                            Search patients
-                                        </Form.Label>
-
-                                        <Col sm="4" md="6" className="p-0">
-                                            <Form.Control type="text" placeholder="Search by name or ID" />
-                                        </Col>
-                                    </Form.Group>
-                                </Form>
-                            </Col>
-
-                            <Col sm={2} md={3} className="add-patient">
-                                <Link to="/addpatients" className="bg-primary">Add patient</Link>
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col sm={10} md={9} className="column-content">
-                                <Form>
-                                    <Form.Group as={Row} controlId="searchPhysician">
-                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
-                                            Search physicians
-                                        </Form.Label>
-
-                                        <Col sm="4" md="6" className="p-0">
-                                            <Form.Control type="text" placeholder="Search by name or ID" onChange={this._searchHandler} autoComplete="off" />
-                                        </Col>
-                                    </Form.Group>
-                                </Form>
-                            </Col>
-                        </Row>
-
-                        <Row>
-                            <Col sm={10} md={9} className="column-content">
-                                <Form>
-                                    <Form.Group as={Row} controlId="searchPrimaryCareManager">
-                                        <Form.Label column sm="6" md="5" lg="4" xl="3">
-                                            Primary care manager
-                                        </Form.Label>
-
-                                        <Col sm="4" md="6" className="p-0">
-                                            <Form.Control type="text" placeholder="Search by name or ID" />
-                                        </Col>
-                                    </Form.Group>
-                                </Form>
-                            </Col>
-                        </Row>
-                    </div>*/}
-
-                    {/*<div className="form-wrapper manager-content">
-                        <Form>
-                            <Form.Group as={Row} controlId="searchPrimaryCareManager">
-                                <Form.Label column sm="6" md="5" lg="4" xl="3">
-                                    Primary care manager
-                                </Form.Label>
-
-                                <Col sm="4" md="6" className="p-0">
-                                    <Form.Control type="text" placeholder="Search by name or ID" />
-                                </Col>
-                            </Form.Group>
-                        </Form>
-                    </div>*/}
-
                     <Row>
                         <Col sm={12} md={12} lg={12} xl={12}>
                             <Card className="dashboard-table">
@@ -535,7 +467,7 @@ class DashboardPage extends React.Component {
                             </Card>
                         </Col>
 
-                        <Col sm={12} md={12} lg={12} xl={12}>
+                        {/*<Col sm={12} md={12} lg={12} xl={12}>
                             <Card className="dashboard-table">
                                 <Card.Header>Practitioners Lists</Card.Header>
 
@@ -588,7 +520,7 @@ class DashboardPage extends React.Component {
                                     </div>
                                 </Card.Body>
                             </Card>
-                        </Col>
+                        </Col>*/}
                     </Row>
                 </div>
             </DashboardWrapper>
