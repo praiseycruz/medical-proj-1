@@ -145,7 +145,7 @@ class PhysicianPage extends React.Component {
             ],
             "extension": [{
                 "url": config.apiGateway.URL + "/Role",
-                "valueBoolean": `${values.role}`
+                "valueString": `${values.role}`
             }]
         }
 

@@ -109,8 +109,8 @@ class AddPatientPage extends React.Component {
                 }
             ],
             "extension": [{
-                "url": config.apiGateway.URL + "/IsRemoteMonitored",
-                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
+                "url": config.apiGateway.URL + "/CanSendText",
+                "valueBoolean": typeof values.canText === 'undefined' ? false : values.canText
             }]
         }
 
