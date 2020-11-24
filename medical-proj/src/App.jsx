@@ -77,12 +77,6 @@ export default class App extends React.Component {
                                 <Nav.Link onClick={this._handleSidebar}>
                                     <FontAwesomeIcon size="sm" className="icon" icon={faBars} />
                                 </Nav.Link>
-
-                                <div className="physician-wrapper">
-                                    <div className="physician-name">
-                                        <p>John Doe, M.D</p>
-                                    </div>
-                                </div>
                             </Nav>
 
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -145,14 +139,19 @@ export default class App extends React.Component {
                                         <span className="link-text">Dashboard</span>
                                     </NavLink>
 
+                                    {/*<NavLink to="/add-patients" activeClassName="active" className="card-links">
+                                        <i className="fas fa-info-circle"></i>
+                                        <span className="link-text">Patient Details</span>
+                                    </NavLink>*/}
+
                                     <NavLink to="/patient-readings" activeClassName="active" className="card-links">
                                         <i className="fas fa-book-open"></i>
-                                        <span className="link-text">Patients Management</span>
+                                        <span className="link-text">Patient Management</span>
                                     </NavLink>
 
                                     <NavLink to="/add-patients" activeClassName="active" className="card-links">
                                         <i className="fas fa-info-circle"></i>
-                                        <span className="link-text">Patients Details</span>
+                                        <span className="link-text">Add New Patient</span>
                                     </NavLink>
 
                                     {/*<Link to="#" className="card-links">
