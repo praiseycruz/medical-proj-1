@@ -28,12 +28,12 @@ export const AddPatientWrapper = styled.div`
     }
 
     .patient-info {
-        /* margin-top: 30px; */
-
         .col-sm-12 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            &.patient-inputs {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }            
         }
 
         .form-group {
@@ -88,8 +88,6 @@ export const AddPatientWrapper = styled.div`
                             }
                         }
                     }
-
-
                 }
             }
         }
@@ -112,6 +110,13 @@ export const AddPatientWrapper = styled.div`
                 border-radius: 2px;
                 padding: 6px 12px;
             }
+        }
+
+        .add-patient-condition-wrapper {
+            margin-top: 30px;
+            border-top: 2px solid #282E38;
+            padding-top: 25px;
+            min-height: 400px;
         }
     }
 
@@ -288,7 +293,7 @@ export const AddPatientWrapper = styled.div`
 
                     label {
                         &.form-label {
-                            border-bottom: 1px solid #fff;
+                            border-bottom: 1px solid #a9a9a961;
                             padding: 15px;
                             margin-bottom: 20px;
                         }

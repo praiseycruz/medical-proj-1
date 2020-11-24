@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
-import { Form, Row, Col, Button, Modal, Card, Tabs, Tab } from 'react-bootstrap'
+import { Form, Row, Col, Button, Modal, Card } from 'react-bootstrap'
 import { TableComponent } from '../../../components/Table'
 import { patientAction, dashboardAction, practitionerAction, deviceAction, careTeamAction } from '../../../actions'
 import iziToast from 'izitoast';
@@ -14,7 +14,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
 
-class AddPatientPage extends React.Component {
+class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -58,193 +58,7 @@ class AddPatientPage extends React.Component {
             physicianValue: '',
             devicesDataOnClick: [],
             physicianData: [],
-            isPhysicianAdded: false,
-            diagnosisCode: [
-                {
-                    name: 'Code 1'
-                },
-                {
-                    name: 'Code 2'
-                },
-                {
-                    name: 'Code 3'
-                }
-            ],
-            diagnosisCodeValue: '',
-            conditionValue: '',
-            conditionLists: [
-                {
-                    name: 'Condition 1'
-                },
-                {
-                    name: 'Condition 2'
-                },
-                {
-                    name: 'Condition 3'
-                }
-            ],
-            conditionsAdded: [
-                {
-                    condition: 'Condition 1',
-                    diagnosisCode: 'Code 1',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 2',
-                    diagnosisCode: 'Code 2',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 3',
-                    diagnosisCode: 'Code 3',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 4',
-                    diagnosisCode: 'Code 4',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                }
-            ],
-            conditionCols: [
-                {
-                    title: '',
-                    key: 'condition',
-                    render: colData => {
-                        return <span>{colData.condition}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'diagnosisCode',
-                    render: colData => {
-                        return <span>{colData.diagnosisCode}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'programs',
-                    render: colData => {
-                        return <span>{colData.programs[0].name}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'button',
-                    render: colData => {
-                        return <button className="btn btn-danger" onClick={(e) => { this._removeCondition(colData.id) }}><i className="fa fa-times" aria-hidden="true"></i></button>
-                    }
-                }
-            ],
-            alertLists: [
-                {
-                    priority: 'High',
-                    title: "Patient's blood pressure is out of target range",
-                    date: '10/17/2020 3:37 PM'
-                },
-                {
-                    priority: 'High',
-                    title: "Patient's blood pressure is out of target range",
-                    date: '10/17/2020 3:37 PM'
-                },
-                {
-                    priority: 'Low',
-                    title: "Patient's blood pressure is out of target range",
-                    date: '10/17/2020 3:37 PM'
-                },
-                {
-                    priority: 'High',
-                    title: "Patient's blood pressure is out of target range",
-                    date: '10/17/2020 3:37 PM'
-                },
-                {
-                    priority: 'Low',
-                    title: "Patient's blood pressure is out of target range",
-                    date: '10/17/2020 3:37 PM'
-                },
-            ],
-            alertCols: [
-                {
-                    title: 'Priority',
-                    key: 'priority',
-                    render: colData => {
-                        return <span className={colData.priority.toLowerCase()}>{colData.priority}</span>
-                    }
-                },
-                {
-                    title: 'Title',
-                    key: 'title',
-                    render: colData => {
-                        return <span>{colData.title}</span>
-                    }
-                },
-                {
-                    title: 'Date',
-                    key: 'date',
-                    render: colData => {
-                        return <span>{colData.date}</span>
-                    }
-                },
-                {
-                    title: 'View',
-                    key: 'button',
-                    render: colData => {
-                        return <button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>View</button>
-                    }
-                }
-            ],
-            patientDevicesLists: [
-                {
-                    name: '',
-                    connectedAt: '',
-                    lastMeasurement: ''
-                }
-            ],
-            patientDevicesCols: [
-                {
-                    title: 'Device',
-                    key: 'device',
-                    render: colData => {
-                        return <span>{colData.device}</span>
-                    }
-                },
-                {
-                    title: 'Connected At',
-                    key: 'connectedAt',
-                    render: colData => {
-                        return <span>{colData.connectedAt}</span>
-                    }
-                },
-                {
-                    title: 'Last Measurement At',
-                    key: 'lastMeasurement',
-                    render: colData => {
-                        return <span>{colData.lastMeasurement}</span>
-                    }
-                },
-                {
-                    title: 'Actions',
-                    key: 'button',
-                    render: colData => {
-                        return <>{colData.actions}</>
-                    }
-                }
-            ],
+            isPhysicianAdded: false
         }
     }
 
@@ -268,11 +82,6 @@ class AddPatientPage extends React.Component {
             "telecom": [
                 {
                     "value": `${values.phoneNum}`,
-                    "use": "home",
-                    "system": "phone"
-                },
-                {
-                    "value": `${values.mobileNum}`,
                     "use": "mobile",
                     "system": "phone"
                 },
@@ -305,8 +114,8 @@ class AddPatientPage extends React.Component {
                 }
             ],
             "extension": [{
-                "url": config.apiGateway.URL + "/CanSendText",
-                "valueBoolean": typeof values.canText === 'undefined' ? false : values.canText
+                "url": config.apiGateway.URL + "/IsRemoteMonitored",
+                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
             }]
         }
 
@@ -319,7 +128,7 @@ class AddPatientPage extends React.Component {
         let lastname = []
 		let addemail = []
         let ssn = []
-        let addressLine1 = []
+        let address = []
         let zipcode = []
         let phoneNum = []
 
@@ -335,8 +144,8 @@ class AddPatientPage extends React.Component {
         if (!values.ssn)
             ssn.push("SSN is required")
 
-        if (!values.addressLine1)
-            addressLine1.push("Address is required")
+        if (!values.address)
+            address.push("Address is required")
 
         if (!values.zipcode)
             zipcode.push("Zipcode is required")
@@ -357,8 +166,8 @@ class AddPatientPage extends React.Component {
         if (ssn.length > 0)
             errors.ssn = ssn
 
-        if (addressLine1.length > 0)
-            errors.addressLine1 = addressLine1
+        if (address.length > 0)
+            errors.address = address
 
         if (zipcode.length > 0)
             errors.zipcode = zipcode
@@ -599,46 +408,9 @@ class AddPatientPage extends React.Component {
         });
     }
 
-    _getDiagnosisCode = (e) => {
-        let { value } = e.target
-
-        this.setState({
-            diagnosisCodeValue: value
-        })
-    }
-
-    _getCondition = (e) => {
-        let { value } = e.target
-
-        this.setState({
-            conditionValue: value
-        })
-    }
-
-    _handleSubmitAddCondition = () => {
-
-    }
-
-    _handleValidateAddCondition = () => {
-
-    }
-
     render() {
-        let { showModal,
-              devicesAdded,
-              devicesLists,
-              physicianValue,
-              physicianLists,
-              devicesDataOnClick,
-              diagnosisCode,
-              diagnosisCodeValue,
-              conditionLists,
-              conditionValue,
-              conditionsAdded,
-              alertLists,
-              patientDevicesLists } = this.state
-
-        let { patient, practitioner } = this.props
+        let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists, devicesDataOnClick } = this.state
+        let { patient, practitioner, removeBc } = this.props
 
         let isAddingNewPatientLoading = false
         let patientId = null
@@ -733,7 +505,7 @@ class AddPatientPage extends React.Component {
             })
         }
 
-        if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
+        /*if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
             populateDeviceData = devicesDataOnClick.map((item, key) => {
 
                 return (
@@ -800,39 +572,13 @@ class AddPatientPage extends React.Component {
                     </Form.Group>
                 </div>
             )
-        }
-
-        let diagnosisCodeOption = diagnosisCode.map((item, key) => {
-            return (
-                <option key={key}>{item.name}</option>
-            )
-        })
-
-        let conditionOptions = conditionLists.map((item, key) => {
-            return (
-                <option key={key}>{item.name}</option>
-            )
-        })
+        }*/
 
         return (
             <AddPatientWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Add New Patient</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Add New Patient</li>
-                    </ol>
-                </div>
-
                 <div className="mt-4">
                     <Card>
-                        <Card.Header>Add patient info</Card.Header>
+                        <Card.Header>Update patient info</Card.Header>
 
                         <Card.Body>
                             <FormFinal
@@ -847,29 +593,6 @@ class AddPatientPage extends React.Component {
                                         <div className="patient-info">
                                             <Row>
                                                 <Col sm={6}>
-                                                    <Form.Group className="patient-id">
-                                                        <Row>
-                                                            <Col sm={12} className="patient-inputs">
-                                                                <Form.Label className="col-sm-4">ID</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="patientId" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Patient ID"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
                                                     <Form.Group className="patient-firstname">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1052,6 +775,7 @@ class AddPatientPage extends React.Component {
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
+
                                                     {/*<Form.Group className="monitoring">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1128,7 +852,6 @@ class AddPatientPage extends React.Component {
                                                                               dateFormat="MM/dd/yyyy"
                                                                               value={this.state.dob}
                                                                               id="date_picker_id"
-                                                                              autoComplete="off"
                                                                             />
                                                                         )}
                                                                     </Field>
@@ -1148,29 +871,6 @@ class AddPatientPage extends React.Component {
                                                                                 <Form.Control
                                                                                     type={type}
                                                                                     placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="patient-medicare">
-                                                        <Row>
-                                                            <Col sm={12} className="patient-inputs">
-                                                                <Form.Label className="col-sm-4">Medicare ID</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="medicareId" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Medicare ID"
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
@@ -1277,141 +977,12 @@ class AddPatientPage extends React.Component {
                                                 </Col>
                                             </Row>
 
-                                            <div className="add-patient-condition-wrapper">
-                                                <div>
-                                                    <Tabs defaultActiveKey="conditions" transition={false} id="noanim-tab-example">
-                                                        <Tab eventKey="conditions" title="Conditions">
-                                                            <FormFinal
-                                                                    initialValues={{
-                                                                        gender: 'male'
-                                                                    }}
-                                                                    onSubmit={this._handleSubmitAddCondition}
-                                                                    validate={this._handleValidateAddCondition}
-                                                                    render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                                                                        <Form onSubmit={handleSubmit}>
-                                                                            <div className="patient-condition">
-                                                                                <div>
-                                                                                    <Form.Group className="firstname">
-                                                                                        <Row>
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Condition</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <Field name="condition" type="select">
-                                                                                                        {({ input, meta, type }) => (
-                                                                                                            <>
-                                                                                                                <Form.Control
-                                                                                                                     as="select"
-                                                                                                                     value={conditionValue}
-                                                                                                                     onChange={(e) => { this._getCondition(e) }}>
-                                                                                                                     {conditionOptions}
-                                                                                                                </Form.Control>
-                                                                                                            </>
-                                                                                                        )}
-                                                                                                    </Field>
-                                                                                                </div>
-                                                                                            </Col>
-
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Diagnosis Code</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <Field name="diagnosis" type="select">
-                                                                                                        {({ input, meta, type }) => (
-                                                                                                            <Form.Control
-                                                                                                                 as="select"
-                                                                                                                 value={diagnosisCodeValue}
-                                                                                                                 onChange={(e) => { this._getDiagnosisCode(e) }}>
-                                                                                                                 {diagnosisCodeOption}
-                                                                                                            </Form.Control>
-                                                                                                        )}
-                                                                                                    </Field>
-                                                                                                </div>
-                                                                                            </Col>
-
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Programs</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <div>
-                                                                                                        <label className="programs-label">
-                                                                                                            <Field name="programs-rpm" type="checkbox" value="rpm">
-                                                                                                                {({ input, meta }) => (
-                                                                                                                    <>
-                                                                                                                        <input
-                                                                                                                            {...input}
-                                                                                                                        />
-                                                                                                                    </>
-                                                                                                                )}
-                                                                                                            </Field>
-                                                                                                            <span>RPM</span>
-                                                                                                        </label>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </Col>
-
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Assessment</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <div className="add-assessment">
-                                                                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                                                                            Start Now
-                                                                                                        </Button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </Col>
-                                                                                        </Row>
-                                                                                    </Form.Group>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div className="mt-4">
-                                                                                <TableComponent data={conditionsAdded} cols={this.state.conditionCols} bordered={false} striped={false} removeThead={true} isTableFor={'conditions'} />
-                                                                            </div>
-                                                                        </Form>
-                                                                )} />
-                                                        </Tab>
-                                                        <Tab eventKey="devices" title="Devices">
-                                                            <div className="supplied-devices-wrapper">
-                                                                <div className="supplied-devices-section">
-                                                                    <h5>Supplied Devices:</h5>
-
-                                                                    <Button variant="primary">Add Device</Button>
-                                                                </div>
-                                                                <div className="mt-4">
-                                                                    <TableComponent data={devicesLists} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
-                                                                </div>
-                                                            </div>
-
-                                                            <div className="patient-device-wrapper">
-                                                                <h5>Patient Devices:</h5>
-
-                                                                <div className="mt-4">
-                                                                    <TableComponent data={patientDevicesLists} cols={this.state.patientDevicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
-                                                                </div>
-                                                            </div>
-                                                        </Tab>
-                                                        <Tab eventKey="alerts" title="Alerts">
-                                                            <div className="mt-4">
-                                                                <TableComponent data={alertLists} cols={this.state.alertCols} bordered={false} striped={false} isTableFor={'alerts'} />
-                                                            </div>
-                                                        </Tab>
-                                                        <Tab eventKey="billing" title="Billing">
-                                                            Billing
-                                                        </Tab>
-                                                        <Tab eventKey="portal" title="Portal">
-                                                            Portal
-                                                        </Tab>
-                                                        <Tab eventKey="rangeSetup" title="Patient Alerts Range Setup/Edit">
-                                                            Patient Alerts Range Setup/Edit
-                                                        </Tab>
-                                                    </Tabs>
-                                                </div>
-                                            </div>
-
                                             <div className="btn-add">
                                                 <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
                                                     { isAddingNewPatientLoading ?
-                                                        <span className="ml-2">Adding Patient...</span>
+                                                        <span className="ml-2">Updating Patient Data...</span>
                                                         :
-                                                        <>Add Patient</>
+                                                        <>Edit Patient</>
                                                     }
                                                 </Button>
                                             </div>
@@ -1420,248 +991,6 @@ class AddPatientPage extends React.Component {
                                 )} />
                         </Card.Body>
                     </Card>
-
-                    {/*<FormFinal
-                         initialValues={{
-
-                         }}
-                         onSubmit={this._handleSubmitDevice}
-                         validate={this._handleValidateDevice}
-                         render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                             <Form onSubmit={handleSubmit}>
-                                 <div className="devices">
-                                     <>
-                                         <h2>Devices</h2>
-
-                                         <Card>
-                                             <Card.Body>
-                                                 <Form.Group className="devices">
-                                                     <div className="device-wrapper">
-                                                         <div className="col-sm-12 col-md-6 col-lg-4 p-0">
-                                                             <Field name="devices" type="text">
-                                                                 {({ input, meta, type }) => (
-                                                                     <>
-                                                                         <Form.Control
-                                                                             type={type}
-                                                                             placeholder="Device type"
-                                                                             autoComplete="off"
-                                                                             {...input}
-                                                                         />
-                                                                     </>
-                                                                 )}
-                                                             </Field>
-                                                         </div>
-
-                                                         <Button
-                                                             id="btn-add-device"
-                                                             onClick={this._openModal}>Add Device</Button>
-                                                     </div>
-                                                 </Form.Group>
-
-                                                 <div className="mt-4">
-                                                     <TableComponent data={devicesAdded} cols={this.state.cols} bordered={false} striped={false} removeThead={true} isTableFor={'devices'} />
-                                                 </div>
-                                             </Card.Body>
-                                         </Card>
-                                     </>
-                                 </div>
-
-                                 <Modal
-                                     show={showModal}
-                                     size="md"
-                                     aria-labelledby="contained-modal-title-vcenter"
-                                     centered
-                                     onHide={this._closeModal}
-                                 >
-                                     <Modal.Header closeButton>
-                                        <h5>Adding new device - {`"${patientName}"`}</h5>
-                                     </Modal.Header>
-
-                                     <Modal.Body>
-                                         <div className="adding-new">
-                                             <Form.Group className="devices-types">
-                                                 <Form.Label className="col-sm-5">Device Name</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <Field name="device" type="select">
-                                                         {({ input, meta, type }) => (
-                                                             <>
-                                                                 <Form.Control
-                                                                      as="select"
-                                                                      value={this.state.deviceValue}
-                                                                      onChange={(e) => { this._getDeviceName(e) }} >
-                                                                      <option>-- SELECT A DEVICE --</option>
-                                                                      { optionDevicesLists }
-                                                                 </Form.Control>
-                                                             </>
-                                                         )}
-                                                     </Field>
-                                                 </div>
-                                             </Form.Group>
-
-                                             { populateDeviceData }
-                                         </div>
-
-                                         <div className="device-limits">
-                                             <h5>Device limits for patient</h5>
-
-                                             <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">Dangerously high</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <div className="limit-wrapper">
-                                                         <label>above</label>
-                                                         <Field name="dangerously" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="180"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-                                                     </div>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">High</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <div className="limit-wrapper">
-                                                         <Field name="high" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="120"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-
-                                                         <label>to</label>
-
-                                                         <Field name="high-t" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="180"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-                                                     </div>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">Normal</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <div className="limit-wrapper">
-                                                         <Field name="normal" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="80"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-
-                                                         <label>to</label>
-
-                                                         <Field name="normal-t" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="120"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-                                                     </div>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">Low</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <div className="limit-wrapper">
-                                                         <Field name="low" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="50"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-
-                                                         <label>to</label>
-
-                                                         <Field name="low-t" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="80"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-                                                     </div>
-                                                 </div>
-                                             </Form.Group>
-
-                                             <Form.Group className="devices-types mt-4">
-                                                 <Form.Label className="col-sm-5">Dangerously low</Form.Label>
-                                                 <div className="col-sm-7">
-                                                     <div className="limit-wrapper">
-                                                         <label>below</label>
-
-                                                         <Field name="very-low" type="number">
-                                                             {({ input, meta, type }) => (
-                                                                 <>
-                                                                     <Form.Control
-                                                                         type={type}
-                                                                         placeholder="50"
-                                                                         autoComplete="off"
-                                                                         {...input}
-                                                                     />
-                                                                 </>
-                                                             )}
-                                                         </Field>
-                                                     </div>
-                                                 </div>
-                                             </Form.Group>
-                                         </div>
-                                     </Modal.Body>
-
-                                     <Modal.Footer>
-                                         <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
-                                             Add Device
-                                         </Button>
-                                     </Modal.Footer>
-                                 </Modal>
-                             </Form>
-                     )} />*/}
                 </div>
             </AddPatientWrapper>
         )
@@ -1678,5 +1007,5 @@ function mapStateToProps(state) {
     }
 }
 
-const connectedAddPatientPage = connect(mapStateToProps)(AddPatientPage)
-export { connectedAddPatientPage as AddPatientPage }
+const connectedEditPatientPage = connect(mapStateToProps)(EditPatientPage)
+export { connectedEditPatientPage as EditPatientPage }
