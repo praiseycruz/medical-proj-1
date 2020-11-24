@@ -7,6 +7,7 @@ import { Form, Row, Col, Button, Card } from 'react-bootstrap'
 import { practitionerAction, dashboardAction, patientAction } from '../../actions'
 import iziToast from 'izitoast';
 import { RandNum } from '../../helpers'
+import { config } from '../../config'
 
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -142,6 +143,10 @@ class PhysicianPage extends React.Component {
                     "system": "EXSYS"
                 }
             ],
+            "extension": [{
+                "url": config.apiGateway.URL + "/Role",
+                "valueBoolean": `${values.role}`
+            }]
         }
 
         dispatch(practitionerAction.create(practitionerData))
