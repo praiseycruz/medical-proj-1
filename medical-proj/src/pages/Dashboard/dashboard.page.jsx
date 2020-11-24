@@ -35,8 +35,8 @@ class DashboardPage extends React.Component {
                     title: 'Name',
                     key: 'name',
                     render: colData => {
-                        return <span>{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
-                        // return <span>{ colData.resource.name }</span>;
+                        // return <Link to="/patient-readings">{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</Link>;
+                        return <span>{ colData.resource.name }</span>;
                     }
                 },
                 {
@@ -66,14 +66,7 @@ class DashboardPage extends React.Component {
                     render: colData => {
                         return <span><button className="btn btn-primary edit" onClick={(e, data) => { this._getPatientData(e, colData.resource)} }><i className="fas fa-pencil-alt"></i></button></span>;
                     }
-                }                
-                /*{
-                    title: 'PCP',
-                    key: 'pcp',
-                    render: colData => {
-                        return <span>{colData.pcp}</span>;
-                    }
-                },*/
+                }
             ],
             practitionerCols: [
                 {
@@ -106,6 +99,16 @@ class DashboardPage extends React.Component {
                     }
                 }
             ],
+            careManagerValue: 'all',
+            careManagerLists: [
+                {
+                    name: 'One Sample'
+                },
+                {
+                    name: 'Two Sample'
+                }
+            ],
+            activityValue: ''
         }
     }
 
@@ -247,14 +250,40 @@ class DashboardPage extends React.Component {
         localStorage.setItem('patientDetails', patientData);
     }
 
+    _getPrimaryCareManagerValue = (e) => {
+        let { value } = e.target
+
+        this.setState({
+            careManagerValue: value
+        })
+
+        // var index = e.target.selectedIndex;
+        // var optionElement = e.target.childNodes[index]
+        // var optionId =  optionElement.getAttribute('data-id')
+        //
+        // let physicianData = [
+        //     {
+        //         "id": optionId,
+        //         "role": "Primary Physician"
+        //     }
+        // ]
+    }
+
+    _getActivityValue = (e) => {
+        this.setState({
+            activityValue: e.target.value
+        })
+    }
+
     render() {
         let { practitioner } = this.props
-        let { pagination, count, patientLoading, practitionersPagination } = this.state
+        let { pagination, count, patientLoading, practitionersPagination, careManagerLists } = this.state
 
         // let isGetPatientLoading = false
         let isGetPractionerLoading = false
         let pagePagination = null
         let practitionerPagePagination = null
+        let primaryCareManagerOptions = []
 
         if (typeof practitioner !== 'undefined' && practitioner !== null) {
             let { getAll } = practitioner
@@ -322,6 +351,16 @@ class DashboardPage extends React.Component {
             })
         }
 
+        if (careManagerLists !== 'undefined' && careManagerLists !== null && careManagerLists.length > 0) {
+            primaryCareManagerOptions = careManagerLists.map((manager, key) => {
+                return (
+                    <option key={key} value={manager.name}>{manager.name}</option>
+                )
+            })
+        }
+
+        console.log(this.state.careManagerValue);
+
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
@@ -337,6 +376,21 @@ class DashboardPage extends React.Component {
 							</li>
 							<li className="active">Dashboard</li>
 						</ol>
+                    </div>
+
+                    <div className="care-manager-wrapper">
+                        <div className="row">
+                            <label className="mb-0 px-3">Primary Care Manager: </label>
+                            <div className="px-2">
+                                <select
+                                    className="form-control"
+                                    value={this.state.careManagerValue}
+                                    onChange={(e) => { this._getPrimaryCareManagerValue(e) }}>
+                                    <option value="all">ALL</option>
+                                    { primaryCareManagerOptions }
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div className="state-overview">
@@ -373,8 +427,16 @@ class DashboardPage extends React.Component {
                                         <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
                                     </span>
 
-                                    <div className="info-box-content">
-                                        <span className="info-box-text">No activity in days</span>
+                                    <div className="info-box-content with-input">
+                                        <span className="info-box-text">
+                                            No activity in days
+
+                                            <input
+                                                className="form-control"
+                                                placeholder="Enter number"
+                                                value={this.state.activityValue}
+                                                onChange={(e) => { this._getActivityValue(e) }} />
+                                        </span>
                                         <span className="info-box-number">150</span>
                                     </div>
                                 </div>

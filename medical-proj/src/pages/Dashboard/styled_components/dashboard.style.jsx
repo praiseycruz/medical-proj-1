@@ -55,7 +55,7 @@ export const DashboardWrapper = styled.div`
         }
 
         .state-overview {
-            margin-top: 30px;
+            margin-top: 15px;
 
             .row {
                 justify-content: center;
@@ -63,7 +63,8 @@ export const DashboardWrapper = styled.div`
                 .info-box {
                     border-bottom-left-radius: 5px;
                     border-top-right-radius: 5px;
-                    min-height: 100px;
+                    min-height: 115px;
+                    /* height: 100%; */
                     background: #fff;
                     width: 100%;
                     box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
@@ -104,6 +105,43 @@ export const DashboardWrapper = styled.div`
                             font-weight: 300;
                             font-size: 21px;
                         }
+
+                        &.with-input {
+                            /* padding-top: 0; */
+
+                            .info-box-text {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+
+                                input {
+                                    background-color: #b869d9 !important;
+                                    max-width: 110px;
+                                    border: 1px solid #d46eff;
+                                    height: 25px;
+                                    margin-bottom: 5px;
+                                    border-radius: 20px;
+                                    padding: 6px 12px;
+
+                                    &:focus {
+                                        box-shadow: none;
+                                    }
+
+                                    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+                                        color: #c2c2c2;
+                                        opacity: 1; /* Firefox */
+                                    }
+
+                                    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
+                                        color: #c2c2c2;
+                                    }
+
+                                    &::-ms-input-placeholder { /* Microsoft Edge */
+                                        color: #c2c2c2;
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     &.bg-blue {
@@ -118,6 +156,29 @@ export const DashboardWrapper = styled.div`
                         background-color: #8E44AD;
                     }
                 }
+            }
+        }
+
+        .care-manager-wrapper {
+            background-color: #333a47;
+            border-radius: 2px;
+            padding: 20px 15px;
+            margin: 20px 0 30px;
+
+            label {
+                margin-bottom: 0;
+                color: #fff;
+                font-size: 22px;
+            }
+
+            select {
+                background-color: #353c48;
+                width: 100%;
+                min-width: 250px;
+                color: #fff;
+                border: 1px solid #767a82;
+                font-size: 15px;
+                padding: 6px 12px;
             }
         }
 
