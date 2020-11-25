@@ -7,12 +7,6 @@ var defaultState = {
         success: false,
         error: null
     },
-    careTeamCreate: {
-        loading: false,
-        success: false,
-        error: null,
-        careTeam: {}
-    },
     findByPatientId: {
         loading: false,
         success: false,
@@ -72,47 +66,6 @@ export function careteam(state = defaultState, action) {
             getAll.success = false
             state = {
                 getAll,
-                ...otherState
-            }
-            return state
-        case careteamConstants.CARETEAM_CREATE_REQUEST:
-            var {
-                careTeamCreate,
-                ...otherState
-            } = state
-            careTeamCreate.success = false
-            careTeamCreate.error = null
-            careTeamCreate.loading = true
-            state = {
-                careTeamCreate,
-                ...otherState
-            }
-
-            return state
-        case careteamConstants.CARETEAM_CREATE_SUCCESS:
-            var {
-                careTeamCreate,
-                ...otherState
-            } = state
-            careTeamCreate.success = true
-            careTeamCreate.loading = false
-            careTeamCreate.error = null
-            careTeamCreate.careTeam = action.careTeam
-            state = {
-                careTeamCreate,
-                ...otherState
-            }
-            return state
-        case careteamConstants.CARETEAM_CREATE_FAILURE:
-            var {
-                careTeamCreate,
-                ...otherState
-            } = state
-            careTeamCreate.loading = false
-            careTeamCreate.success = false
-            careTeamCreate.error = action.error
-            state = {
-                careTeamCreate,
                 ...otherState
             }
             return state
