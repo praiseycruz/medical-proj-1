@@ -1,6 +1,7 @@
 import React from 'react'
 import { config } from '../config'
 import { Method, headers } from '../helpers'
+import _ from 'lodash'
 
 export const practitionerService = {
     create,
@@ -22,13 +23,42 @@ function create(data) {
     })
 }
 
-function getAll(count, skip) {
+function getAll(count, skip, role) {
     const requestOptions = headers(Method.GET)
-
     return fetch(config.apiGateway.URL + config.Practitioner.getAll(count, skip), requestOptions)
     .then(handleResponse)
     .then(response => {
+
+        if ( typeof role!=='undefined' && role!=='' && role!==null) {
+
+            let validRoles = ['Primary Physician', 'Care Manager']
+            if ( validRoles.indexOf(role)!==-1) {
+
+                if (typeof response!=='undefined') {
+                    if (typeof response.entry!=='undefined') {
+                        if ( response.entry.length > 0) {
+                            let finalEntries = []
+                            let { entry } = response
+                            entry.map( et => {
+                                if ( typeof et !=='undefined') {
+                                    if ( typeof et.resource!=='undefined') {
+                                        if (et.resource.extension[0].valueString==role) {
+                                            finalEntries.push(et)
+                                        }
+                                    }
+                                }
+                            })
+
+                            response.entry = finalEntries
+                        }
+                    }
+                }
+            }
+
+        }
+
         return Promise.resolve(response)
+
     }).catch(error => {
         return Promise.reject(error)
     })
