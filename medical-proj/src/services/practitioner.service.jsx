@@ -30,10 +30,9 @@ function getAll(count, skip, role) {
     .then(response => {
 
         if ( typeof role!=='undefined' && role!=='' && role!==null) {
-
             let validRoles = ['Primary Physician', 'Care Manager']
-            if ( validRoles.indexOf(role)!==-1) {
 
+            if ( validRoles.indexOf(role)!==-1) {
                 if (typeof response!=='undefined') {
                     if (typeof response.entry!=='undefined') {
                         if ( response.entry.length > 0) {
@@ -42,13 +41,17 @@ function getAll(count, skip, role) {
                             entry.map( et => {
                                 if ( typeof et !=='undefined') {
                                     if ( typeof et.resource!=='undefined') {
-                                        if (et.resource.extension[0].valueString==role) {
-                                            finalEntries.push(et)
+                                        if (typeof et.resource.extension!=='undefined' && et.resource.extension.length > 0) {
+                                            if (et.resource.extension[0].valueString==role) {
+                                                finalEntries.push(et)
+                                            } else {
+
+                                            }
                                         }
                                     }
                                 }
                             })
-
+                            
                             response.entry = finalEntries
                         }
                     }
