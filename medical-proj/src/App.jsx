@@ -10,13 +10,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Accordion, DropdownButton, Dropdown, Card, Button } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars, faBell, faCaretRight, faCaretDown } from "@fortawesome/free-solid-svg-icons"
-
+import { connect } from 'react-redux'
 import 'izitoast/dist/css/iziToast.min.css'; // added izitoast css
 
 import './assets/scss/global.scss'
 import { history } from './helpers'
 
-export default class App extends React.Component {
+export class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -39,10 +39,81 @@ export default class App extends React.Component {
 
     componentDidMount() {
 
+        let pages = {
+            'dashboard': 'Dashboard',
+            'patient-management': 'Patient Management',
+            'add-patients': 'Add Patient',
+            'reports': 'Reports',
+            'physician': 'Office Setup',
+            'care-manager': 'Office Setup',
+            'task-management': 'Office Setup',
+            'add-device': 'Office Setup'
+        }
+
+        let exceptions = ['physician','care-manager','task-management','add-device']
+        let exceptionsMap = ['Physician Management', 'Care Manager Management', 'Tasks', 'Add New Device']
+        let currentPage = (window.location.pathname).toString().replace('/','')
+
+        if (exceptions.indexOf(currentPage)!==-1)
+            this._setOfficePage(exceptionsMap[exceptions.indexOf(currentPage)])
+        else
+            this._setCurrentPage(pages[currentPage])
+
+
+    }
+
+    _setCurrentPage = (page) => {
+
+        let { dispatch, breadCrumbs } = this.props
+        /*
+        if (breadCrumbs.history.indexOf(page)==-1) {
+            breadCrumbs.history.push(page)
+        } else {
+            breadCrumbs.history = []
+            breadCrumbs.history.push(page)
+        }*/
+        breadCrumbs.history = []
+        breadCrumbs.history.push(page)
+
+        //set history
+        dispatch({
+            type: 'SET_HISTORY',
+            history: breadCrumbs.history
+        })
+
+        //set current page
+        dispatch({
+            type: 'SET_CURRENT_PAGE',
+            currentPage: page
+        })
+    }
+
+
+    _setOfficePage = (page) => {
+
+        let { dispatch, breadCrumbs } = this.props
+
+        breadCrumbs.history = []
+        breadCrumbs.history.push('Office Setup')
+        breadCrumbs.history.push(page)
+
+        //set history
+        dispatch({
+            type: 'SET_HISTORY',
+            history: breadCrumbs.history
+        })
+
+        //set current page
+        dispatch({
+            type: 'SET_CURRENT_PAGE',
+            currentPage: 'Office Setup'
+        })
     }
 
     render() {
         let { sidebarOpen, officeSetup } = this.state
+
+        let historyLength = this.props.breadCrumbs.history.length
 
         return (
             <Router history={history}>
@@ -66,10 +137,28 @@ export default class App extends React.Component {
             							<li>
                                             <i className="fa fa-home"></i>&nbsp;
                                             <Link to="/dashboard" className="parent-item">Home</Link>
-                                            &nbsp;<i className="fa fa-angle-right">
-                                            </i>
+                                            &nbsp;<i className="fa fa-angle-right"></i>
             							</li>
-            							<li className="active">Dashboard</li>
+                                        {
+                                            this.props.breadCrumbs.history.map ((h, key) => {
+                                                return (
+                                                    <span key={key}>
+                                                        <li className={(h==this.props.breadCrumbs.currentPage) ? 'active' : ''}>
+                                                        {
+                                                            h
+                                                        }
+                                                        {
+                                                            historyLength > 1 && key!= ( historyLength - 1 ) &&
+                                                            <>
+                                                            &nbsp;<i className="fa fa-angle-right"></i>
+                                                            </>
+                                                        }
+                                                        </li>
+                                                    </span>
+                                                )
+                                            })
+                                        }
+
             						</ol>
                                 </div>
                             </Nav>
@@ -129,32 +218,23 @@ export default class App extends React.Component {
 
                             <div className="sidebar-menu-section">
                                 <Accordion>
-                                    <NavLink to="/dashboard" activeClassName="active" className="card-links">
+                                    <NavLink onClick={() => {this._setCurrentPage('Dashboard')}}
+                                    to="/dashboard" activeClassName="active" className="card-links">
                                         <img src="/images/dashboard.svg" className="img-fluid dashboard-icon" alt="dashboard-svg"/>
                                         <span className="link-text">Dashboard</span>
                                     </NavLink>
 
-                                    {/*<NavLink to="/add-patients" activeClassName="active" className="card-links">
-                                        <i className="fas fa-info-circle"></i>
-                                        <span className="link-text">Patient Details</span>
-                                    </NavLink>*/}
-
-                                    <NavLink to="/patient-management" activeClassName="active" className="card-links">
+                                    <NavLink onClick={() => {this._setCurrentPage('Patient Management')}} to="/patient-management" activeClassName="active" className="card-links">
                                         <i className="fas fa-book-open"></i>
                                         <span className="link-text">Patient Management</span>
                                     </NavLink>
 
-                                    <NavLink to="/add-patients" activeClassName="active" className="card-links">
+                                    <NavLink onClick={() => {this._setCurrentPage('Add New Patient')}} to="/add-patients" activeClassName="active" className="card-links">
                                         <i className="fas fa-info-circle"></i>
                                         <span className="link-text">Add New Patient</span>
                                     </NavLink>
 
-                                    {/*<Link to="#" className="card-links">
-                                        <i className="fas fa-tasks"></i>
-                                        <span className="link-text">Tasks</span>
-                                    </Link>*/}
-
-                                    <NavLink to="/reports" className="card-links" activeClassName="active">
+                                    <NavLink onClick={() => {this._setCurrentPage('Reports')}} to="/reports" className="card-links" activeClassName="active">
                                         <i className="fas fa-file-medical-alt"></i>
                                         <span className="link-text">Reports</span>
                                     </NavLink>
@@ -174,22 +254,22 @@ export default class App extends React.Component {
                                         <Accordion.Collapse eventKey="1" className="accordion-collapse">
                                             <ul>
                                                 <li>
-                                                    <NavLink to="/physician" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setOfficePage('Physician Management')}} to="/physician" className="card-links" activeClassName="active">
                                                         <i className="fas fa-user-md"></i>
                                                         <span className="link-text">Physician Management</span>
                                                     </NavLink>
 
-                                                    <NavLink to="/care-manager" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setOfficePage('Care Manager Management')}} to="/care-manager" className="card-links" activeClassName="active">
                                                         <i className="fas fa-file-medical"></i>
                                                         <span className="link-text">Care Manager Management</span>
                                                     </NavLink>
 
-                                                    <NavLink to="/task-management" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setOfficePage('Tasks')}} to="/task-management" className="card-links" activeClassName="active">
                                                         <i className="fas fa-tasks"></i>
                                                         Tasks
                                                     </NavLink>
 
-                                                    <NavLink to="/add-device" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setOfficePage('Add New Device')}} to="/add-device" className="card-links" activeClassName="active">
                                                         <i className="fas fa-tasks"></i>
                                                         Add New Device
                                                     </NavLink>
@@ -228,3 +308,14 @@ export default class App extends React.Component {
         )
     }
 }
+
+
+function mapStateToProps(state) {
+    const { breadCrumbs } = state
+    return {
+        breadCrumbs
+    }
+}
+
+const connectedApp = connect(mapStateToProps)(App)
+export default connectedApp
