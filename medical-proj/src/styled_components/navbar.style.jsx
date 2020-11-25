@@ -5,13 +5,13 @@ export const NavbarWrapper = styled.div`
     margin: 0;
     border: 0;
     padding: 0;
-    min-height: 60px;
+    min-height: 65px;
     filter: none;
     background-color: #333a47;
     /* background-color: #2C333F; */
 
     nav {
-        height: 60px;
+        height: 65px;
         /* background-color: #2C333F; */
         background-color: #333a47;
         box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
