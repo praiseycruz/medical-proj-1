@@ -24,12 +24,9 @@ class DashboardPage extends React.Component {
             hasGetPatientCount: false,
             searchValue: null,
             patientsPagination: null,
-            practitionersPagination: null,
             patientTotal: null,
-            practitionerTotal: null,
             patientLoading: false,
             patientsData: [],
-            practitionersData: [],
             patientCols: [
                 {
                     title: 'Name',
@@ -68,37 +65,6 @@ class DashboardPage extends React.Component {
                     }
                 }
             ],
-            practitionerCols: [
-                {
-                    title: 'Practitioner Name',
-                    key: 'name',
-                    render: colData => {
-                        return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
-                        // return <span>{ colData.resource.name }</span>;
-                    }
-                },
-                {
-                    title: 'DOB',
-                    key: 'dob',
-                    render: colData => {
-                        return <span>{colData.resource.birthDate}</span>;
-                    }
-                },
-                {
-                    title: 'Gender',
-                    key: 'gender',
-                    render: colData => {
-                        return <span>{colData.resource.gender}</span>;
-                    }
-                },
-                {
-                    title: 'Actions',
-                    key: 'edit',
-                    render: colData => {
-                        return <span><button className="btn btn-primary edit"><i className="fas fa-pencil-alt"></i></button></span>;
-                    }
-                }
-            ],
             careManagerValue: 'all',
             careManagerLists: [
                 {
@@ -116,7 +82,7 @@ class DashboardPage extends React.Component {
         const { dispatch } = this.props
         dispatch(dashboardAction.count())
         dispatch(patientAction.getAll(10, 0))
-        dispatch(practitionerAction.getAll(10, 0))
+        dispatch(practitionerAction.getAll(20, 0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -177,26 +143,6 @@ class DashboardPage extends React.Component {
                 }
             }
         }
-
-        if (prevProps.practitioner !== this.props.practitioner) {
-            let { getAll } = this.props.practitioner
-
-            if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
-
-                if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry, link, total } = practitioners
-
-                    if (typeof entry !== 'undefined' && entry !== null) {
-                        this.setState({
-                            practitionersData: entry,
-                            practitionersPagination: link,
-                            practitionerTotal: total
-                        })
-                    }
-                }
-            }
-        }
     }
 
     _getPaginationLink = (e, link, relation) => {
@@ -217,10 +163,6 @@ class DashboardPage extends React.Component {
         }
 
         dispatch(patientAction.getPaginationLink(link, patientsModule.currentPage))
-    }
-
-    _getPractitionerPaginationLink = (e, link, relation) => {
-
     }
 
     _handleSubmitSearch = values => {
@@ -274,28 +216,10 @@ class DashboardPage extends React.Component {
     }
 
     render() {
-        let { practitioner } = this.props
-        let { pagination, count, patientLoading, practitionersPagination, careManagerLists } = this.state
+        let { pagination, count, patientLoading, careManagerLists } = this.state
 
-        // let isGetPatientLoading = false
-        let isGetPractionerLoading = false
         let pagePagination = null
-        let practitionerPagePagination = null
         let primaryCareManagerOptions = []
-
-        if (typeof practitioner !== 'undefined' && practitioner !== null) {
-            let { getAll } = practitioner
-
-            if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { loading } = getAll
-
-                if (loading) {
-                    isGetPractionerLoading = true
-                } else {
-                    isGetPractionerLoading = false
-                }
-            }
-        }
 
         if (typeof pagination !== 'undefined' && pagination !== null) {
             pagePagination = pagination.map((item, index) => {
@@ -323,32 +247,6 @@ class DashboardPage extends React.Component {
             })
         }
 
-        if (typeof practitionersPagination !== 'undefined' && practitionersPagination !== null) {
-            practitionerPagePagination = practitionersPagination.map((item, index) => {
-                let key = index + 1
-
-                return (
-                    <>
-                        { (item.relation === 'next' || item.relation === 'previous') &&
-                            <button
-                                key={key}
-                                className={`${item.relation === 'previous' ? 'btn btn-secondary previous' : 'btn btn-primary next'}`}
-                                onClick={(e, link, relation) => { this._getPractitionerPaginationLink(e, item.url, item.relation) }}>
-                                { item.relation === 'previous' ?
-                                    <>
-                                        <i className="fas fa-angle-left"></i> &nbsp; Previous
-                                    </> :
-                                    <>
-                                        Next &nbsp; <i className="fas fa-angle-right"></i>
-                                    </>
-                                }
-                            </button>
-                        }
-                    </>
-                )
-            })
-        }
-
         if (careManagerLists !== 'undefined' && careManagerLists !== null && careManagerLists.length > 0) {
             primaryCareManagerOptions = careManagerLists.map((manager, key) => {
                 return (
@@ -356,8 +254,6 @@ class DashboardPage extends React.Component {
                 )
             })
         }
-
-        console.log(this.state.careManagerValue);
 
         return (
             <DashboardWrapper>
