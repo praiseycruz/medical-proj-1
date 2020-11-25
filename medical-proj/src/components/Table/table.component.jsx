@@ -12,39 +12,6 @@ export class TableComponent extends React.Component {
 
         return (
             <TableWrapper>
-                {/* loading !== 'undefined' && loading !== null && !loading ?
-                    <Table
-                        responsive
-                        hover
-                        size="sm"
-                        className={`${bordered ? 'table-bordered' : 'table-borderless'} ${striped ? 'table-striped' : ''}`}>
-                        <thead className={`${removeThead ? 'd-none' : ''}`}>
-                            <tr>
-                                {cols.map((headerItem, index) => (
-                                    <th key={index}>{headerItem.title}</th>
-                                ))}
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            { data.map((item, index) => (
-                                <tr key={index}>
-                                    {cols.map((col, key) => (
-                                        <td key={key} className={isTableFor}>{col.render(item)}</td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </Table>
-                    :
-                    <div className="spinner-wrapper">
-                        <Spinner animation="border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </Spinner>
-                        <span className="ml-3">Loading data...</span>
-                    </div>
-                */}
-
                 { loading !== 'undefined' && loading !== null && !loading ?
                     <>
                         { data.length > 0 ?

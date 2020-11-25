@@ -176,6 +176,10 @@ export const TableWrapper = styled.div`
                             }
                         }
                     }
+
+                    .email {
+                        text-transform: none !important;
+                    }
                 }
             }
         }
