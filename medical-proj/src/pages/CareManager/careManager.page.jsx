@@ -7,6 +7,12 @@ import { Form, Row, Col, Button, Card } from 'react-bootstrap'
 import { practitionerAction } from '../../actions'
 import { RandNum } from '../../helpers'
 
+import { config } from '../../config'
+
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import moment from 'moment'
+
 class CareManagerPage extends React.Component {
     constructor(props) {
         super(props)
@@ -44,7 +50,8 @@ class CareManagerPage extends React.Component {
             ],
             isPractitionerCreated: false,
             hasPractitionerCreated: false,
-            practitionerData: {}
+            practitionerData: {},
+            dob: new Date()
         }
     }
 
@@ -52,50 +59,68 @@ class CareManagerPage extends React.Component {
     }
 
     _handleSubmit = async values => {
-        // const { dispatch } = this.props
-        //
-        // let practitionerData = {
-        //     "resourceType": "Practitioner",
-        //     "name": [
-        //         {
-        //             "use": "official",
-        //             "given": [`${values.firstname}`],
-        //             "family": `${values.lastname}`
-        //         }
-        //     ],
-        //     "gender": `${values.gender}`,
-        //     "telecom": [
-        //         {
-        //             "value": `${values.phoneNum}`,
-        //             "use": "mobile",
-        //             "system": "phone"
-        //         },
-        //         {
-        //             "system": "email",
-        //             "value": `${values.addemail}`
-        //         }
-        //     ],
-        //     "address": [
-        //         {
-        //             "text": [
-        //                 `${values.address}`
-        //             ],
-        //             "postalCode": `${values.zipcode}`
-        //         }
-        //     ],
-        //     "identifier": [
-        //         {
-        //             "system": "http://hl7.org/fhir/sid/us-ssn",
-        //             "value": `${values.ssn}`
-        //         },
-        //         {
-        //             "value": RandNum("PX"),
-        //             "system": "EXSYS"
-        //         }
-        //     ],
-        // }
-        //
-        // dispatch(practitionerAction.create(practitionerData))
+        const { dispatch } = this.props
+
+        let s = document.getElementById("date_picker_id")
+        let dobFormat = moment(s.value).format("yyyy-MM-DD")
+
+        let practitionerData = {
+            "resourceType": "Practitioner",
+            "name": [
+                {
+                    "use": "official",
+                    "given": [`${values.firstname}`],
+                    "family": `${values.lastname}`,
+                }
+            ],
+            "birthDate": `${dobFormat}`,
+            "gender": `${values.gender}`,
+            "telecom": [
+                {
+                    "value": `${values.phoneNum}`,
+                    "use": "home",
+                    "system": "phone"
+                },
+                {
+                    "value": `${values.mobileNum}`,
+                    "use": "mobile",
+                    "system": "phone"
+                },
+                {
+                    "system": "email",
+                    "value": `${values.addemail}`
+                }
+            ],
+            "address": [
+                {
+                    "text": [
+                        `${values.addressLine1} ${values.addressLine2}, ${values.state} ${values.zipcode}`
+                    ],
+                    "line": [
+                        `${values.addressLine1}`,
+                        `${values.addressLine2}`
+                    ],
+                    "state": `${values.state}`,
+                    "postalCode": `${values.zipcode}`
+                }
+            ],
+            "identifier": [
+                {
+                    "system": "http://hl7.org/fhir/sid/us-ssn",
+                    "value": `${values.ssn}`
+                },
+                {
+                    "value": RandNum("PX"),
+                    "system": "EXSYS"
+                }
+            ],
+            "extension": [{
+                "url": config.apiGateway.URL + "/Role",
+                "valueString": `Care Manager`
+            }]
+        }
+
+        dispatch(practitionerAction.create(practitionerData))
     }
 
     _handleValidate = values => {
@@ -157,6 +182,12 @@ class CareManagerPage extends React.Component {
 		return errors
     }
 
+    _setDob = date => {
+        this.setState({
+            dob: date
+        });
+    }
+
     render() {
 
         return (
@@ -176,223 +207,15 @@ class CareManagerPage extends React.Component {
                 </div>
 
                 <div className="mt-4">
-                    {/*<FormFinal
-                        initialValues={{
-                            gender: 'male'
-                        }}
-                        onSubmit={this._handleSubmit}
-                        validate={this._handleValidate}
-                        render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                            <Form onSubmit={handleSubmit}>
-                                <div className="patient-info">
-                                    <>
-                                        <Card>
-                                            <Card.Header>Care Manager Info</Card.Header>
-
-                                            <Card.Body>
-                                                <div>
-                                                    <Form.Group className="firstname">
-                                                        <Row>
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">First name</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="firstname" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="First name"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Gender</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <label className="gender-label male">
-                                                                        <Field name="gender" type="radio" value="male">
-                                                                            {({ input, meta }) => (
-                                                                                <>
-                                                                                    <input
-                                                                                        {...input}
-                                                                                    />
-                                                                                </>
-                                                                            )}
-                                                                        </Field>
-                                                                        <span>Male</span>
-                                                                    </label>
-
-                                                                    <label className="gender-label">
-                                                                        <Field name="gender" type="radio" value="female">
-                                                                            {({ input, meta, type }) => (
-                                                                                <>
-                                                                                    <input
-                                                                                        type={type}
-                                                                                        {...input}
-                                                                                    />
-                                                                                </>
-                                                                            )}
-                                                                        </Field>
-                                                                        <span>Female</span>
-                                                                    </label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="lastname">
-                                                        <Row>
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Last name</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="lastname" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Last name"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="ssn" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="email">
-                                                        <Row>
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Email</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="addemail" type="email">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Email address"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Address</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="address" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Address"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="phoneNum">
-                                                        <Row>
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Phone Number</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="phoneNum" type="number">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Number"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-
-                                                            <Col sm={6}>
-                                                                <Form.Label className="col-sm-4">Zip Code</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="zipcode" type="number">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Zip code"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <div className="btn-add">
-                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                            Add Care Manager
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    </>
-                                </div>
-                            </Form>
-                    )} />*/}
-
                     <Card>
                         <Card.Header>Care Manager Info</Card.Header>
 
                         <Card.Body>
                             <FormFinal
                                 initialValues={{
-                                    gender: 'male'
+                                    gender: 'male',
+                                    addressLine1: '',
+                                    addressLine2: ''
                                 }}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
@@ -480,7 +303,30 @@ class CareManagerPage extends React.Component {
                                                                             <>
                                                                                 <Form.Control
                                                                                     type={type}
-                                                                                    placeholder="Number"
+                                                                                    placeholder="Phone Number"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="care-manager-number">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Mobile Number</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="mobileNum" type="number">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Mobile Number"
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
@@ -531,6 +377,29 @@ class CareManagerPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
+                                                    <Form.Group className="dob">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">DOB</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="dob" type="select">
+                                                                        {({ input, meta, type }) => (
+                                                                            <DatePicker
+                                                                              selected={this.state.dob}
+                                                                              onChange={date => this._setDob(date)}
+                                                                              isClearable
+                                                                              placeholderText="MM/DD/YYYY"
+                                                                              dateFormat="MM/dd/yyyy"
+                                                                              value={this.state.dob}
+                                                                              id="date_picker_id"
+                                                                            />
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
                                                     <Form.Group className="care-manager-ssn">
                                                         <Row>
                                                             <Col sm={12}>
@@ -559,12 +428,58 @@ class CareManagerPage extends React.Component {
                                                             <Col sm={12}>
                                                                 <Form.Label className="col-sm-4">Address</Form.Label>
                                                                 <div className="col-sm-8">
-                                                                    <Field name="address" type="text">
+                                                                    <Field name="addressLine1" type="text">
                                                                         {({ input, meta, type }) => (
                                                                             <>
                                                                                 <Form.Control
                                                                                     type={type}
-                                                                                    placeholder="Address"
+                                                                                    placeholder="Address Line 1"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="care-manager-address">
+                                                        <Row>
+                                                            <Col sm={12} className="physician-inputs">
+                                                                <Form.Label className="col-sm-4"></Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="addressLine2" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Address Line 2"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="physician-state">
+                                                        <Row>
+                                                            <Col sm={12} className="physician-inputs">
+                                                                <Form.Label className="col-sm-4">State</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="state" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="State"
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
