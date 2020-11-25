@@ -48,24 +48,6 @@ export default class App extends React.Component {
             <Router history={history}>
         	   <MainWrapper className={`${sidebarOpen ? '' : 'content-collapse'}`}>
         			<NavbarWrapper>
-                        {/*<Navbar fixed="top">
-                            <PageLogoSection className="page-logo">
-                                <ul>
-                                    <li><Link to="/dashboard">Evixia</Link></li>
-                                </ul>
-                            </PageLogoSection>
-
-                            <Nav className="mr-auto">
-                                <Nav.Link onClick={this._handleSidebar}>
-                                    <FontAwesomeIcon size="sm" className="icon" icon={faBars} />
-                                </Nav.Link>
-                            </Nav>
-
-                            <NotificationBell>
-                                <FontAwesomeIcon size="sm" className="icon" icon={faBell} />
-                            </NotificationBell>
-                        </Navbar>*/}
-
                         <Navbar collapseOnSelect expand="lg" variant="dark" fixed="top">
                             <PageLogoSection className="page-logo">
                                 <ul>
@@ -77,6 +59,19 @@ export default class App extends React.Component {
                                 <Nav.Link onClick={this._handleSidebar}>
                                     <FontAwesomeIcon size="sm" className="icon" icon={faBars} />
                                 </Nav.Link>
+
+
+                                <div className="page-breadcrumbs">
+                                    <ol className="breadcrumb page-breadcrumb pull-right">
+            							<li>
+                                            <i className="fa fa-home"></i>&nbsp;
+                                            <Link to="/dashboard" className="parent-item">Home</Link>
+                                            &nbsp;<i className="fa fa-angle-right">
+                                            </i>
+            							</li>
+            							<li className="active">Dashboard</li>
+            						</ol>
+                                </div>
                             </Nav>
 
                             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -101,7 +96,7 @@ export default class App extends React.Component {
                                             <>
                                                 <img src="/images/default-user-icon.png" className="img-fluid"
                                                 style={{ width: '26px',  marginRight: '10px', borderRadius: '50%' }} alt="User Icon"/>
-                                                <span style={{ fontSize: '14px' }}>John Doe</span>
+                                                <span style={{ fontSize: '16px' }}>John Doe</span>
                                             </>
                                         }
                                         id="dropdown-menu-align-right"
@@ -144,7 +139,7 @@ export default class App extends React.Component {
                                         <span className="link-text">Patient Details</span>
                                     </NavLink>*/}
 
-                                    <NavLink to="/patient-readings" activeClassName="active" className="card-links">
+                                    <NavLink to="/patient-management" activeClassName="active" className="card-links">
                                         <i className="fas fa-book-open"></i>
                                         <span className="link-text">Patient Management</span>
                                     </NavLink>
@@ -220,7 +215,7 @@ export default class App extends React.Component {
                             />
                             <Route exact path="/dashboard" component={DashboardPage} />
                             <Route exact path="/add-patients" component={AddPatientPage} />
-                            <Route exact path="/patient-readings" component={PatientReadingsPage} />
+                            <Route exact path="/patient-management" component={PatientReadingsPage} />
                             <Route exact path="/physician" component={PhysicianPage} />
                             <Route exact path="/care-manager" component={CareManagerPage} />
                             <Route exact path="/reports" component={ReportsPage} />
