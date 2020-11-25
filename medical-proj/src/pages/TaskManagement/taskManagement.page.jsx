@@ -290,20 +290,6 @@ class TaskManagementPage extends React.Component {
 
         return (
             <TaskManagementWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Task Management</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Task Management</li>
-                    </ol>
-                </div>
-
                 <div className="search-patient">
                     <FormFinal
                         onSubmit={this._handleSubmitSearch}
