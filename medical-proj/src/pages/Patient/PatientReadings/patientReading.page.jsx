@@ -360,23 +360,9 @@ class PatientReadingsPage extends React.Component {
 
         return (
             <AddPatientWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Patient Management</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Patient Management</li>
-                    </ol>
-                </div>
-
                 <Row>
                     <Col sm={12} md={12} lg={12} xl={12}>
-                        <div className="patient-reading-wrapper mt-4">
+                        <div className="patient-reading-wrapper mt-3">
                             <FormFinal
                                 onSubmit={this._handleSubmitSearch}
                                 validate={this._handleValidate}

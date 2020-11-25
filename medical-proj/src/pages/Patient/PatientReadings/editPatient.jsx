@@ -576,7 +576,7 @@ class EditPatientPage extends React.Component {
 
         return (
             <AddPatientWrapper>
-                <div className="mt-4">
+                <div className="mt-3">
                     <Card>
                         <Card.Header>Update patient info</Card.Header>
 

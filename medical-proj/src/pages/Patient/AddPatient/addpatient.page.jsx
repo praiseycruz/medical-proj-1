@@ -19,8 +19,47 @@ class AddPatientPage extends React.Component {
         super(props)
         this.state = {
             showModal: false,
+            deviceValue: '',
             devicesAdded: [],
             devicesLists: [],
+            devicesDataOnClick: [],
+            patientDevicesLists: [
+                {
+                    name: '',
+                    connectedAt: '',
+                    lastMeasurement: ''
+                }
+            ],
+            patientDevicesCols: [
+                {
+                    title: 'Device',
+                    key: 'device',
+                    render: colData => {
+                        return <span>{colData.device}</span>
+                    }
+                },
+                {
+                    title: 'Connected At',
+                    key: 'connectedAt',
+                    render: colData => {
+                        return <span>{colData.connectedAt}</span>
+                    }
+                },
+                {
+                    title: 'Last Measurement At',
+                    key: 'lastMeasurement',
+                    render: colData => {
+                        return <span>{colData.lastMeasurement}</span>
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'button',
+                    render: colData => {
+                        return <>{colData.actions}</>
+                    }
+                }
+            ],
             cols: [
                 {
                     title: '',
@@ -53,11 +92,11 @@ class AddPatientPage extends React.Component {
             ],
             isPatientCreated: false,
             hasPatientCreated: false,
-            deviceValue: '',
             dob: new Date(),
             physicianValue: '',
-            devicesDataOnClick: [],
             physicianData: [],
+            careManagerLists: [],
+            careManagerValue: '',
             isPhysicianAdded: false,
             diagnosisCode: [
                 {
@@ -205,43 +244,6 @@ class AddPatientPage extends React.Component {
                     key: 'button',
                     render: colData => {
                         return <button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>View</button>
-                    }
-                }
-            ],
-            patientDevicesLists: [
-                {
-                    name: '',
-                    connectedAt: '',
-                    lastMeasurement: ''
-                }
-            ],
-            patientDevicesCols: [
-                {
-                    title: 'Device',
-                    key: 'device',
-                    render: colData => {
-                        return <span>{colData.device}</span>
-                    }
-                },
-                {
-                    title: 'Connected At',
-                    key: 'connectedAt',
-                    render: colData => {
-                        return <span>{colData.connectedAt}</span>
-                    }
-                },
-                {
-                    title: 'Last Measurement At',
-                    key: 'lastMeasurement',
-                    render: colData => {
-                        return <span>{colData.lastMeasurement}</span>
-                    }
-                },
-                {
-                    title: 'Actions',
-                    key: 'button',
-                    render: colData => {
-                        return <>{colData.actions}</>
                     }
                 }
             ],
@@ -450,7 +452,7 @@ class AddPatientPage extends React.Component {
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
-        dispatch(practitionerAction.getAll(10, 0))
+        dispatch(practitionerAction.getAll(100, 0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -469,57 +471,39 @@ class AddPatientPage extends React.Component {
                         let patientId = patient.id
 
                         if (!hasPatientCreated) {
-                            if (physicianData !== 'undefined' && physicianData !== null && physicianData.length > 0) {
-                                if (!isPhysicianAdded) {
-                                    let id = null
-                                    let role = null
-
-                                    physicianData.map((physician, index) => {
-                                        id = physician.id
-                                        role = physician.role
-                                    })
-
-                                    if (id !== null && role !== null) {
-                                        iziToast.success({
-                                            position: 'topRight',
-                                            title: 'Success',
-                                            displayMode: 1,
-                                            message: 'Patient registered successfully!',
-                                        })
-
-                                        dispatch(dashboardAction.count())
-                                        dispatch(patientAction.getAll(10, 0))
-                                        dispatch(practitionerAction.getAll(10, 0))
-                                        // dispatch(careTeamAction.createWithPractitioner(patientId, id, role))
-                                        // console.log(patientId, id, role, 'in here');
-                                    }
-
-                                    this.setState({
-                                        isPatientCreated: true,
-                                        hasPatientCreated: true,
-                                        patientData: patient,
-                                        isPhysicianAdded: true
-                                    })
-                                }
-                            }
-
-                            // this.setState({
-                            //     isPatientCreated: true,
-                            //     hasPatientCreated: true,
-                            //     patientData: patient,
-                            //     isPhysicianAdded: true
-                            // })
-
-                            // iziToast.success({
-                            //     position: 'topRight',
-                            //     title: 'Success',
-                            //     displayMode: 1,
-                            //     message: 'Patient registered successfully!',
-                            // })
+                            // if (physicianData !== 'undefined' && physicianData !== null && physicianData.length > 0) {
+                            //     if (!isPhysicianAdded) {
+                            //         let id = null
+                            //         let role = null
                             //
-                            // dispatch(dashboardAction.count())
-                            // dispatch(patientAction.getAll(10, 0))
-                            // dispatch(practitionerAction.getAll(10, 0))
+                            //         physicianData.map((physician, index) => {
+                            //             id = physician.id
+                            //             role = physician.role
+                            //         })
+                            //
+                            //         if (id !== null && role !== null) {
+                            //             iziToast.success({
+                            //                 position: 'topRight',
+                            //                 title: 'Success',
+                            //                 displayMode: 1,
+                            //                 message: 'Patient registered successfully!',
+                            //             })
+                            //
+                            //             dispatch(dashboardAction.count())
+                            //             dispatch(patientAction.getAll(10, 0))
+                            //             dispatch(practitionerAction.getAll(100, 0))
+                            //             // dispatch(careTeamAction.createWithPractitioner(patientId, id, role))
+                            //             // console.log(patientId, id, role, 'in here');
+                            //         }
+                            //
+                            //         this.setState({
+                            //             isPatientCreated: true,
+                            //             hasPatientCreated: true,
+                            //             patientData: patient,
+                            //             isPhysicianAdded: true
+                            //         })
+                            //     }
+                            // }
                         }
                     }
                 }
@@ -538,6 +522,40 @@ class AddPatientPage extends React.Component {
                     if (typeof entry !== 'undefined' && entry !== null) {
                         this.setState({
                             devicesLists: entry
+                        })
+                    }
+                }
+            }
+        }
+
+        if (prevProps.practitioner !== this.props.pracitioner) {
+            let { getAll } = this.props.practitioner
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { practitioners } = getAll
+
+                if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    let { entry } = practitioners
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        entry.map((physician, index) => {
+                            let { resource } = physician
+
+                            if (typeof resource !== 'undefined' && resource !== null) {
+                                let { extension } = resource
+                                let finalEntriesOfPhysicians = []
+                                let finalEntriesOfCareManagers = []
+
+                                if (typeof extension !=='undefined' && extension.length > 0) {
+                                    if (extension[0].valueString == 'Primary Physician') {
+                                        finalEntriesOfPhysicians.push(physician)
+
+                                    } else if (extension[0].valueString == 'Care Manager') {
+                                        finalEntriesOfCareManagers.push(physician)
+                                        
+                                    }
+                                }
+                            }
                         })
                     }
                 }
@@ -689,7 +707,6 @@ class AddPatientPage extends React.Component {
                                 let { name } = resource
 
                                 if (typeof name !== 'undefined' && name !== null) {
-
                                     let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
 
                                     return (
@@ -816,21 +833,7 @@ class AddPatientPage extends React.Component {
 
         return (
             <AddPatientWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Add New Patient</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Add New Patient</li>
-                    </ol>
-                </div>
-
-                <div className="mt-4">
+                <div className="mt-3">
                     <Card>
                         <Card.Header>Add patient info</Card.Header>
 
@@ -1281,7 +1284,7 @@ class AddPatientPage extends React.Component {
                                                 <div>
                                                     <Tabs defaultActiveKey="conditions" transition={false} id="noanim-tab-example">
                                                         <Tab eventKey="conditions" title="Conditions">
-                                                            <FormFinal
+                                                            {/*<FormFinal
                                                                     initialValues={{
                                                                         gender: 'male'
                                                                     }}
@@ -1289,84 +1292,85 @@ class AddPatientPage extends React.Component {
                                                                     validate={this._handleValidateAddCondition}
                                                                     render={({values, initialValues, pristine, submitting, handleSubmit }) => (
                                                                         <Form onSubmit={handleSubmit}>
-                                                                            <div className="patient-condition">
-                                                                                <div>
-                                                                                    <Form.Group className="firstname">
-                                                                                        <Row>
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Condition</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <Field name="condition" type="select">
-                                                                                                        {({ input, meta, type }) => (
-                                                                                                            <>
-                                                                                                                <Form.Control
-                                                                                                                     as="select"
-                                                                                                                     value={conditionValue}
-                                                                                                                     onChange={(e) => { this._getCondition(e) }}>
-                                                                                                                     {conditionOptions}
-                                                                                                                </Form.Control>
-                                                                                                            </>
-                                                                                                        )}
-                                                                                                    </Field>
-                                                                                                </div>
-                                                                                            </Col>
 
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Diagnosis Code</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <Field name="diagnosis" type="select">
-                                                                                                        {({ input, meta, type }) => (
-                                                                                                            <Form.Control
-                                                                                                                 as="select"
-                                                                                                                 value={diagnosisCodeValue}
-                                                                                                                 onChange={(e) => { this._getDiagnosisCode(e) }}>
-                                                                                                                 {diagnosisCodeOption}
-                                                                                                            </Form.Control>
-                                                                                                        )}
-                                                                                                    </Field>
-                                                                                                </div>
-                                                                                            </Col>
-
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Programs</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <div>
-                                                                                                        <label className="programs-label">
-                                                                                                            <Field name="programs-rpm" type="checkbox" value="rpm">
-                                                                                                                {({ input, meta }) => (
-                                                                                                                    <>
-                                                                                                                        <input
-                                                                                                                            {...input}
-                                                                                                                        />
-                                                                                                                    </>
-                                                                                                                )}
-                                                                                                            </Field>
-                                                                                                            <span>RPM</span>
-                                                                                                        </label>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </Col>
-
-                                                                                            <Col sm={3}>
-                                                                                                <Form.Label className="col-sm-12">Assessment</Form.Label>
-                                                                                                <div className="col-sm-12">
-                                                                                                    <div className="add-assessment">
-                                                                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                                                                            Start Now
-                                                                                                        </Button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </Col>
-                                                                                        </Row>
-                                                                                    </Form.Group>
-                                                                                </div>
-                                                                            </div>
-
-                                                                            <div className="mt-4">
-                                                                                <TableComponent data={conditionsAdded} cols={this.state.conditionCols} bordered={false} striped={false} removeThead={true} isTableFor={'conditions'} />
-                                                                            </div>
                                                                         </Form>
-                                                                )} />
+                                                                )} />*/}
+                                                            <div className="patient-condition">
+                                                                <div>
+                                                                    <Form.Group className="firstname">
+                                                                        <Row>
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Condition</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <Field name="condition" type="select">
+                                                                                        {({ input, meta, type }) => (
+                                                                                            <>
+                                                                                                <Form.Control
+                                                                                                     as="select"
+                                                                                                     value={conditionValue}
+                                                                                                     onChange={(e) => { this._getCondition(e) }}>
+                                                                                                     {conditionOptions}
+                                                                                                </Form.Control>
+                                                                                            </>
+                                                                                        )}
+                                                                                    </Field>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Diagnosis Code</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <Field name="diagnosis" type="select">
+                                                                                        {({ input, meta, type }) => (
+                                                                                            <Form.Control
+                                                                                                 as="select"
+                                                                                                 value={diagnosisCodeValue}
+                                                                                                 onChange={(e) => { this._getDiagnosisCode(e) }}>
+                                                                                                 {diagnosisCodeOption}
+                                                                                            </Form.Control>
+                                                                                        )}
+                                                                                    </Field>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Programs</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <div>
+                                                                                        <label className="programs-label">
+                                                                                            <Field name="programs-rpm" type="checkbox" value="rpm">
+                                                                                                {({ input, meta }) => (
+                                                                                                    <>
+                                                                                                        <input
+                                                                                                            {...input}
+                                                                                                        />
+                                                                                                    </>
+                                                                                                )}
+                                                                                            </Field>
+                                                                                            <span>RPM</span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Assessment</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <div className="add-assessment">
+                                                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
+                                                                                            Start Now
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="mt-4">
+                                                                <TableComponent data={conditionsAdded} cols={this.state.conditionCols} bordered={false} striped={false} removeThead={true} isTableFor={'conditions'} />
+                                                            </div>
                                                         </Tab>
                                                         <Tab eventKey="devices" title="Devices">
                                                             <div className="supplied-devices-wrapper">

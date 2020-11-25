@@ -33,7 +33,7 @@ export const AddPatientWrapper = styled.div`
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-            }            
+            }
         }
 
         .form-group {
@@ -113,16 +113,14 @@ export const AddPatientWrapper = styled.div`
         }
 
         .add-patient-condition-wrapper {
-            margin-top: 30px;
-            border-top: 2px solid #282E38;
-            padding-top: 25px;
+            margin-top: 45px;
+            border-top: 2px solid #8f8f8f;
+            padding-top: 45px;
             min-height: 400px;
         }
     }
 
     .patient-reading-wrapper {
-        /* margin-top: 30px; */
-
         .patient-readings {
             .form-group {
                 .from-label {
