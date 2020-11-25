@@ -19,6 +19,7 @@ class PhysicianPage extends React.Component {
         super(props)
         this.state = {
             showModal: false,
+            role: 'Primary Physician',
             cols: [
                 {
                     title: '',
@@ -58,11 +59,10 @@ class PhysicianPage extends React.Component {
             practitionerTotal: null,
             practitionerCols: [
                 {
-                    title: 'Practitioner Name',
+                    title: 'Physician Name',
                     key: 'name',
                     render: colData => {
-                        return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].family + " " + colData.resource.name[0].given }</span>;
-                        // return <span>{ colData.resource.name }</span>;
+                        return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
                     }
                 },
                 {
@@ -93,7 +93,7 @@ class PhysicianPage extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(practitionerAction.getAll(10, 0))
+        dispatch(practitionerAction.getAll(10, 0, this.state.role))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -117,16 +117,16 @@ class PhysicianPage extends React.Component {
                                 practitionerData: practitioner
                             })
 
-                            iziToast.success({
-                                position: 'topRight',
-                                title: 'Success',
-                                displayMode: 1,
-                                message: 'Practitioner registered successfully!',
-                            })
+                            // iziToast.success({
+                            //     position: 'topRight',
+                            //     title: 'Success',
+                            //     displayMode: 1,
+                            //     message: 'Practitioner registered successfully!',
+                            // })
 
                             dispatch(dashboardAction.count())
                             dispatch(patientAction.getAll(10, 0))
-                            dispatch(practitionerAction.getAll(10, 0))
+                            dispatch(practitionerAction.getAll(10, 0, this.state.role))
                         }
                     }
                 }
@@ -178,6 +178,11 @@ class PhysicianPage extends React.Component {
             "telecom": [
                 {
                     "value": `${values.phoneNum}`,
+                    "use": "home",
+                    "system": "phone"
+                },
+                {
+                    "value": `${values.mobileNum}`,
                     "use": "mobile",
                     "system": "phone"
                 },
@@ -189,8 +194,13 @@ class PhysicianPage extends React.Component {
             "address": [
                 {
                     "text": [
-                        `${values.address}`
+                        `${values.addressLine1} ${values.addressLine2}, ${values.state} ${values.zipcode}`
                     ],
+                    "line": [
+                        `${values.addressLine1}`,
+                        `${values.addressLine2}`
+                    ],
+                    "state": `${values.state}`,
                     "postalCode": `${values.zipcode}`
                 }
             ],
@@ -206,7 +216,7 @@ class PhysicianPage extends React.Component {
             ],
             "extension": [{
                 "url": config.apiGateway.URL + "/Role",
-                "valueString": `${values.role}`
+                "valueString": `Primary Physician`
             }]
         }
 
@@ -690,7 +700,30 @@ class PhysicianPage extends React.Component {
                                                                             <>
                                                                                 <Form.Control
                                                                                     type={type}
-                                                                                    placeholder="Number"
+                                                                                    placeholder="Phone Number"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="physician-number">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Mobile Number</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="mobileNum" type="number">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Mobile Number"
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
@@ -752,8 +785,8 @@ class PhysicianPage extends React.Component {
                                                                               selected={this.state.dob}
                                                                               onChange={date => this._setDob(date)}
                                                                               isClearable
-                                                                              placeholderText="YYYY-MM-DD"
-                                                                              dateFormat="yyyy-MM-dd"
+                                                                              placeholderText="MM/DD/YYYY"
+                                                                              dateFormat="MM/dd/yyyy"
                                                                               value={this.state.dob}
                                                                               id="date_picker_id"
                                                                             />
@@ -789,7 +822,7 @@ class PhysicianPage extends React.Component {
 
                                                     <Form.Group className="physician-address">
                                                         <Row>
-                                                            <Col sm={12}>
+                                                            <Col sm={12} className="physician-inputs">
                                                                 <Form.Label className="col-sm-4">Address</Form.Label>
                                                                 <div className="col-sm-8">
                                                                     <Field name="address" type="text">
@@ -797,7 +830,53 @@ class PhysicianPage extends React.Component {
                                                                             <>
                                                                                 <Form.Control
                                                                                     type={type}
-                                                                                    placeholder="Address"
+                                                                                    placeholder="Address Line 1"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="physician-address">
+                                                        <Row>
+                                                            <Col sm={12} className="physician-inputs">
+                                                                <Form.Label className="col-sm-4"></Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="addressLine2" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Address Line 2"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="physician-state">
+                                                        <Row>
+                                                            <Col sm={12} className="physician-inputs">
+                                                                <Form.Label className="col-sm-4">State</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="state" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="State"
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
