@@ -152,7 +152,6 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
 }
 
 function create(patientData, physicianId, careManagerId, deviceIds) {
-    const requestOptions = headers(Method.GET)
 
     let tempPatientId = RandNum('')
 
@@ -220,6 +219,8 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
             ...deviceIds.map(id => deviceTemplate(id, tempPatientId))
         ]
     }
+
+    const requestOptions = headers(Method.POST, reqBody)
 
     return fetch(config.apiGateway.URL, requestOptions)
     .then(handleResponse)
