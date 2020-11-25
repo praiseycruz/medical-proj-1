@@ -160,11 +160,6 @@ export const DashboardWrapper = styled.div`
         }
 
         .care-manager-wrapper {
-            background-color: #333a47;
-            border-radius: 2px;
-            padding: 20px 15px;
-            margin: 20px 0 30px;
-
             label {
                 margin-bottom: 0;
                 color: #fff;

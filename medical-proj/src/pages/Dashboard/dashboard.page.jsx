@@ -214,8 +214,6 @@ class DashboardPage extends React.Component {
             this.setState({
                 patientsModule
             })
-
-            console.log(patientsModule);
         }
 
         dispatch(patientAction.getPaginationLink(link, patientsModule.currentPage))
@@ -246,7 +244,7 @@ class DashboardPage extends React.Component {
         //     data: patientData
         // })
 
-        this.props.history.push('/patient-readings')
+        this.props.history.push('/patient-management')
         localStorage.setItem('patientDetails', patientData);
     }
 
@@ -364,85 +362,77 @@ class DashboardPage extends React.Component {
         return (
             <DashboardWrapper>
                 <div className="dashboard-content">
-                    <div className="page-breadcrumbs">
-                        <h1>Dashboard</h1>
-
-                        <ol className="breadcrumb page-breadcrumb pull-right">
-							<li>
-                                <i className="fa fa-home"></i>&nbsp;
-                                <Link to="/dashboard" className="parent-item">Home</Link>
-                                &nbsp;<i className="fa fa-angle-right">
-                                </i>
-							</li>
-							<li className="active">Dashboard</li>
-						</ol>
-                    </div>
-
-                    <div className="care-manager-wrapper">
-                        <div className="row">
-                            <label className="mb-0 px-3">Primary Care Manager: </label>
-                            <div className="px-2">
-                                <select
-                                    className="form-control"
-                                    value={this.state.careManagerValue}
-                                    onChange={(e) => { this._getPrimaryCareManagerValue(e) }}>
-                                    <option value="all">ALL</option>
-                                    { primaryCareManagerOptions }
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="state-overview">
-                        <div className="row">
-                            <div className="col-xl-4 col-md-6 col-12">
-                                <div className="info-box bg-blue">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
-                                    </span>
-
-                                    <div className="info-box-content">
-                                        <span className="info-box-text">Total RPM patients</span>
-                                        <span className="info-box-number">{ this.state.count }</span>
+                    <Card>
+                        <Card.Header>
+                            <div className="care-manager-wrapper">
+                                <div className="row">
+                                    <label className="mb-0 px-3">Primary Care Manager: </label>
+                                    <div className="px-2">
+                                        <select
+                                            className="form-control"
+                                            value={this.state.careManagerValue}
+                                            onChange={(e) => { this._getPrimaryCareManagerValue(e) }}>
+                                            <option value="all">ALL</option>
+                                            { primaryCareManagerOptions }
+                                        </select>
                                     </div>
                                 </div>
                             </div>
+                        </Card.Header>
 
-                            <div className="col-xl-4 col-md-6 col-12">
-                                <div className="info-box bg-red">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faExclamationTriangle} />
-                                    </span>
+                        <Card.Body>
+                            <div className="state-overview">
+                                <div className="row">
+                                    <div className="col-xl-4 col-md-6 col-12">
+                                        <div className="info-box bg-blue">
+                                            <span className="info-box-icon push-bottom">
+                                                <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
+                                            </span>
 
-                                    <div className="info-box-content">
-                                        <span className="info-box-text">New critical alerts</span>
-                                        <span className="info-box-number">26</span>
+                                            <div className="info-box-content">
+                                                <span className="info-box-text">Total RPM patients</span>
+                                                <span className="info-box-number">{ this.state.count }</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-xl-4 col-md-6 col-12">
+                                        <div className="info-box bg-red">
+                                            <span className="info-box-icon push-bottom">
+                                                <FontAwesomeIcon size="sm" className="icon" icon={faExclamationTriangle} />
+                                            </span>
+
+                                            <div className="info-box-content">
+                                                <span className="info-box-text">New critical alerts</span>
+                                                <span className="info-box-number">26</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-xl-4 col-md-6 col-12">
+                                        <div className="info-box bg-purple">
+                                            <span className="info-box-icon push-bottom">
+                                                <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
+                                            </span>
+
+                                            <div className="info-box-content with-input">
+                                                <span className="info-box-text">
+                                                    No activity in days
+
+                                                    <input
+                                                        className="form-control"
+                                                        placeholder="Enter number"
+                                                        value={this.state.activityValue}
+                                                        onChange={(e) => { this._getActivityValue(e) }} />
+                                                </span>
+                                                <span className="info-box-number">150</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="col-xl-4 col-md-6 col-12">
-                                <div className="info-box bg-purple">
-                                    <span className="info-box-icon push-bottom">
-                                        <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
-                                    </span>
-
-                                    <div className="info-box-content with-input">
-                                        <span className="info-box-text">
-                                            No activity in days
-
-                                            <input
-                                                className="form-control"
-                                                placeholder="Enter number"
-                                                value={this.state.activityValue}
-                                                onChange={(e) => { this._getActivityValue(e) }} />
-                                        </span>
-                                        <span className="info-box-number">150</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </Card.Body>
+                    </Card>
 
                     <Row>
                         <Col sm={12} md={12} lg={12} xl={12}>
