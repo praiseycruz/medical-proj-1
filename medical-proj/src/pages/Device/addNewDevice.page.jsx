@@ -164,25 +164,7 @@ class AddNewDevicePage extends React.Component {
 
         return (
             <AddDeviceWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Add New Device</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li>
-                            <i className="far fa-building"></i>&nbsp; Office Setup
-                            &nbsp;<i className="fa fa-angle-right"></i>
-                        </li>
-                        <li className="active">Add New Device</li>
-                    </ol>
-                </div>
-
-                <div className="mt-4">
+                <div className="mt-3">
                     <Card>
                         <Card.Header>Device</Card.Header>
 
