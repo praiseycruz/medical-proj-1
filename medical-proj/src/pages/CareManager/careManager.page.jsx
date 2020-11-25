@@ -4,20 +4,26 @@ import { Link } from 'react-router-dom'
 import { AddCareManagerWrapper } from './styled_components/careManager.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Card } from 'react-bootstrap'
-import { practitionerAction } from '../../actions'
+import { practitionerAction, dashboardAction, patientAction } from '../../actions'
+import { practitionerService } from '../../services'
 import { RandNum } from '../../helpers'
+import iziToast from 'izitoast';
 
 import { config } from '../../config'
 
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
+import { TableComponent } from '../../components/Table'
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class CareManagerPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
             showModal: false,
+            role: 'Care Manager',
             cols: [
                 {
                     title: '',
@@ -51,16 +57,115 @@ class CareManagerPage extends React.Component {
             isPractitionerCreated: false,
             hasPractitionerCreated: false,
             practitionerData: {},
-            dob: new Date()
+            dob: new Date(),
+            isAddingNewPractitionerLoading: false,
+            practitionersLists: [],
+            practitionersPagination: null,
+            practitionerTotal: null,
+            practitionerCols: [
+                {
+                    title: 'Care Manager',
+                    key: 'name',
+                    render: colData => {
+                        return <span>{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
+                    }
+                },
+                {
+                    title: 'DOB',
+                    key: 'dob',
+                    render: colData => {
+                        return <span>{colData.resource.birthDate}</span>;
+                    }
+                },
+                {
+                    title: 'Gender',
+                    key: 'gender',
+                    render: colData => {
+                        return <span>{colData.resource.gender}</span>;
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'edit',
+                    render: colData => {
+                        return <span><button className="btn btn-primary edit"><i className="fas fa-pencil-alt"></i></button></span>;
+                    }
+                }
+            ],
+            practitionerTotal: null,
+            initialValues: {
+                firstname: '',
+                lastname: '',
+                addemail: '',
+                phoneNum: '',
+                mobileNum: '',
+                gender: 'male',
+                ssn: '',
+                addressLine1: '',
+                addressLine2: '',
+                state: '',
+                zipcode: ''
+            }
         }
     }
 
     componentDidMount() {
+        const { dispatch } = this.props
+        dispatch(practitionerAction.getAll(100, 0, this.state.role))
     }
 
-    _handleSubmit = async values => {
+    componentDidUpdate(prevProps, prevState) {
+        let { practitioner } = this.props
+        let { isPractitionerCreated, hasPractitionerCreated } = this.state
         const { dispatch } = this.props
 
+        if (prevProps.practitioner !== this.props.practitioner) {
+            let { create, getAll } = this.props.practitioner
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { success, practitioner } = create
+
+                if (success) {
+                    if ( typeof practitioner !== 'undefined' && practitioner !== null) {
+                        if (!hasPractitionerCreated) {
+
+                            this.setState({
+                                isPractitionerCreated: true,
+                                hasPractitionerCreated: true,
+                                practitionerData: practitioner
+                            })
+                        }
+                    }
+                }
+            }
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { practitioners } = getAll
+
+                if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    let { entry, link, total } = practitioners
+
+                    this.setState({
+                        practitionerTotal: total,
+                        practitionersPagination: link
+                    })
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        this.setState({
+                            practitionersLists: entry
+                        })
+                    } else {
+                        this.setState({
+                            practitionersLists: []
+                        })
+                    }
+                }
+            }
+        }
+    }
+
+    _handleSubmit = async (values, form) => {
+        const { dispatch } = this.props
         let s = document.getElementById("date_picker_id")
         let dobFormat = moment(s.value).format("yyyy-MM-DD")
 
@@ -116,11 +221,28 @@ class CareManagerPage extends React.Component {
             ],
             "extension": [{
                 "url": config.apiGateway.URL + "/Role",
-                "valueString": `Care Manager`
+                "valueString": `${this.state.role}`
             }]
         }
 
-        dispatch(practitionerAction.create(practitionerData))
+        try {
+            this.setState({
+                isAddingNewPractitionerLoading: true
+            })
+            await practitionerService.create(practitionerData)
+
+            this.setState({
+                isAddingNewPractitionerLoading: false
+            })
+
+            Object.keys(values).forEach(key => {
+                form.change(key, undefined)
+                form.resetFieldState(key)
+            })
+
+        } catch(e) {
+            console.log(e)
+        }
     }
 
     _handleValidate = values => {
@@ -129,7 +251,7 @@ class CareManagerPage extends React.Component {
         let lastname = []
 		let addemail = []
         let ssn = []
-        let address = []
+        let addressLine1 = []
         let zipcode = []
         let phoneNum = []
 
@@ -145,8 +267,8 @@ class CareManagerPage extends React.Component {
         if (!values.ssn)
             ssn.push("SSN is required")
 
-        if (!values.address)
-            address.push("Address is required")
+        if (!values.addressLine1)
+            addressLine1.push("Address is required")
 
         if (!values.zipcode)
             zipcode.push("Zipcode is required")
@@ -167,8 +289,8 @@ class CareManagerPage extends React.Component {
         if (ssn.length > 0)
             errors.ssn = ssn
 
-        if (address.length > 0)
-            errors.address = address
+        if (addressLine1.length > 0)
+            errors.addressLine1 = addressLine1
 
         if (zipcode.length > 0)
             errors.zipcode = zipcode
@@ -176,9 +298,6 @@ class CareManagerPage extends React.Component {
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
 
-
-
-        console.log(errors);
 		return errors
     }
 
@@ -189,38 +308,89 @@ class CareManagerPage extends React.Component {
     }
 
     render() {
+        let { practitioner } = this.props
+        let { practitionersPagination, initialValues } = this.state
+
+        let isAddingNewPractitionerLoading = false
+        let isGetPractionerLoading = false
+        let practitionerPagePagination = null
+
+        if (typeof practitioner !== 'undefined' && practitioner !== null) {
+            let { create, getAll } = practitioner
+
+            if (typeof create !== 'undefined' && create !== null) {
+                let { practitioner, loading } = create
+
+                if (loading) {
+                    isAddingNewPractitionerLoading = true
+                } else {
+                    isAddingNewPractitionerLoading = false
+                }
+            }
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { loading } = getAll
+
+                if (loading) {
+                    isGetPractionerLoading = true
+                } else {
+                    isGetPractionerLoading = false
+                }
+            }
+        }
+
+        if (typeof practitionersPagination !== 'undefined' && practitionersPagination !== null) {
+            practitionerPagePagination = practitionersPagination.map((item, index) => {
+                let key = index + 1
+
+                return (
+                    <div key={key}>
+                        { (item.relation === 'next' || item.relation === 'previous') &&
+                            <button
+                                key={key}
+                                className={`${item.relation === 'previous' ? 'btn btn-secondary previous' : 'btn btn-primary next'}`}
+                                onClick={(e, link, relation) => { this._getPractitionerPaginationLink(e, item.url, item.relation) }}>
+                                { item.relation === 'previous' ?
+                                    <>
+                                        <i className="fas fa-angle-left"></i> &nbsp; Previous
+                                    </> :
+                                    <>
+                                        Next &nbsp; <i className="fas fa-angle-right"></i>
+                                    </>
+                                }
+                            </button>
+                        }
+                    </div>
+                )
+            })
+        }
 
         return (
             <AddCareManagerWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Care Manager</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Care Manager Management</li>
-                    </ol>
-                </div>
-
-                <div className="mt-4">
+                <div className="mt-3">
                     <Card>
                         <Card.Header>Care Manager Info</Card.Header>
 
                         <Card.Body>
                             <FormFinal
-                                initialValues={{
-                                    gender: 'male',
-                                    addressLine1: '',
-                                    addressLine2: ''
-                                }}
+                                initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
-                                render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                                    <Form onSubmit={handleSubmit}>
+                                render={({values, initialValues, pristine, submitting, handleSubmit, form, reset }) => (
+                                    <Form onSubmit={(event) => {
+                                        const promise = handleSubmit(event);
+                                        promise && promise.then(() => {
+                                            const { dispatch } = this.props
+                                            dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                            form.reset();
+                                            iziToast.success({
+                                                position: 'topRight',
+                                                title: 'Success',
+                                                displayMode: 1,
+                                                message: 'Care Manager registered successfully!',
+                                            })
+                                         }); return promise; }}>
+
                                         <div className="care-manager-info">
                                             <Row>
                                                 <Col sm={6}>
@@ -518,13 +688,70 @@ class CareManagerPage extends React.Component {
                                             </Row>
 
                                             <div className="btn-add">
-                                                <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                    Add Care Manager
+                                                <Button type="submit" disabled={pristine || this.state.isAddingNewPractitionerLoading} variant="primary" className={`btn-submit`}>
+
+                                                    { this.state.isAddingNewPractitionerLoading ?
+                                                    'Adding Care Manager...' : 'Add Care Manager'
+                                                    }
                                                 </Button>
                                             </div>
                                         </div>
                                     </Form>
                                 )} />
+                        </Card.Body>
+                    </Card>
+
+                    <Card className="dashboard-table mt-4">
+                        <Card.Header>Care Managers Lists</Card.Header>
+
+                        <Card.Body>
+                            <div className="form-wrapper patients-content">
+                                <Row>
+                                    <Col sm={12} className="column-content">
+                                        <Form>
+                                            <Form.Group as={Row} controlId="searchPatients">
+                                                <Form.Label className="mb-0 px-3">
+                                                    Search care manager
+                                                </Form.Label>
+
+                                                <div className="px-2">
+                                                    <Form.Control type="text" placeholder="Search by name or ID" />
+                                                </div>
+
+                                                <Button className="btn btn-submit">Search</Button>
+                                            </Form.Group>
+                                        </Form>
+                                    </Col>
+                                </Row>
+                            </div>
+
+                            <TableComponent
+                                data={this.state.practitionersLists}
+                                cols={this.state.practitionerCols}
+                                loading={isGetPractionerLoading}
+                                total={this.state.practitionerTotal}
+                                isTableFor="practitioners"
+                            />
+
+                            <div className="pagination">
+                                <div className="pagination-content">
+                                    { !isGetPractionerLoading ?
+                                        <>
+                                            { this.state.practitionerTotal === 0 ?
+                                                <span>Showing 0 items of 0 entries</span>
+                                                :
+                                                <span>Showing {this.state.practitionersLists.length} items of {this.state.practitionersLists.length} entries</span>
+                                            }
+
+                                            <div className="pagination-button">
+                                                { practitionerPagePagination }
+                                            </div>
+                                        </>
+                                        :
+                                        <></>
+                                    }
+                                </div>
+                            </div>
                         </Card.Body>
                     </Card>
                 </div>
@@ -534,9 +761,9 @@ class CareManagerPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const {  } = state
+    const { practitioner } = state
     return {
-
+        practitioner
     }
 }
 
