@@ -1234,7 +1234,7 @@ class AddPatientPage extends React.Component {
                                                             <Col sm={12} className="patient-inputs">
                                                                 <Form.Label className="col-sm-4">State</Form.Label>
                                                                 <div className="col-sm-8">
-                                                                    <Field name="state" type="number">
+                                                                    <Field name="state" type="text">
                                                                         {({ input, meta, type }) => (
                                                                             <>
                                                                                 <Form.Control
