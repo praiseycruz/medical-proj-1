@@ -8,11 +8,14 @@ import { practitionerAction, dashboardAction, patientAction } from '../../action
 import iziToast from 'izitoast';
 import { RandNum } from '../../helpers'
 import { config } from '../../config'
+import { practitionerService } from '../../services'
 
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
 import { TableComponent } from '../../components/Table'
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class PhysicianPage extends React.Component {
     constructor(props) {
@@ -20,46 +23,17 @@ class PhysicianPage extends React.Component {
         this.state = {
             showModal: false,
             role: 'Primary Physician',
-            cols: [
-                {
-                    title: '',
-                    key: 'deviceName',
-                    render: colData => {
-                        return <span>{colData.deviceName}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'name',
-                    render: colData => {
-                        return <span>{colData.name}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'serialNum',
-                    render: colData => {
-                        return <span>{colData.serialNum}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'button',
-                    render: colData => {
-                        return <button className="btn btn-danger" onClick={(e) => { this._removeData(colData.id) }}>Remove</button>
-                    }
-                }
-            ],
             isPractitionerCreated: false,
             hasPractitionerCreated: false,
-            practitionerData: {},
-            practitionersLists: [],
+            practitionerLoading: false,
+            practitionerData: {}, // store newly practitioner created
+            practitionersLists: [], // store all the lists of practitioners
             dob: new Date(),
-            practitionersPagination: null,
-            practitionerTotal: null,
+            practitionersPagination: null, // pracitioner pagination
+            practitionerTotal: null, // practitioner total
             practitionerCols: [
                 {
-                    title: 'Physician Name',
+                    title: 'Name',
                     key: 'name',
                     render: colData => {
                         return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
@@ -80,20 +54,47 @@ class PhysicianPage extends React.Component {
                     }
                 },
                 {
+                    title: 'Mobile',
+                    key: 'mobile',
+                    render: colData => {
+                        return <span>{colData.resource.telecom[1].value}</span>;
+                    }
+                },
+                {
+                    title: 'Email',
+                    key: 'email',
+                    render: colData => {
+                        return <span className="email">{colData.resource.telecom[2].value}</span>;
+                    }
+                },
+                {
                     title: 'Actions',
                     key: 'edit',
                     render: colData => {
                         return <span><button className="btn btn-primary edit"><i className="fas fa-pencil-alt"></i></button></span>;
                     }
                 }
-            ],
-            practitionerTotal: null
+            ], // practitioner table columns,
+            isAddingNewPractitionerLoading: false,
+            initialValues: {
+                firstname: '',
+                lastname: '',
+                addemail: '',
+                phoneNum: '',
+                mobileNum: '',
+                gender: 'male',
+                ssn: '',
+                addressLine1: '',
+                addressLine2: '',
+                state: '',
+                zipcode: ''
+            }
         }
     }
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(practitionerAction.getAll(10, 0, this.state.role))
+        dispatch(practitionerAction.getAll(100, 0, this.state.role))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -104,6 +105,7 @@ class PhysicianPage extends React.Component {
         if (prevProps.practitioner !== this.props.practitioner) {
             let { create, getAll } = practitioner
 
+            // for newly registered practitioner
             if (typeof create !== 'undefined' && create !== null) {
                 let { success, practitioner } = create
 
@@ -116,24 +118,24 @@ class PhysicianPage extends React.Component {
                                 hasPractitionerCreated: true,
                                 practitionerData: practitioner
                             })
-
-                            // iziToast.success({
-                            //     position: 'topRight',
-                            //     title: 'Success',
-                            //     displayMode: 1,
-                            //     message: 'Practitioner registered successfully!',
-                            // })
-
-                            dispatch(dashboardAction.count())
-                            dispatch(patientAction.getAll(10, 0))
-                            dispatch(practitionerAction.getAll(10, 0, this.state.role))
                         }
                     }
                 }
             }
 
+            // getting all the lists of practitioners
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
+                let { practitioners, loading } = getAll
+
+                if (loading) {
+                    this.setState({
+                        practitionerLoading: true
+                    })
+                } else {
+                    this.setState({
+                        practitionerLoading: false
+                    })
+                }
 
                 if (typeof practitioners !== 'undefined' && practitioners !== null) {
                     let { entry, link, total } = practitioners
@@ -157,7 +159,7 @@ class PhysicianPage extends React.Component {
         }
     }
 
-    _handleSubmit = async values => {
+    _handleSubmit = async (values, form) => {
         const { dispatch } = this.props
 
         let s = document.getElementById("date_picker_id")
@@ -216,11 +218,29 @@ class PhysicianPage extends React.Component {
             ],
             "extension": [{
                 "url": config.apiGateway.URL + "/Role",
-                "valueString": `Primary Physician`
+                "valueString": `${this.state.role}`
             }]
         }
 
-        dispatch(practitionerAction.create(practitionerData))
+        try {
+            this.setState({
+                isAddingNewPractitionerLoading: true
+            })
+
+            await practitionerService.create(practitionerData)
+
+            this.setState({
+                isAddingNewPractitionerLoading: false
+            })
+
+            Object.keys(values).forEach(key => {
+                form.change(key, undefined)
+                form.resetFieldState(key)
+            })
+
+        } catch(e) {
+            console.log(e)
+        }
     }
 
     _handleValidate = values => {
@@ -230,7 +250,7 @@ class PhysicianPage extends React.Component {
         let lastname = []
 		let addemail = []
         let ssn = []
-        let address = []
+        let addressLine1 = []
         let zipcode = []
         let phoneNum = []
 
@@ -249,8 +269,8 @@ class PhysicianPage extends React.Component {
         if (!values.ssn)
             ssn.push("SSN is required")
 
-        if (!values.address)
-            address.push("Address is required")
+        if (!values.addressLine1)
+            addressLine1.push("Address is required")
 
         if (!values.zipcode)
             zipcode.push("Zipcode is required")
@@ -271,14 +291,16 @@ class PhysicianPage extends React.Component {
         if (ssn.length > 0)
             errors.ssn = ssn
 
-        if (address.length > 0)
-            errors.address = address
+        if (addressLine1.length > 0)
+            errors.addressLine1 = addressLine1
 
         if (zipcode.length > 0)
             errors.zipcode = zipcode
 
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
+
+            console.log(errors);
 
 		return errors
     }
@@ -291,12 +313,9 @@ class PhysicianPage extends React.Component {
 
     render() {
         let { practitioner } = this.props
-        let { practitionersPagination } = this.state
-
-        console.log(this.state.practitionerTotal);
+        let { practitionersPagination, practitionerLoading, initialValues } = this.state
 
         let isAddingNewPractitionerLoading = false
-        let isGetPractionerLoading = false
         let practitionerPagePagination = null
 
         if (typeof practitioner !== 'undefined' && practitioner !== null) {
@@ -309,16 +328,6 @@ class PhysicianPage extends React.Component {
                     isAddingNewPractitionerLoading = true
                 } else {
                     isAddingNewPractitionerLoading = false
-                }
-            }
-
-            if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { loading } = getAll
-
-                if (loading) {
-                    isGetPractionerLoading = true
-                } else {
-                    isGetPractionerLoading = false
                 }
             }
         }
@@ -351,250 +360,31 @@ class PhysicianPage extends React.Component {
 
         return (
             <AddPhysicianWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Physician</h1>
-
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li>
-                            <i className="far fa-building"></i>&nbsp; Office Setup
-                            &nbsp;<i className="fa fa-angle-right"></i>
-                        </li>
-                        <li className="active">Physician Management</li>
-                    </ol>
-                </div>
-
-                <div className="mt-4">
-                {/*<FormFinal
-                        initialValues={{
-                            gender: 'male'
-                        }}
-                        onSubmit={this._handleSubmit}
-                        validate={this._handleValidate}
-                        render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                            <Form onSubmit={handleSubmit}>
-                                <div className="patient-info">
-                                    <>
-                                        <Card>
-                                            <Card.Header>Physician Info</Card.Header>
-
-                                            <Card.Body>
-                                                <div>
-                                                <Form.Group className="firstname">
-                                                    <Row>
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">First name</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="firstname" type="text">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="First name"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Gender</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <label className="gender-label male">
-                                                                    <Field name="gender" type="radio" value="male">
-                                                                        {({ input, meta }) => (
-                                                                            <>
-                                                                                <input
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                    <span>Male</span>
-                                                                </label>
-
-                                                                <label className="gender-label">
-                                                                    <Field name="gender" type="radio" value="female">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <input
-                                                                                    type={type}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                    <span>Female</span>
-                                                                </label>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Form.Group>
-
-                                                <Form.Group className="lastname">
-                                                    <Row>
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Last name</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="lastname" type="text">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="Last name"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="ssn" type="text">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="SSN"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Form.Group>
-
-                                                <Form.Group className="email">
-                                                    <Row>
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Email</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="addemail" type="email">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="Email address"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Address</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="address" type="text">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="Address"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Form.Group>
-
-                                                <Form.Group className="phoneNum">
-                                                    <Row>
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Phone Number</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="phoneNum" type="number">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="Number"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-
-                                                        <Col sm={6}>
-                                                            <Form.Label className="col-sm-4">Zip Code</Form.Label>
-                                                            <div className="col-sm-8">
-                                                                <Field name="zipcode" type="number">
-                                                                    {({ input, meta, type }) => (
-                                                                        <>
-                                                                            <Form.Control
-                                                                                type={type}
-                                                                                placeholder="Zip code"
-                                                                                autoComplete="off"
-                                                                                className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                {...input}
-                                                                            />
-                                                                        </>
-                                                                    )}
-                                                                </Field>
-                                                            </div>
-                                                        </Col>
-                                                    </Row>
-                                                </Form.Group>
-
-                                                <div className="btn-add">
-                                                    <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPractitionerLoading ? 'disabled' : ''}`}>
-                                                        { isAddingNewPractitionerLoading ?
-                                                            <span className="ml-2">Adding Practitioner...</span>
-                                                            :
-                                                            <>Add Practitioner</>
-                                                        }
-                                                    </Button>
-                                                </div>
-                                                </div>
-                                            </Card.Body>
-                                        </Card>
-                                    </>
-                                </div>
-                            </Form>
-                    )} />*/}
-
+                <div className="mt-3">
                     <Card>
                         <Card.Header>Physician Info</Card.Header>
 
                         <Card.Body>
                             <FormFinal
-                                initialValues={{
-                                    gender: 'male'
-                                }}
+                                initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
-                                render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                                    <Form onSubmit={handleSubmit}>
+                                render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
+                                    <Form onSubmit={(event) => {
+                                        const promise = handleSubmit(event);
+                                        promise && promise.then(() => {
+                                            const { dispatch } = this.props
+                                            dispatch(practitionerAction.getAll(100, 0, this.state.role))
+
+                                            form.reset();
+                                            iziToast.success({
+                                                position: 'topRight',
+                                                title: 'Success',
+                                                displayMode: 1,
+                                                message: 'Physician registered successfully!!',
+                                            })
+                                         }); return promise; }}>
+
                                         <div className="physician-info">
                                             <Row>
                                                 <Col sm={6}>
@@ -825,7 +615,7 @@ class PhysicianPage extends React.Component {
                                                             <Col sm={12} className="physician-inputs">
                                                                 <Form.Label className="col-sm-4">Address</Form.Label>
                                                                 <div className="col-sm-8">
-                                                                    <Field name="address" type="text">
+                                                                    <Field name="addressLine1" type="text">
                                                                         {({ input, meta, type }) => (
                                                                             <>
                                                                                 <Form.Control
@@ -915,11 +705,10 @@ class PhysicianPage extends React.Component {
                                             </Row>
 
                                             <div className="btn-add">
-                                                <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPractitionerLoading ? 'disabled' : ''}`}>
-                                                    { isAddingNewPractitionerLoading ?
-                                                        <span className="ml-2">Adding Physician...</span>
-                                                        :
-                                                        <>Add Physician</>
+                                                <Button type="submit" disabled={pristine || this.state.isAddingNewPractitionerLoading} variant="primary" className={`btn-submit`}>
+
+                                                    { this.state.isAddingNewPractitionerLoading ?
+                                                    'Adding Physician...' : 'Add Physician'
                                                     }
                                                 </Button>
                                             </div>
@@ -956,14 +745,14 @@ class PhysicianPage extends React.Component {
                             <TableComponent
                                 data={this.state.practitionersLists}
                                 cols={this.state.practitionerCols}
-                                loading={isGetPractionerLoading}
+                                loading={practitionerLoading}
                                 total={this.state.practitionerTotal}
                                 isTableFor="practitioners"
                             />
 
                             <div className="pagination">
                                 <div className="pagination-content">
-                                    { !isGetPractionerLoading ?
+                                    { !practitionerLoading ?
                                         <>
                                             { this.state.practitionerTotal === 0 ?
                                                 <span>Showing 0 items of 0 entries</span>
