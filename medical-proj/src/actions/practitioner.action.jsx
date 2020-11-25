@@ -30,7 +30,7 @@ function create(data) {
     function failure(error) { return { type: practitionerConstants.CREATE_FAILURE, error } }
 }
 
-function getAll(count, skip) {
+function getAll(count, skip, role) {
 
     return dispatch => {
 
@@ -39,8 +39,8 @@ function getAll(count, skip) {
         proceed()
 
         function proceed() {
-            practitionerService.getAll(count, skip).then( response => {
-                console.log(response)
+            practitionerService.getAll(count, skip, role).then( response => {
+                //console.log(response)
                 dispatch(success(response))
             }).catch(error => {
                 dispatch(failure(error))
