@@ -139,20 +139,17 @@ export class App extends React.Component {
                                             <Link to="/dashboard" className="parent-item">Home</Link>
                                             &nbsp;<i className="fa fa-angle-right"></i>
             							</li>
-                                        {
-                                            this.props.breadCrumbs.history.map ((h, key) => {
+
+                                        { this.props.breadCrumbs.history.map ((h, key) => {
                                                 return (
-                                                    <span key={key}>
+                                                    <span key={key} className="d-flex">
                                                         <li className={(h==this.props.breadCrumbs.currentPage) ? 'active' : ''}>
-                                                        {
-                                                            h
-                                                        }
-                                                        {
-                                                            historyLength > 1 && key!= ( historyLength - 1 ) &&
-                                                            <>
-                                                            &nbsp;<i className="fa fa-angle-right"></i>
-                                                            </>
-                                                        }
+                                                            { h }
+                                                            { historyLength > 1 && key!= ( historyLength - 1 ) &&
+                                                                <>
+                                                                    &nbsp;<i className="fa fa-angle-right"></i>
+                                                                </>
+                                                            }
                                                         </li>
                                                     </span>
                                                 )
