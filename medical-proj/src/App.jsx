@@ -147,7 +147,7 @@ export class App extends React.Component {
                                                             { h }
                                                             { historyLength > 1 && key!= ( historyLength - 1 ) &&
                                                                 <>
-                                                                    &nbsp;<i className="fa fa-angle-right"></i>
+                                                                    &nbsp;<i className="fa fa-angle-right ml-2"></i>
                                                                 </>
                                                             }
                                                         </li>
