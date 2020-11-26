@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { AddPatientWrapper } from '../Patient/styled_components/addpatient.style'
+import { ReportsWrapper } from './styled_components/reports.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Modal, Card, Tabs, Tab } from 'react-bootstrap'
 import { patientAction, dashboardAction, practitionerAction, deviceAction } from '../../actions'
@@ -27,22 +27,9 @@ class ReportsPage extends React.Component {
     render() {
 
         return (
-            <AddPatientWrapper>
-                <div className="page-breadcrumbs">
-                    <h1>Reports</h1>
+            <ReportsWrapper>
 
-                    <ol className="breadcrumb page-breadcrumb pull-right">
-                        <li>
-                            <i className="fa fa-home"></i>&nbsp;
-                            <Link className="parent-item" to="/dashboard">Home</Link>
-                            &nbsp;<i className="fa fa-angle-right">
-                            </i>
-                        </li>
-                        <li className="active">Reports</li>
-                    </ol>
-                </div>
-
-            </AddPatientWrapper>
+            </ReportsWrapper>
         )
     }
 }
