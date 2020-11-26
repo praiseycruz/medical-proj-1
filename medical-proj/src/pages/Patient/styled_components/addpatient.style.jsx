@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const AddPatientWrapper = styled.div`
     h2 {
-        font-size: 22px;
+        font-size: 20px;
         margin: 40px 0 20px;
     }
 
@@ -157,7 +157,7 @@ export const AddPatientWrapper = styled.div`
 
                 .patient-name {
                     display: block;
-                    font-size: 22px;
+                    font-size: 20px;
                     margin: 0 0px 25px;
                     color: #fff !important;
                     border-top: 2px solid #3C4452;

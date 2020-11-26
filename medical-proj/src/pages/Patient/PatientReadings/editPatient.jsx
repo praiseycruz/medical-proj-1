@@ -18,10 +18,10 @@ class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            showModal: false,
+            showPatientLocationModal: false,
             devicesAdded: [],
             devicesLists: [],
-            cols: [
+            devicesCols: [
                 {
                     title: '',
                     key: 'deviceName',
@@ -62,6 +62,7 @@ class EditPatientPage extends React.Component {
         }
     }
 
+    // submit patient update data
     _handleSubmit = async (values) => {
         const { dispatch } = this.props
 
@@ -178,33 +179,21 @@ class EditPatientPage extends React.Component {
 		return errors
     }
 
-    _openModal = () => {
-        let { isPatientCreated } = this.state
-
+    // open patient location modal
+    _openPatientLocation = () => {
         this.setState({
-            showModal: true
+            showPatientLocationModal: true
         })
-
-        // if (isPatientCreated) {
-        //     this.setState({
-        //         showModal: true
-        //     })
-        // } else {
-        //     iziToast.warning({
-        //         position: 'topRight',
-        //         title: 'Warning',
-        //         displayMode: 1,
-        //         message: 'Please register Patient first before assigning a Device',
-        //     });
-        // }
     }
 
+    // close patient location modal
     _closeModal = () => {
         this.setState({
-            showModal: false
+            showPatientLocationModal: false
         })
     }
 
+    // for adding device to patient
     _addDevice = () => {
         // let deviceData = {
         //     "resourceType": "Device",
@@ -244,16 +233,9 @@ class EditPatientPage extends React.Component {
         // }
     }
 
+    // removing device data
     _removeDeviceData = (id) => {
         alert(id)
-    }
-
-    _handleSubmitDevice = () => {
-
-    }
-
-    _handleValidateDevice = () => {
-
     }
 
     componentDidMount() {
@@ -266,74 +248,6 @@ class EditPatientPage extends React.Component {
         let { patient } = this.props
         let { hasPatientCreated, isPatientCreated, physicianData, isPhysicianAdded } = this.state
         const { dispatch } = this.props
-
-        if (prevProps.patient !== this.props.patient) {
-            let { create } = this.props.patient
-
-            if (typeof create !== 'undefined' && create !== null) {
-                let { success, patient } = create
-
-                if (success) {
-                    if ( typeof patient !== 'undefined' && patient !== null) {
-                        let patientId = patient.id
-
-                        if (!hasPatientCreated) {
-                            if (physicianData !== 'undefined' && physicianData !== null && physicianData.length > 0) {
-                                if (!isPhysicianAdded) {
-                                    let id = null
-                                    let role = null
-
-                                    physicianData.map((physician, index) => {
-                                        id = physician.id
-                                        role = physician.role
-                                    })
-
-                                    if (id !== null && role !== null) {
-                                        iziToast.success({
-                                            position: 'topRight',
-                                            title: 'Success',
-                                            displayMode: 1,
-                                            message: 'Patient registered successfully!',
-                                        })
-
-                                        dispatch(dashboardAction.count())
-                                        dispatch(patientAction.getAll(10, 0))
-                                        dispatch(practitionerAction.getAll(10, 0))
-                                        // dispatch(careTeamAction.createWithPractitioner(patientId, id, role))
-                                        // console.log(patientId, id, role, 'in here');
-                                    }
-
-                                    this.setState({
-                                        isPatientCreated: true,
-                                        hasPatientCreated: true,
-                                        patientData: patient,
-                                        isPhysicianAdded: true
-                                    })
-                                }
-                            }
-
-                            // this.setState({
-                            //     isPatientCreated: true,
-                            //     hasPatientCreated: true,
-                            //     patientData: patient,
-                            //     isPhysicianAdded: true
-                            // })
-
-                            // iziToast.success({
-                            //     position: 'topRight',
-                            //     title: 'Success',
-                            //     displayMode: 1,
-                            //     message: 'Patient registered successfully!',
-                            // })
-                            //
-                            // dispatch(dashboardAction.count())
-                            // dispatch(patientAction.getAll(10, 0))
-                            // dispatch(practitionerAction.getAll(10, 0))
-                        }
-                    }
-                }
-            }
-        }
 
         if (prevProps.device !== this.props.device) {
             let { unassignedDevices } = this.props.device
@@ -409,13 +323,18 @@ class EditPatientPage extends React.Component {
     }
 
     render() {
-        let { showModal, devicesAdded, devicesLists, physicianValue, physicianLists, devicesDataOnClick } = this.state
+        let { showPatientLocationModal,
+              devicesAdded,
+              devicesLists,
+              physicianValue,
+              physicianLists,
+              devicesDataOnClick } = this.state
         let { patient, practitioner, removeBc } = this.props
 
         let isAddingNewPatientLoading = false
         let patientId = null
-        let patientName = null
-        let patientData = null
+        // let patientName = null
+        // let patientData = null
         let optionDevicesLists = null
         let physicianOptions = []
         let populateDeviceData = null
@@ -432,15 +351,15 @@ class EditPatientPage extends React.Component {
                     isAddingNewPatientLoading = false
                 }
 
-                if (typeof patient !== 'undefined' && patient !== null) {
-                    patientId = patient.id
-
-                    if (typeof patient.name !== 'undefined' && patient.name !== null ) {
-                        patientData = patient.name.map((item, index) => {
-                            patientName = item.given + ' ' + item.family
-                        })
-                    }
-                }
+                // if (typeof patient !== 'undefined' && patient !== null) {
+                //     patientId = patient.id
+                //
+                //     if (typeof patient.name !== 'undefined' && patient.name !== null ) {
+                //         patientData = patient.name.map((item, index) => {
+                //             patientName = item.given + ' ' + item.family
+                //         })
+                //     }
+                // }
             }
         }
 
@@ -505,6 +424,7 @@ class EditPatientPage extends React.Component {
             })
         }
 
+        // commented for now
         /*if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
             populateDeviceData = devicesDataOnClick.map((item, key) => {
 
@@ -775,29 +695,6 @@ class EditPatientPage extends React.Component {
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
-
-                                                    {/*<Form.Group className="monitoring">
-                                                        <Row>
-                                                            <Col sm={12} className="patient-inputs">
-                                                                <Form.Label className="col-sm-4">Remote Monitoring</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="monitor" type="checkbox">
-                                                                        {({ input, meta, type }) => (
-
-                                                                            <>
-                                                                                <input
-                                                                                    type={type}
-                                                                                    {...input}
-                                                                                    checked={true}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                    <span className="ml-2">Yes</span>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>*/}
                                                 </Col>
 
                                                 <Col sm={6}>
@@ -974,6 +871,19 @@ class EditPatientPage extends React.Component {
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
+
+                                                    <Form.Group className="patient-location-wrapper">
+                                                        <Row>
+                                                            <Col sm={12} className="patient-inputs">
+                                                                <Form.Label className="col-sm-4"></Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Button className="get-patient-location" onClick={ this._openPatientLocation }>
+                                                                        <i className="fas fa-map-marker-alt"></i>
+                                                                    </Button>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
                                                 </Col>
                                             </Row>
 
@@ -990,6 +900,28 @@ class EditPatientPage extends React.Component {
                                     </Form>
                                 )} />
                         </Card.Body>
+
+                        { /* Patient Location Modal */ }
+                        <Modal
+                          show={showPatientLocationModal}
+                          size="lg"
+                          aria-labelledby="contained-modal-title-vcenter"
+                          centered
+                          onHide={this._closeModal}>
+                            <Modal.Header closeButton>
+                                <Modal.Title id="contained-modal-title-vcenter">
+                                    Patient Location
+                                </Modal.Title>
+                            </Modal.Header>
+
+                            <Modal.Body>
+                                INSERT MAP HERE
+                            </Modal.Body>
+
+                            <Modal.Footer>
+                                <Button onClick={this._closeModal}>Close</Button>
+                            </Modal.Footer>
+                        </Modal>
                     </Card>
                 </div>
             </AddPatientWrapper>

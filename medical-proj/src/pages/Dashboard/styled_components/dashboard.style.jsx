@@ -163,7 +163,7 @@ export const DashboardWrapper = styled.div`
             label {
                 margin-bottom: 0;
                 color: #fff;
-                font-size: 22px;
+                font-size: 20px;
             }
 
             select {
@@ -183,7 +183,7 @@ export const DashboardWrapper = styled.div`
             border-radius: 2px;
 
             .card-header {
-                font-size: 22px;
+                font-size: 20px;
                 border-radius: 2px;
                 border: none;
                 background-color: #2D333D;

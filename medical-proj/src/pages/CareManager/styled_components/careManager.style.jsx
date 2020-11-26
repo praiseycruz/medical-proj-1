@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const AddCareManagerWrapper = styled.div`
     h2 {
-        font-size: 22px;
+        font-size: 20px;
         margin: 40px 0 20px;
     }
 
