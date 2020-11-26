@@ -15,6 +15,7 @@ class DashboardPage extends React.Component {
         super(props)
         this.state = {
             count: 0,
+            role: 'Care Manager',
             patientsModule: {
                 totalPages: 0,
                 currentPage: 1,
@@ -82,7 +83,7 @@ class DashboardPage extends React.Component {
         const { dispatch } = this.props
         dispatch(dashboardAction.count())
         dispatch(patientAction.getAll(10, 0))
-        dispatch(practitionerAction.getAll(20, 0))
+        dispatch(practitionerAction.getAll(20, 0, this.state.role))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -143,6 +144,39 @@ class DashboardPage extends React.Component {
                 }
             }
         }
+
+        // if (prevProps.practitioner !== this.props.pracitioner) {
+        //     let { getAll } = this.props.practitioner
+        //
+        //     if (typeof getAll !== 'undefined' && getAll !== null) {
+        //         let { practitioners } = getAll
+        //
+        //         if (!this.state.hasSetSelects) {
+        //             if (typeof practitioners !== 'undefined' && practitioners !== null) {
+        //                 let { entry } = practitioners
+        //
+        //                 if (typeof entry !== 'undefined' && entry !== null) {
+        //                     let finalEntriesOfCareManagers = []
+        //
+        //                     entry.map((careManager, index) => {
+        //                         let { resource } = physician
+        //
+        //                         if (typeof resource !== 'undefined' && resource !== null) {
+        //                             let { name, id } = resource
+        //
+        //
+        //                         }
+        //                     })
+        //
+        //                     this.setState({
+        //                         hasSetSelects: true,
+        //                         careManagerLists: finalEntriesOfCareManagers
+        //                     })
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     _getPaginationLink = (e, link, relation) => {
@@ -216,6 +250,7 @@ class DashboardPage extends React.Component {
     }
 
     render() {
+        let { practitioner } = this.props
         let { pagination, count, patientLoading, careManagerLists } = this.state
 
         let pagePagination = null
@@ -247,12 +282,31 @@ class DashboardPage extends React.Component {
             })
         }
 
-        if (careManagerLists !== 'undefined' && careManagerLists !== null && careManagerLists.length > 0) {
-            primaryCareManagerOptions = careManagerLists.map((manager, key) => {
-                return (
-                    <option key={key} value={manager.name}>{manager.name}</option>
-                )
-            })
+        if (typeof practitioner !== 'undefined' && practitioner !== null) {
+            let { getAll } = practitioner
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { practitioners } = getAll
+
+                if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    let { entry } = practitioners
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        primaryCareManagerOptions = entry.map((careManager, index) => {
+                            let { resource } = careManager
+
+                            if (typeof resource !== 'undefined' && resource !== null) {
+                                let { name, id } = resource
+                                let fullname = name[0].given + ' ' + name[0].family
+
+                                return (
+                                    <option key={index} value={id}>{fullname}</option>
+                                )
+                            }
+                        })
+                    }
+                }
+            }
         }
 
         return (
