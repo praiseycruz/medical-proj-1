@@ -167,7 +167,7 @@ export const TaskManagementWrapper = styled.div`
                             .timer {
                                 text-align: center;
                                 font-size: 25px;
-                                border: 1px solid #767a82;
+                                border: 1px solid #767a8259;
                                 border-radius: 2px;
                                 margin-bottom: 10px;
                                 width: 100%;
@@ -200,7 +200,7 @@ export const TaskManagementWrapper = styled.div`
                                         width: 100%;
                                         max-width: 250px;
                                         color: #fff;
-                                        border: 1px solid #767a82;
+                                        border: 1px solid #767a8259;
                                         font-size: 15px;
                                         border-radius: 2px;
                                         padding: 6px 12px;
@@ -249,7 +249,7 @@ export const TaskManagementWrapper = styled.div`
 
                 .patient-number-wrapper {
                     width: 100%;
-                    border: 1px solid #767a82;
+                    border: 1px solid #767a8259;
                     min-height: 150px;
                     padding: 15px;
                     border-radius: 2px;

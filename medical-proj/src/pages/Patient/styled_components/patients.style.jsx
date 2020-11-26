@@ -22,7 +22,7 @@ export const AddPatientWrapper = styled.div`
 
     .form-control {
         background-color: transparent;
-        border: 1px solid #5d6472;
+        border: 1px solid #767a8259;
         border-radius: 2px;
         color: #fff;
     }

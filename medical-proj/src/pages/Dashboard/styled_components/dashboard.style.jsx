@@ -47,7 +47,7 @@ export const DashboardWrapper = styled.div`
                         max-width: 250px;
                         color: #fff;
                         /* border-radius: 30px; */
-                        border: 1px solid #767a82;
+                        border: 1px solid #767a8259;
                         font-size: 15px;
                     }
                 }
@@ -161,9 +161,10 @@ export const DashboardWrapper = styled.div`
 
         .care-manager-wrapper {
             label {
-                margin-bottom: 0;
                 color: #fff;
                 font-size: 20px;
+                display: flex;
+                align-items: center;
             }
 
             select {
@@ -171,7 +172,7 @@ export const DashboardWrapper = styled.div`
                 width: 100%;
                 min-width: 250px;
                 color: #fff;
-                border: 1px solid #767a82;
+                border: 1px solid #767a8259;
                 font-size: 15px;
                 padding: 6px 12px;
             }
