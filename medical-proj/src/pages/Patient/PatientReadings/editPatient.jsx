@@ -1,12 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
+import ReactDOM from 'react-dom'
 import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
 import { Form, Row, Col, Button, Modal, Card } from 'react-bootstrap'
 import { TableComponent } from '../../../components/Table'
 import { patientAction, dashboardAction, practitionerAction, deviceAction, careTeamAction } from '../../../actions'
-import iziToast from 'izitoast';
+import iziToast from 'izitoast'
 import { RandNum } from '../../../helpers/misc'
 import { config } from '../../../config'
 
@@ -14,13 +15,27 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
 
+import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react'
+import Geocode from "react-geocode"
+import { CurrentLocation } from '../../../components/Map'
+
+Geocode.setApiKey(config.googleApiKey)
+
 class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            showingInfoWindow: false,
+            activeMarker: {},
+            selectedPlace: {},
             showPatientLocationModal: false,
             devicesAdded: [],
             devicesLists: [],
+            patientLocation: {
+                lat: 4.210484,
+                lng: 101.975766
+            },
+            patientAddress: '',
             devicesCols: [
                 {
                     title: '',
@@ -181,9 +196,31 @@ class EditPatientPage extends React.Component {
 
     // open patient location modal
     _openPatientLocation = () => {
+        
+        let { patientLocation } = this.state
+        let location = document.querySelector('input[name="addressLine1"]').value
         this.setState({
-            showPatientLocationModal: true
+            showPatientLocationModal: true,
+            patientAddress: location
         })
+   
+        Geocode.fromAddress(location).then(
+          response => {
+            const { lat, lng } = response.results[0].geometry.location
+
+            patientLocation = {
+                lat,
+                lng
+            }
+            this.setState({
+                patientLocation
+            })
+          },
+          error => {
+            console.error(error)
+          }
+        )
+
     }
 
     // close patient location modal
@@ -239,9 +276,12 @@ class EditPatientPage extends React.Component {
     }
 
     componentDidMount() {
+        
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
         dispatch(practitionerAction.getAll(10, 0))
+        //this._loadMap(this.state.patientLocation)
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -271,7 +311,7 @@ class EditPatientPage extends React.Component {
     _getDeviceName = (e) => {
         let { value } = e.target
 
-        var index = e.target.selectedIndex;
+        var index = e.target.selectedIndex
         var optionElement = e.target.childNodes[index]
         var optionId =  optionElement.getAttribute('data-id')
         var optionType =  optionElement.getAttribute('data-type')
@@ -297,7 +337,7 @@ class EditPatientPage extends React.Component {
     _getPhysicianValue = (e) => {
         let { value } = e.target
 
-        var index = e.target.selectedIndex;
+        var index = e.target.selectedIndex
         var optionElement = e.target.childNodes[index]
         var optionId =  optionElement.getAttribute('data-id')
 
@@ -313,13 +353,29 @@ class EditPatientPage extends React.Component {
             physicianData
         })
 
-        console.log(physicianData);
+        console.log(physicianData)
     }
 
     _setDob = date => {
         this.setState({
             dob: date
-        });
+        })
+    }
+
+    onMarkerClick = (props, marker, e) =>
+        this.setState({
+          selectedPlace: props,
+          activeMarker: marker,
+          showingInfoWindow: true
+        })
+
+    onClose = props => {
+        if (this.state.showingInfoWindow) {
+          this.setState({
+            showingInfoWindow: false,
+            activeMarker: null
+          })
+        }
     }
 
     render() {
@@ -913,9 +969,22 @@ class EditPatientPage extends React.Component {
                                     Patient Location
                                 </Modal.Title>
                             </Modal.Header>
-
                             <Modal.Body>
-                                INSERT MAP HERE
+                             <CurrentLocation
+                                google={this.props.google}
+                                initialCenter={this.state.patientLocation}
+                              >
+                                <Marker onClick={this.onMarkerClick} name={this.state.patientAddress} />
+                                <InfoWindow
+                                  marker={this.state.activeMarker}
+                                  visible={this.state.showingInfoWindow}
+                                  onClose={this.onClose}
+                                >
+                                  <div>
+                                    <h4>{this.state.selectedPlace.name}</h4>
+                                  </div>
+                                </InfoWindow>
+                              </CurrentLocation>
                             </Modal.Body>
 
                             <Modal.Footer>
@@ -939,5 +1008,7 @@ function mapStateToProps(state) {
     }
 }
 
-const connectedEditPatientPage = connect(mapStateToProps)(EditPatientPage)
+const connectedEditPatientPage = connect(mapStateToProps)(GoogleApiWrapper({
+  apiKey: config.googleApiKey
+})(EditPatientPage))
 export { connectedEditPatientPage as EditPatientPage }
