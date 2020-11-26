@@ -90,74 +90,140 @@ body {
         -moz-appearance: textfield;
     }
 
-    .modal-content {
-        background-color: #3C4452;
+    .modal {
+        .modal-content {
+            background-color: #3C4452;
 
-        .modal-header {
-            margin: 0 16px;
-            padding: 16px 0;
+            .modal-header {
+                margin: 0 16px;
+                padding: 16px 0;
 
-            h5 {
-                margin-bottom: 0;
-            }
-        }
-
-        .modal-body {
-            h5 {
-                border-bottom: 1px solid #fff;
-                padding-bottom: 15px;
+                h5 {
+                    margin-bottom: 0;
+                }
             }
 
-            .adding-new,
-            .device-limits {
-                .devices-types {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-bottom: 20px;
+            .modal-body {
+                h5 {
+                    border-bottom: 1px solid #fff;
+                    padding-bottom: 15px;
+                }
 
-                    label {
-                        font-size: 16px;
-                        margin-bottom: 0;
-                        color: #a9a9a9;
-
-                        &.form-label {
-                            color: #fff;
-                        }
-                    }
-
-                    .limit-wrapper {
+                .adding-new,
+                .device-limits {
+                    .devices-types {
                         display: flex;
-                        justify-content: space-between;
+                        justify-content: center;
                         align-items: center;
+                        margin-bottom: 20px;
 
                         label {
+                            font-size: 16px;
                             margin-bottom: 0;
-                            font-size: 14px;
+                            color: #a9a9a9;
+
+                            &.form-label {
+                                color: #fff;
+                            }
+                        }
+
+                        .limit-wrapper {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+
+                            label {
+                                margin-bottom: 0;
+                                font-size: 14px;
+                            }
+                        }
+                    }
+
+                    .form-control {
+                        background-color: transparent;
+                        border: 1px solid #767a8259;
+                        border-radius: 2px;
+                        color: #fff;
+                        font-size: 14px;
+                    }
+                }
+
+                .device-limits {
+                    margin-top: 40px;
+
+                    .form-control {
+                        max-width: 100px;
+                    }
+                }
+            }
+
+            .modal-footer {
+                border: none;
+            }
+        }
+
+        &.edit-physician-modal {
+            .modal-content {
+                .modal-header {
+                    border-bottom: 2px solid #7a7e8273;
+
+                    .modal-title {
+                        font-size: 20px;
+                        margin-bottom: 0;
+                    }
+                }
+
+                .modal-body {
+                    margin-top: 15px;
+
+                    .physician-info {
+                        .col-sm-6 {
+                            .col-sm-12 {
+                                display: flex;
+                                align-items: center;
+                            }
+
+                            .col-sm-4,
+                            label {
+                                margin-bottom: 0;
+                            }
+
+                            label {
+                                &.gender-label {
+                                    &.male {
+                                        margin-right: 15px;
+                                    }
+
+                                    input {
+                                        margin-right: 5px;
+                                    }
+                                }
+                            }
+
+                            .react-datepicker-wrapper {
+                                input {
+                                    background-color: #353c48;
+                                    width: 100%;
+                                    max-width: 250px;
+                                    color: #fff;
+                                    border: 1px solid #464e5b;
+                                    font-size: 14px;
+                                    border-radius: 2px;
+                                    padding: 6px 12px;
+                                }
+                            }
                         }
                     }
                 }
 
-                .form-control {
-                    background-color: transparent;
-                    border: 1px solid #767a8259;
-                    border-radius: 2px;
-                    color: #fff;
-                    font-size: 14px;
+                .modal-footer {
+                    border-top: 2px solid #7a7e8273;
+
+                    button {
+                        border-radius: 2px;
+                    }
                 }
             }
-
-            .device-limits {
-                margin-top: 40px;
-
-                .form-control {
-                    max-width: 100px;
-                }
-            }
-        }
-
-        .modal-footer {
-            border: none;
         }
     }
 }
