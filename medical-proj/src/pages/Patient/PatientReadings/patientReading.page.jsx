@@ -158,7 +158,7 @@ class PatientReadingsPage extends React.Component {
                     }
                 },
                 {
-                    title: 'View',
+                    title: 'Actions',
                     key: 'button',
                     render: colData => {
                         return <button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>View</button>
@@ -207,13 +207,15 @@ class PatientReadingsPage extends React.Component {
                     key: 'button',
                     render: colData => {
                         return <>
-                                <button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Bill for 1199</button>
-                                <button className="btn btn-danger" onClick={(e) => { this._viewAlert(colData.id) }}>Remove</button>
-                                <button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Edit</button>
+                                <button className="btn btn-primary" onClick={(e) => { this._viewAlert(e, colData.id) }}>Bill for 1199</button>
+                                <button className="btn btn-danger" onClick={(e) => { this._viewAlert(e, colData.id) }}>Remove</button>
+                                <button className="btn btn-primary" onClick={(e) => { this._viewAlert(e, colData.id) }}>Edit</button>
                             </>
                     }
                 }
             ],
+            devicesAdded: [],
+            devicesDataOnClick: [],
             patientDevicesLists: [
                 {
                     name: '',
@@ -252,6 +254,8 @@ class PatientReadingsPage extends React.Component {
                 }
             ],
             showEditPatientModal: false,
+            showAlertModal: false,
+            showModalDevices: false
         }
     }
 
@@ -270,6 +274,24 @@ class PatientReadingsPage extends React.Component {
         let patientDetails = localStorage.getItem("patientDetails")
 
         console.log(patientDetails);
+
+        if (prevProps.device !== this.props.device) {
+            let { unassignedDevices } = this.props.device
+
+            if (typeof unassignedDevices !== 'undefined' && unassignedDevices !== null) {
+                let { devices } = unassignedDevices
+
+                if (typeof devices !== 'undefined' && devices !== null) {
+                    let { entry } = devices
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        this.setState({
+                            devicesLists: entry
+                        })
+                    }
+                }
+            }
+        }
     }
 
 
@@ -325,12 +347,62 @@ class PatientReadingsPage extends React.Component {
         })
     }
 
-    _handleSubmitPatientEdit = () => {
+    _getDeviceName = (e) => {
+        let { value } = e.target
+
+        var index = e.target.selectedIndex;
+        var optionElement = e.target.childNodes[index]
+        var optionId =  optionElement.getAttribute('data-id')
+        var optionType =  optionElement.getAttribute('data-type')
+        var optionSer =  optionElement.getAttribute('data-serial')
+        var optionMan =  optionElement.getAttribute('data-man')
+        var optionModel =  optionElement.getAttribute('data-model')
+
+        let devicesDataOnClick = [
+            {
+                "type": optionType,
+                "serial": optionSer,
+                "manufacturer": optionMan,
+                "model": optionModel
+            }
+        ]
+
+        this.setState({
+            deviceValue: value,
+            devicesDataOnClick
+        })
+    }
+
+    _handleSubmitDevice = () => {
 
     }
 
-    _handleValidatePatientEdit = () => {
+    _handleValidateDevice = () => {
 
+    }
+
+    _viewAlert = (e, id) => {
+        this.setState({
+            showAlertModal: true
+        })
+    }
+
+    _closeModalAlert = () => {
+        this.setState({
+            showAlertModal: false
+        })
+    }
+
+    _openModalDevices = () => {
+        this.setState({
+            showModalDevices: true
+        })
+    }
+
+    _closeModalDevices = () => {
+        this.setState({
+            showModalDevices: false
+        })
     }
 
     render() {
@@ -343,8 +415,109 @@ class PatientReadingsPage extends React.Component {
             alertLists,
             devicesLists,
             patientDevicesLists,
-            showEditPatientModal
+            showEditPatientModal,
+            showAlertModal,
+            showModalDevices,
+            devicesDataOnClick,
+            devicesAdded
         } = this.state
+
+        let optionDevicesLists = null
+        let populateDeviceData = null
+
+        if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
+            optionDevicesLists = devicesLists.map((deviceItem, deviceKey) => {
+                let { resource } = deviceItem
+
+                if (typeof resource !== 'undefined' && resource !== null) {
+                    let { deviceName, manufacturer } = resource
+
+                    if (typeof deviceName !== 'undefined' && deviceName !== null) {
+                        return (
+                            <option
+                                key={deviceItem.resource.id}
+                                value={deviceName[0].name}
+                                data-id={deviceItem.resource.id}
+                                data-type={deviceItem.resource.type.text}
+                                data-man={deviceItem.resource.manufacturer}
+                                data-serial={deviceItem.resource.serialNumber}
+                                data-model={deviceItem.resource.modelNumber}>
+                                    { deviceName[0].name }
+                            </option>
+                        )
+                    }
+                }
+            })
+        }
+
+        if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
+            populateDeviceData = devicesDataOnClick.map((item, key) => {
+                console.log(item.type);
+                return (
+                    <div key={key}>
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Device Type</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.type}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Device Model</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.model}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.serial}</label>
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group className="devices-types">
+                            <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                            <div className="col-sm-7">
+                                <label>{item.manufacturer}</label>
+                            </div>
+                        </Form.Group>
+                    </div>
+                )
+            })
+        } else {
+            populateDeviceData = (
+                <div>
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Device Type</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Device Model</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+
+                    <Form.Group className="devices-types">
+                        <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                        <div className="col-sm-7">
+                            <label>--</label>
+                        </div>
+                    </Form.Group>
+                </div>
+            )
+        }
 
         let diagnosisCodeOption = diagnosisCode.map((item, key) => {
             return (
@@ -516,10 +689,10 @@ class PatientReadingsPage extends React.Component {
                                                 <div className="supplied-devices-section">
                                                     <h5>Supplied Devices:</h5>
 
-                                                    <Button variant="primary">Add Device</Button>
+                                                    <Button variant="primary" onClick={this._openModalDevices}>Add Device</Button>
                                                 </div>
                                                 <div className="mt-4">
-                                                    <TableComponent data={devicesLists} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
+                                                    <TableComponent data={devicesAdded} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
                                                 </div>
                                             </div>
 
@@ -608,6 +781,261 @@ class PatientReadingsPage extends React.Component {
                             </Form>
                         )}
                     />
+
+                    <FormFinal
+                         initialValues={{
+
+                         }}
+                         onSubmit={this._handleSubmitDevice}
+                         validate={this._handleValidateDevice}
+                         render={({values, initialValues, pristine, submitting, handleSubmit }) => (
+                             <Form onSubmit={handleSubmit}>
+                                 <Modal
+                                     show={showModalDevices}
+                                     size="md"
+                                     aria-labelledby="contained-modal-title-vcenter"
+                                     centered
+                                     onHide={this._closeModalDevices}
+                                 >
+                                     <Modal.Header closeButton>
+                                        <h5>Adding new device - ""</h5>
+                                     </Modal.Header>
+
+                                     <Modal.Body>
+                                         <div className="adding-new">
+                                             <Form.Group className="devices-types">
+                                                 <Form.Label className="col-sm-5">Device Name</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <Field name="addDevice" type="select">
+                                                         {({ input, meta, type }) => (
+                                                             <>
+                                                                 <Form.Control
+                                                                     id="allow"
+                                                                     as="select"
+                                                                     onChange={(e) => { this._getDeviceName(e) }}
+                                                                     // {...input}
+                                                                     className="form-control">
+                                                                        <option>-- SELECT A DEVICE --</option>
+                                                                        { optionDevicesLists }
+                                                                 </Form.Control>
+                                                             </>
+                                                         )}
+                                                     </Field>
+                                                 </div>
+                                             </Form.Group>
+
+                                             { populateDeviceData }
+                                         </div>
+
+                                         <div className="device-limits">
+                                             <h5>Device limits for patient</h5>
+
+                                             <Form.Group className="devices-types mt-4">
+                                                 <Form.Label className="col-sm-5">Dangerously high</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <div className="limit-wrapper">
+                                                         <label>above</label>
+                                                         <Field name="dangerously" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="180"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+                                                     </div>
+                                                 </div>
+                                             </Form.Group>
+
+                                             <Form.Group className="devices-types mt-4">
+                                                 <Form.Label className="col-sm-5">High</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <div className="limit-wrapper">
+                                                         <Field name="high" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="120"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+
+                                                         <label>to</label>
+
+                                                         <Field name="high-t" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="180"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+                                                     </div>
+                                                 </div>
+                                             </Form.Group>
+
+                                             <Form.Group className="devices-types mt-4">
+                                                 <Form.Label className="col-sm-5">Normal</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <div className="limit-wrapper">
+                                                         <Field name="normal" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="80"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+
+                                                         <label>to</label>
+
+                                                         <Field name="normal-t" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="120"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+                                                     </div>
+                                                 </div>
+                                             </Form.Group>
+
+                                             <Form.Group className="devices-types mt-4">
+                                                 <Form.Label className="col-sm-5">Low</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <div className="limit-wrapper">
+                                                         <Field name="low" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="50"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+
+                                                         <label>to</label>
+
+                                                         <Field name="low-t" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="80"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+                                                     </div>
+                                                 </div>
+                                             </Form.Group>
+
+                                             <Form.Group className="devices-types mt-4">
+                                                 <Form.Label className="col-sm-5">Dangerously low</Form.Label>
+                                                 <div className="col-sm-7">
+                                                     <div className="limit-wrapper">
+                                                         <label>below</label>
+
+                                                         <Field name="very-low" type="number">
+                                                             {({ input, meta, type }) => (
+                                                                 <>
+                                                                     <Form.Control
+                                                                         type={type}
+                                                                         placeholder="50"
+                                                                         autoComplete="off"
+                                                                         {...input}
+                                                                     />
+                                                                 </>
+                                                             )}
+                                                         </Field>
+                                                     </div>
+                                                 </div>
+                                             </Form.Group>
+                                         </div>
+                                     </Modal.Body>
+
+                                     <Modal.Footer>
+                                         <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
+                                             Add Device
+                                         </Button>
+                                     </Modal.Footer>
+                                 </Modal>
+                             </Form>
+                     )} />
+
+                    <Modal
+                        show={showAlertModal}
+                        size="md"
+                        aria-labelledby="contained-modal-title-vcenter"
+                        centered
+                        onHide={this._closeModalAlert}
+                        >
+                        <Modal.Header closeButton>
+                           <h5>Notification - High</h5>
+                        </Modal.Header>
+
+                        <Modal.Body>
+                            <div className="update-patient-wrapper">
+                                <div>
+                                    <div className="type">
+                                        <label className="mb-0 mr-2">Type: </label>
+                                        <span>Patient Reading</span>
+                                    </div>
+
+                                    <div className="status">
+                                        <label className="mb-0 mr-2">Status: </label>
+                                        <span>Read</span>
+                                    </div>
+
+                                    <div className="date">
+                                        <label className="mb-0 mr-2">Date: </label>
+                                        <span>10/17/2019 12:37 PM</span>
+                                    </div>
+
+                                    <div className="priority">
+                                        <label className="mb-0 mr-2">Priority: </label>
+                                        <span className="high">High</span>
+                                    </div>
+
+                                    <div className="patient">
+                                        <label className="mb-0 mr-2">Patient: </label>
+                                        <span>Paul Degagne</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal.Body>
+
+                        <Modal.Footer>
+                            <Button variant="danger" onClick={this._closeModalAlert}>Close</Button>
+                        </Modal.Footer>
+                    </Modal>
+
                 </Row>
 
             </AddPatientWrapper>
