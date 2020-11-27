@@ -364,6 +364,10 @@ class AddPatientPage extends React.Component {
                     "value": `${values.ssn}`
                 },
                 {
+                    "system": `${config.apiGateway.URL}` + "/CustomId",
+                    "value": `${values.patientId}`
+                },
+                {
                     "value": RandNum("PX"),
                     "system": "EXSYS"
                 }
