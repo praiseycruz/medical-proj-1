@@ -335,6 +335,8 @@ class PatientReadingsPage extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        const { dispatch } = this.props
+
         let patientDetails = localStorage.getItem("patientDetails")
 
         if (prevProps.device !== this.props.device) {
@@ -1110,10 +1112,11 @@ class PatientReadingsPage extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { patient, device } = state
+    const { patient, device, practitioner } = state
     return {
         patient,
-        device
+        device,
+        practitioner
     }
 }
 
