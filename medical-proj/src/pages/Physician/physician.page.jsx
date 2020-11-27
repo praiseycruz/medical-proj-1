@@ -21,6 +21,7 @@ class PhysicianPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            currentPage: 1,
             showPhysicianEditModal: false,
             getPhysicanDataOnClick: {}, // set physician data on click edit button
             role: 'Primary Physician', // set role to physician
@@ -103,7 +104,9 @@ class PhysicianPage extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(practitionerAction.getAll(100, 0, this.state.role))
+        //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+        dispatch(practitionerAction.getAllPhysician(100,0))
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -409,8 +412,8 @@ class PhysicianPage extends React.Component {
                                         const promise = handleSubmit(event);
                                         promise && promise.then(() => {
                                             const { dispatch } = this.props
-                                            dispatch(practitionerAction.getAll(100, 0, this.state.role))
-
+                                            //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                            dispatch(practitionerAction.getAllPhysician(100,0))
                                             form.reset();
                                             iziToast.success({
                                                 position: 'topRight',
@@ -829,8 +832,8 @@ class PhysicianPage extends React.Component {
                                                 const promise = handleSubmit(event);
                                                 promise && promise.then(() => {
                                                     const { dispatch } = this.props
-                                                    dispatch(practitionerAction.getAll(100, 0, this.state.role))
-
+                                                    //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                                    dispatch(practitionerAction.getAllPhysician(100,0))
                                                     form.reset();
                                                     iziToast.success({
                                                         position: 'topRight',

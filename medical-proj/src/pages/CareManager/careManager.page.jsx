@@ -129,7 +129,8 @@ class CareManagerPage extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(practitionerAction.getAll(100, 0, this.state.role))
+        //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+        dispatch(practitionerAction.getAllCareManager(100,0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -415,7 +416,9 @@ class CareManagerPage extends React.Component {
                                         const promise = handleSubmit(event);
                                         promise && promise.then(() => {
                                             const { dispatch } = this.props
-                                            dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                            //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                            dispatch(practitionerAction.getAllCareManager(100,0))
+
                                             form.reset();
                                             iziToast.success({
                                                 position: 'topRight',
@@ -811,8 +814,8 @@ class CareManagerPage extends React.Component {
                                                 const promise = handleSubmit(event);
                                                 promise && promise.then(() => {
                                                     const { dispatch } = this.props
-                                                    dispatch(practitionerAction.getAll(100, 0, this.state.role))
-
+                                                    //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                                    dispatch(practitionerAction.getAllCareManager(100,0))
                                                     form.reset();
                                                     iziToast.success({
                                                         position: 'topRight',

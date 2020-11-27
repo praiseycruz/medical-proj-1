@@ -9,7 +9,33 @@ export const practitionerService = {
     findById,
     searchByIdOrName,
     getPaginationLink,
+    getAllPhysician,
+    getAllCareManager
 }
+
+
+function getAllCareManager(count, skip) {
+
+    const requestOptions = headers(Method.GET)
+    return fetch(config.apiGateway.URL + config.Practitioner.getAllCareManager(count, skip), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    })
+}
+
+function getAllPhysician(count, skip) {
+
+    const requestOptions = headers(Method.GET)
+    return fetch(config.apiGateway.URL + config.Practitioner.getAllPhysician(count, skip), requestOptions)
+    .then(handleResponse)
+    .then(response => {
+        return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
+    })
+}
+
 
 function create(data) {
     const requestOptions = headers(Method.POST, JSON.stringify(data))
