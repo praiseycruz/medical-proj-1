@@ -50,7 +50,8 @@ class TaskTimerWrapper extends React.Component {
                     name: 'Dr. Four Asd'
                 },
             ],
-            startDate: new Date()
+            startDate: new Date(),
+            showGoalModal: false
         }
     }
 
@@ -70,6 +71,23 @@ class TaskTimerWrapper extends React.Component {
     // _getHours() {
     //     return ("0" + Math.floor(this.state.secondsElapsed / 3600)).slice(-2);
     // }
+
+    _logTime = () => {
+        let { secondsElapsed } = this.state
+
+        if (secondsElapsed !== 0) {
+
+        } else {
+            let error = "<span>Cannot log zero time amount. <br />Please try again after starting timer or click minutes to add manually</span>"
+
+            iziToast.error({
+               position: 'topRight',
+               title: 'Error',
+               displayMode: 1,
+               message: error
+           });
+        }
+    }
 
     _getMinutes() {
         return ("0" + Math.floor((this.state.secondsElapsed % 3600) / 60)).slice(
@@ -134,6 +152,17 @@ class TaskTimerWrapper extends React.Component {
         });
     }
 
+    _showGoalModal = () => {
+        this.setState({
+            showGoalModal: true
+        })
+    }
+
+    _closeGoalModal = () => {
+        this.setState({
+            showGoalModal: false
+        })
+    }
 
     render() {
         let { taskLists,
@@ -178,7 +207,7 @@ class TaskTimerWrapper extends React.Component {
                                             <i className="fas fa-file-medical-alt"></i>
                                         </span>
 
-                                        <div className="info-box-content">
+                                        <div className="info-box-content" onClick={this._showGoalModal}>
                                             <span className="info-box-text pt-1">Goal</span>
                                             <span className="info-box-number">20:00 mins</span>
                                         </div>
@@ -202,36 +231,6 @@ class TaskTimerWrapper extends React.Component {
                                 </div>
                             </div>
                         </div>
-
-                        {/*<Row>
-                            <Col sm={4}>
-                                <div className="logged-content box-wrapper">
-                                    <h5>
-                                        <i className="far fa-clock mr-2"></i>
-                                        Logged this month
-                                    </h5>
-
-                                    <p className="time">40:00</p>
-                                </div>
-                            </Col>
-
-                            <Col sm={4}>
-                                <div className="goal-wrapper box-wrapper">
-                                    <h5>Goal</h5>
-
-                                    <p className="time">20:00 mins</p>
-                                </div>
-                            </Col>
-
-                            <Col sm={4}>
-                                <div className="care-team-wrapper box-wrapper">
-                                    <h5>Care Team</h5>
-
-                                    <p>Care Manager: <span>Dr. Test Manager</span></p>
-                                    <p>PCP: <span>Dr. Test Physician</span></p>
-                                </div>
-                            </Col>
-                        </Row>*/}
 
                         <div className="timer-wrapper">
                             <Container>
@@ -306,7 +305,7 @@ class TaskTimerWrapper extends React.Component {
                                                                         <div className="date-wrapper">
                                                                             <Form.Label className="col-sm-12">Performed on:</Form.Label>
                                                                             <div className="col-sm-12 d-flex justify-content-between align-items-center">
-                                                                                <Field name="date" type="select">
+                                                                                <Field name="date" type="text">
                                                                                     {({ input, meta, type }) => (
                                                                                         <DatePicker
                                                                                           selected={this.state.startDate}
@@ -318,7 +317,7 @@ class TaskTimerWrapper extends React.Component {
                                                                                     )}
                                                                                 </Field>
 
-                                                                                <Button variant="primary">Log Time</Button>
+                                                                                <Button variant="primary" onClick={this._logTime}>Log Time</Button>
                                                                             </div>
                                                                         </div>
 
@@ -346,6 +345,116 @@ class TaskTimerWrapper extends React.Component {
                                     )} />
                             </Container>
                         </div>
+
+                        <FormFinal
+                            initialValues={{
+                                minutes: '20'
+                            }}
+                            onSubmit={this._handleSubmit}
+                            validate={this._handleValidate}
+                            render={({values, initialValues, pristine, submitting, handleSubmit }) => (
+                                <Form onSubmit={handleSubmit}>
+                                    <Modal
+                                        show={this.state.showGoalModal}
+                                        size="md"
+                                        aria-labelledby="contained-modal-title-vcenter"
+                                        centered
+                                        onHide={this._closeGoalModal}>
+
+                                        <Modal.Header closeButton>
+                                            <Modal.Title id="contained-modal-title-vcenter">
+                                                Edit Patient Minute Goal
+                                            </Modal.Title>
+                                        </Modal.Header>
+
+                                        <Modal.Body>
+                                            <div className="goal">
+                                                <Row>
+                                                    <Col sm={12}>
+                                                        <Form.Group className="minutes">
+                                                            <Row>
+                                                                <Col sm={12} className="patient-inputs">
+                                                                    <div className="col-sm-12">
+                                                                        <label className="minutes">
+                                                                            <Field name="minutes" type="radio" value="20">
+                                                                                {({ input, meta }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>20 minutes</span>
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div className="col-sm-12">
+                                                                        <label className="minutes">
+                                                                            <Field name="minutes" type="radio" value="40">
+                                                                                {({ input, meta, type }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            type={type}
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>40 minutes</span>
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div className="col-sm-12">
+                                                                        <label className="minutes">
+                                                                            <Field name="minutes" type="radio" value="60">
+                                                                                {({ input, meta, type }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            type={type}
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>60 minutes</span>
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div className="col-sm-12">
+                                                                        <label className="minutes">
+                                                                            <Field name="minutes" type="radio" value="90+">
+                                                                                {({ input, meta, type }) => (
+                                                                                    <>
+                                                                                        <input
+                                                                                            type={type}
+                                                                                            {...input}
+                                                                                        />
+                                                                                    </>
+                                                                                )}
+                                                                            </Field>
+                                                                            <span>90+ minutes</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </Col>
+                                                            </Row>
+                                                        </Form.Group>
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        </Modal.Body>
+
+                                        <Modal.Footer className="task-management">
+                                            <div className="btn-save">
+                                                <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
+                                                    Save
+                                                </Button>
+                                            </div>
+                                            <Button variant="danger" onClick={this._closeGoalModal}>Close</Button>
+                                        </Modal.Footer>
+                                    </Modal>
+                                </Form>
+                            )} />
                     </div>
                 </Card.Body>
             </Card>
