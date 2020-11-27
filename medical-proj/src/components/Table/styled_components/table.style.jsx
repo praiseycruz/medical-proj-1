@@ -7,7 +7,7 @@ export const TableWrapper = styled.div`
         border-collapse: separate;
         border-spacing: 0;
         color: #4a4a4d;
-        font-size: 16px;
+        font-size: 14px;
         width: 100%;
 
         tr {
@@ -21,7 +21,7 @@ export const TableWrapper = styled.div`
         }
 
         thead {
-            font-size: 16px;
+            font-size: 14px;
             line-height: 24px;
             border: 1px solid transparent;
             max-width: 100%;
