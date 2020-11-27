@@ -216,13 +216,7 @@ class PatientReadingsPage extends React.Component {
             ],
             devicesAdded: [],
             devicesDataOnClick: [],
-            patientDevicesLists: [
-                {
-                    name: '',
-                    connectedAt: '',
-                    lastMeasurement: ''
-                }
-            ],
+            patientDevicesLists: [{}],
             patientDevicesCols: [
                 {
                     title: 'Device',
@@ -255,7 +249,80 @@ class PatientReadingsPage extends React.Component {
             ],
             showEditPatientModal: false,
             showAlertModal: false,
-            showModalDevices: false
+            showModalDevices: false,
+            billingLists: [{}],
+            billingCols: [
+                {
+                    title: 'EHR ID',
+                    key: 'ehrId',
+                    render: colData => {
+                        return <span>{colData.id}</span>
+                    }
+                },
+                {
+                    title: 'Insurance',
+                    key: 'insurance',
+                    render: colData => {
+                        return <span>{colData.insurance}</span>
+                    }
+                },
+                {
+                    title: 'Date of Service',
+                    key: 'dateService',
+                    render: colData => {
+                        return <span>{colData.dateService}</span>
+                    }
+                },
+                {
+                    title: 'Type',
+                    key: 'type',
+                    render: colData => {
+                        return <>{colData.type}</>
+                    }
+                },
+                {
+                    title: 'Note',
+                    key: 'note',
+                    render: colData => {
+                        return <>{colData.note}</>
+                    }
+                },
+                {
+                    title: 'Provider',
+                    key: 'provider',
+                    render: colData => {
+                        return <>{colData.provider}</>
+                    }
+                },
+                {
+                    title: 'Care Manager',
+                    key: 'careManager',
+                    render: colData => {
+                        return <>{colData.careManager}</>
+                    }
+                },
+                {
+                    title: 'POS',
+                    key: 'pos',
+                    render: colData => {
+                        return <>{colData.pos}</>
+                    }
+                },
+                {
+                    title: 'TC Claim',
+                    key: 'tcClaim',
+                    render: colData => {
+                        return <>{colData.tcClaim}</>
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'actions',
+                    render: colData => {
+                        return <>{colData.tcClaim}</>
+                    }
+                }
+            ],
         }
     }
 
@@ -293,7 +360,6 @@ class PatientReadingsPage extends React.Component {
             }
         }
     }
-
 
     _handleSubmitSearch = () => {
 
@@ -419,7 +485,8 @@ class PatientReadingsPage extends React.Component {
             showAlertModal,
             showModalDevices,
             devicesDataOnClick,
-            devicesAdded
+            devicesAdded,
+            billingLists
         } = this.state
 
         let optionDevicesLists = null
@@ -644,22 +711,6 @@ class PatientReadingsPage extends React.Component {
                                                                                             <span>RPM</span>
                                                                                         </label>
                                                                                     </div>
-
-                                                                                    {/*<div>
-                                                                                        <label className="programs-label">
-                                                                                            <Field name="programs-ccm" type="checkbox" value="ccm">
-                                                                                                {({ input, meta, type }) => (
-                                                                                                    <>
-                                                                                                        <input
-                                                                                                            type={type}
-                                                                                                            {...input}
-                                                                                                        />
-                                                                                                    </>
-                                                                                                )}
-                                                                                            </Field>
-                                                                                            <span>CCM</span>
-                                                                                        </label>
-                                                                                    </div>*/}
                                                                                 </div>
                                                                             </Col>
 
@@ -692,7 +743,7 @@ class PatientReadingsPage extends React.Component {
                                                     <Button variant="primary" onClick={this._openModalDevices}>Add Device</Button>
                                                 </div>
                                                 <div className="mt-4">
-                                                    <TableComponent data={devicesAdded} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
+                                                    <TableComponent removeThead={false} data={devicesAdded} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
                                                 </div>
                                             </div>
 
@@ -700,20 +751,40 @@ class PatientReadingsPage extends React.Component {
                                                 <h5>Patient Devices:</h5>
 
                                                 <div className="mt-4">
-                                                    <TableComponent data={patientDevicesLists} cols={this.state.patientDevicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
+                                                    <TableComponent removeThead={false} data={patientDevicesLists} cols={this.state.patientDevicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
                                                 </div>
                                             </div>
                                         </Tab>
                                         <Tab eventKey="alerts" title="Alerts">
                                             <div className="mt-4">
-                                                <TableComponent data={alertLists} cols={this.state.alertCols} bordered={false} striped={false} isTableFor={'alerts'} />
+                                                <TableComponent data={alertLists} removeThead={false} cols={this.state.alertCols} bordered={false} striped={false} isTableFor={'alerts'} />
                                             </div>
                                         </Tab>
                                         <Tab eventKey="billing" title="Billing">
-                                            Billing
+                                            <div className="billing-wrapper">
+                                                <div className="d-flex align-items-center mb-4 mx-2">
+                                                    <label className="mb-0 mr-2">Status Filter</label>
+                                                    <div>
+                                                        <select className="form-control">
+                                                            <option>Ready to bill</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <TableComponent data={billingLists} cols={this.state.billingCols} bordered={false} removeThead={false} striped={false} isTableFor={'patients-billing'} />
+                                            </div>
                                         </Tab>
                                         <Tab eventKey="portal" title="Portal">
-                                            Portal
+                                            <div className="portal-wrapper">
+                                                <Row>
+                                                    <Col sm={12}>
+                                                        <label>Portal status: </label>
+                                                        <div className="portal-button">
+                                                            <Button variant="success">Enable Portal Access</Button>
+                                                        </div>
+                                                    </Col>
+                                                </Row>
+                                            </div>
                                         </Tab>
                                         <Tab eventKey="rangeSetup" title="Patient Alerts Range Setup/Edit">
                                             Patient Alerts Range Setup/Edit
