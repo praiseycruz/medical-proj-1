@@ -651,7 +651,8 @@ class AddPatientPage extends React.Component {
                 "type": optionType,
                 "serial": optionSer,
                 "manufacturer": optionMan,
-                "model": optionModel
+                "model": optionModel,
+                "id": optionId
             }
         ]
 
@@ -1545,7 +1546,7 @@ class AddPatientPage extends React.Component {
                                                                              id="allow"
                                                                              as="select"
                                                                              onChange={(e) => { this._getDeviceName(e) }}
-                                                                             // {...input}
+                                                                             {...input}
                                                                              className="form-control">
                                                                                 <option>-- SELECT A DEVICE --</option>
                                                                                 { optionDevicesLists }
