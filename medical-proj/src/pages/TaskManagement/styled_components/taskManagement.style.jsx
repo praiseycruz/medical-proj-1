@@ -450,6 +450,7 @@ export const TaskManagementWrapper = styled.div`
 
                     &.bg-orange {
                         background-color: #D56E13;
+                        cursor: pointer;
                     }
 
                     &.bg-purple {
