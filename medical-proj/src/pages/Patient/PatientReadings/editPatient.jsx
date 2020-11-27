@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import ReactDOM from 'react-dom'
 import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
-import { Form, Row, Col, Button, Modal, Card } from 'react-bootstrap'
+import { Form, Row, Col, Button, Modal, Card, Container } from 'react-bootstrap'
 import { TableComponent } from '../../../components/Table'
 import { patientAction, dashboardAction, practitionerAction, deviceAction, careTeamAction } from '../../../actions'
 import iziToast from 'izitoast'
@@ -91,7 +91,8 @@ class EditPatientPage extends React.Component {
             physicianValue: '',
             devicesDataOnClick: [],
             physicianData: [],
-            isPhysicianAdded: false
+            isPhysicianAdded: false,
+            showNotificationModal: false
         }
     }
 
@@ -212,11 +213,19 @@ class EditPatientPage extends React.Component {
 		return errors
     }
 
+    _handleSubmitNotifications = () => {
+
+    }
+
+    _handleValidateNotifications = () => {
+
+    }
+
     // open patient location modal
     _openPatientLocation = form => {
 
         let { patientLocation } = this.state
-        
+
         //set the location to get the longitude and latitude
         let completeAddress = {
             addressLine1: typeof form.getFieldState('addressLine1').value!=='undefined' ? form.getFieldState('addressLine1').value : '',
@@ -246,7 +255,7 @@ class EditPatientPage extends React.Component {
             showPatientLocationModal: true,
             patientAddress: location
         })
-    
+
         //geocode now the address into longitude and latitude
         Geocode.fromAddress(location).then(
           response => {
@@ -320,7 +329,7 @@ class EditPatientPage extends React.Component {
     }
 
     componentDidMount() {
-        
+
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
         dispatch(practitionerAction.getAll(10, 0))
@@ -422,13 +431,26 @@ class EditPatientPage extends React.Component {
         }
     }
 
+    _showNotifications = () => {
+        this.setState({
+            showNotificationModal: true
+        })
+    }
+
+    _closeNotifications = () => {
+        this.setState({
+            showNotificationModal: false
+        })
+    }
+
     render() {
         let { showPatientLocationModal,
               devicesAdded,
               devicesLists,
               physicianValue,
               physicianLists,
-              devicesDataOnClick } = this.state
+              devicesDataOnClick,
+              showNotificationModal } = this.state
         let { patient, practitioner, removeBc } = this.props
 
         let isAddingNewPatientLoading = false
@@ -598,7 +620,10 @@ class EditPatientPage extends React.Component {
             <AddPatientWrapper>
                 <div className="mt-3">
                     <Card>
-                        <Card.Header>Update patient info</Card.Header>
+                        <Card.Header className="edit-patient-header">
+                            <span>Update patient info</span>
+                            <Button variant="primary" onClick={this._showNotifications}>Notifications</Button>
+                        </Card.Header>
 
                         <Card.Body>
                             <FormFinal
@@ -1035,6 +1060,268 @@ class EditPatientPage extends React.Component {
                                 <Button onClick={this._closeModal}>Close</Button>
                             </Modal.Footer>
                         </Modal>
+
+                        {/* Show Notification modal */}
+                        <FormFinal
+                            initialValues={{
+
+                            }}
+                            onSubmit={this._handleSubmitNotifications}
+                            validate={this._handleValidateNotifications}
+                            render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
+                              <Form onSubmit={handleSubmit}>
+                                  <Modal
+                                    show={showNotificationModal}
+                                    size="lg"
+                                    aria-labelledby="contained-modal-title-vcenter"
+                                    centered
+                                    onHide={this._closeNotifications}>
+                                      <Modal.Header closeButton>
+                                          <Modal.Title id="contained-modal-title-vcenter">
+                                              Notification Settings
+                                          </Modal.Title>
+                                      </Modal.Header>
+
+                                      <Modal.Body>
+                                          <Row>
+                                              <Col sm={12}>
+                                                  <Container>
+                                                      <Form.Group className="high-severity">
+                                                          <Row>
+                                                              <Col sm={12} className="checkbox-wrapper">
+                                                                  <Form.Label className="col-sm-6">High-Severity Patient Assessment Score</Form.Label>
+                                                                  <div className="col-sm-6">
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientAssessmentPush" type="checkbox" value="push">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Push</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientAssessmentEmail" type="checkbox" value="email">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Email</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientAssessmentText" type="checkbox" value="text">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Text</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </Col>
+
+                                                              <Col sm={12} className="checkbox-wrapper">
+                                                                  <Form.Label className="col-sm-6">When you have an upcoming appointement</Form.Label>
+                                                                  <div className="col-sm-6">
+                                                                      <label className="notification-label">
+                                                                          <Field name="upcomingAppointmentPush" type="checkbox" value="push">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Push</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="upcomingAppointmentEmail" type="checkbox" value="email">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Email</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientAssessmentText" type="checkbox" value="text">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Text</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </Col>
+
+                                                              <Col sm={12} className="checkbox-wrapper">
+                                                                  <Form.Label className="col-sm-6">Remote Patient Reading is Outside of Recommended Range</Form.Label>
+                                                                  <div className="col-sm-6">
+                                                                      <label className="notification-label">
+                                                                          <Field name="rpmReadingPush" type="checkbox" value="push">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Push</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="rpmReadingEmail" type="checkbox" value="email">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Email</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="rpmReadingText" type="checkbox" value="text">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Text</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </Col>
+
+                                                              <Col sm={12} className="checkbox-wrapper">
+                                                                  <Form.Label className="col-sm-6">Patient Reading Overdue Remider</Form.Label>
+                                                                  <div className="col-sm-6">
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingOverduePush" type="checkbox" value="push">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Push</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingOverdueEmail" type="checkbox" value="email">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Email</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingOverdueText" type="checkbox" value="text">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Text</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </Col>
+
+                                                              <Col sm={12} className="checkbox-wrapper">
+                                                                  <Form.Label className="col-sm-6">Patient Reading Due Remider</Form.Label>
+                                                                  <div className="col-sm-6">
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingDuePush" type="checkbox" value="push">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Push</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingDueEmail" type="checkbox" value="email">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Email</span>
+                                                                      </label>
+
+                                                                      <label className="notification-label">
+                                                                          <Field name="patientReadingDueText" type="checkbox" value="text">
+                                                                              {({ input, meta }) => (
+                                                                                  <>
+                                                                                      <input
+                                                                                          {...input}
+                                                                                      />
+                                                                                  </>
+                                                                              )}
+                                                                          </Field>
+                                                                          <span>Text</span>
+                                                                      </label>
+                                                                  </div>
+                                                              </Col>
+                                                          </Row>
+                                                      </Form.Group>
+                                                  </Container>
+                                              </Col>
+                                          </Row>
+                                      </Modal.Body>
+
+                                      <Modal.Footer className="edit-patient">
+                                          <Button variant="primary" className="btn-save" type="submit" disabled={pristine}>Save</Button>
+                                          <Button variant="danger" onClick={this._closeNotifications}>Close</Button>
+                                      </Modal.Footer>
+                                  </Modal>
+                              </Form>
+                            )}
+                          />
                     </Card>
                 </div>
             </AddPatientWrapper>
