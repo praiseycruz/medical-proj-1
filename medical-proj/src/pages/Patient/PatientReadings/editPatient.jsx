@@ -225,8 +225,8 @@ class EditPatientPage extends React.Component {
             zipcode: typeof form.getFieldState('zipcode').value!=='undefined' ? form.getFieldState('zipcode').value : ''
         }
 
-
-        let location = `${completeAddress.addressLine1} ${completeAddress.addressLine2} ${completeAddress.state} ${completeAddress.zipcode}`.ucwords()
+        //combined address inputs
+        let location = `${completeAddress.addressLine1}, ${completeAddress.addressLine2}, ${completeAddress.state}, ${completeAddress.zipcode}`.ucwords()
 
         this.setState({
             showPatientLocationModal: true,
