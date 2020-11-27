@@ -225,8 +225,22 @@ class EditPatientPage extends React.Component {
             zipcode: typeof form.getFieldState('zipcode').value!=='undefined' ? form.getFieldState('zipcode').value : ''
         }
 
+        let completeAddressArray = []
+
+        if (completeAddress.addressLine1!='')
+            completeAddressArray.push(completeAddress.addressLine1)
+
+        if (completeAddress.addressLine2!='')
+            completeAddressArray.push(completeAddress.addressLine2)
+
+        if (completeAddress.state!='')
+            completeAddressArray.push(completeAddress.state)
+
+        if (completeAddress.zipcode!='')
+            completeAddressArray.push(completeAddress.zipcode)
+
         //combined address inputs
-        let location = `${completeAddress.addressLine1}, ${completeAddress.addressLine2}, ${completeAddress.state}, ${completeAddress.zipcode}`.ucwords()
+        let location = completeAddressArray.join(', ').ucwords()
 
         this.setState({
             showPatientLocationModal: true,
