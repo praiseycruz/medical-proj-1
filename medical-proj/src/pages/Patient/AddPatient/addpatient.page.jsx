@@ -366,14 +366,24 @@ class AddPatientPage extends React.Component {
                     "value": `${values.ssn}`
                 },
                 {
+                    "system": `${values.patientIdIdentifier}`,
+                    "value": `${values.patientId}`
+                },
+                {
                     "value": RandNum("PX"),
                     "system": "EXSYS"
                 }
             ],
-            "extension": [{
-                "url": config.apiGateway.URL + "/CanSendText",
-                "valueBoolean": typeof values.canText === 'undefined' ? false : values.canText
-            }]
+            "extension": [
+                {
+                    "url": config.apiGateway.URL + "/CanSendText",
+                    "valueBoolean": typeof values.canText === 'undefined' ? false : values.canText
+                },
+                {
+                    "url": config.apiGateway.URL + "/MedicareId",
+                    "valueString": values.medicareId
+                },
+            ]
         }
 
         if (physicianID !== null && careManagerID !== null) {
