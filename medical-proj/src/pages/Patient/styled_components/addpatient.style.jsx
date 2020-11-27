@@ -206,13 +206,23 @@ export const AddPatientWrapper = styled.div`
 
     .card {
         background-color: #353C48;
-        min-height: 260px;
+        min-height: 300px;
 
         .card-header {
             font-size: 20px;
             border-radius: 2px;
             border: none;
             background-color: #2D333D;
+
+            &.edit-patient-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                button {
+                    border-radius: 2px;
+                }
+            }
         }
 
         .card-body {
@@ -268,6 +278,23 @@ export const AddPatientWrapper = styled.div`
 
                 .patient-device-wrapper {
                     margin-top: 30px;
+                }
+
+                .portal-wrapper {
+                    .col-sm-12 {
+                        display: flex;
+                        align-items: center;
+
+                        label {
+                            margin-bottom: 0;
+                            margin-right: 15px;
+                        }
+
+                        button {
+                            border-radius: 2px;
+                            padding: 4px 12px;
+                        }
+                    }
                 }
             }
 
