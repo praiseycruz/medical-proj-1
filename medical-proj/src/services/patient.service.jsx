@@ -160,6 +160,7 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
 
     let deviceTemplate = (deviceId, patientId) => {
         return {
+            "resourceType": "Device",
             "status": "active",
             "subject": {
                 reference: `Patient/${patientId}`,
@@ -172,6 +173,29 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
         }
     }
 
+    let conditionsTemplate = (patientId, contitionName) => {
+        return {
+            "resourceType": "Condition",
+            "code": {
+                "system": "EXSYS",
+                "text": `${contitionName}`,
+            },
+            "subject": {
+                "reference": `Patient/${patientId}`,
+                "type": "Patient"
+            },
+            "request": {
+                "method": "POST",
+            }
+        }
+    }
+
+    // End resources transaction
+
+    let getPatientSSN = (patientData) => {
+        return JSON.parse(patientData).filter(e => e.system === "http://hl7.org/fhir/sid/us-ssn")[0].value
+    }
+
     let reqBody = {
         "resourceType": "Bundle",
         "type": "transaction",
@@ -179,7 +203,10 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
             {
                 "id": `${tempPatientId}`,
                 ...patientData,
-                "request": { "method": "POST" }
+                "request": {
+                    "method": "POST",
+                    "ifNoneExist": `identifier=http://hl7.org/fhir/sid/us-ssn|${getPatientSSN(patientData)}`,
+                }
             },
             {
                 "resourceType": "CareTeam",
@@ -216,7 +243,8 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
                 "status": "active",
                 "request": { "method": "POST" }
             },
-            ...deviceIds.map(id => deviceTemplate(id, tempPatientId))
+            ...deviceIds.map(id => deviceTemplate(id, tempPatientId)),
+            ...conditions.map(name => conditionsTemplate(name, tempPatientId)),
         ]
     }
 
