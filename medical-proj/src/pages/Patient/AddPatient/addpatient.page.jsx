@@ -14,6 +14,22 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
 
+
+//string prototype for uppercase
+String.prototype.ucwords = function() {
+  let str = this.toLowerCase()
+  return str.toLowerCase().replace(/(?<= )[^\s]|^./g, a=>a.toUpperCase())
+}
+
+//label when adding the device
+var addingNewDeviceLabel = ''
+
+//hidden form component
+const HiddenForm = ({values}) => {
+    addingNewDeviceLabel = `${typeof values.firstname!=='undefined' ? values.firstname : ''} ${typeof values.lastname!=='undefined' ? values.lastname : ''}`.ucwords()
+    return null
+}
+
 class AddPatientPage extends React.Component {
     constructor(props) {
         super(props)
@@ -532,6 +548,8 @@ class AddPatientPage extends React.Component {
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
         dispatch(practitionerAction.getAll(100, 0))
+
+        console.log(this.hiddenForm)
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -1002,6 +1020,7 @@ class AddPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
+                                                    <HiddenForm values={values} />
                                                     <Form.Group className="patient-lastname">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1119,7 +1138,6 @@ class AddPatientPage extends React.Component {
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
-
                                                     <Form.Group className="patient-physician">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1512,7 +1530,7 @@ class AddPatientPage extends React.Component {
                                              onHide={this._closeModal}
                                          >
                                              <Modal.Header closeButton>
-                                                <h5>Adding new device - {`"${this.state.initialValues.firstname}"`}</h5>
+                                                <h5>Adding new device - {`"${addingNewDeviceLabel}"`}</h5>
                                              </Modal.Header>
 
                                              <Modal.Body>
