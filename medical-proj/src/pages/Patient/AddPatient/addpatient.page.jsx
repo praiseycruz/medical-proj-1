@@ -18,87 +18,52 @@ class AddPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            showModal: false,
-            deviceValue: '',
-            devicesAdded: [],
             hasSetSelects: false,
             patientDevicesLists: [
                 {
-                    name: '',
-                    connectedAt: '',
-                    lastMeasurement: ''
+                    device: '',
+                    deviceType: '',
                 }
-            ],
+            ], // store all the devices populated in the table (data passed in registering patient)
             patientDevicesCols: [
                 {
-                    title: 'Device',
-                    key: 'device',
-                    render: colData => {
-                        return <span>{colData.device}</span>
-                    }
-                },
-                {
-                    title: 'Connected At',
-                    key: 'connectedAt',
-                    render: colData => {
-                        return <span>{colData.connectedAt}</span>
-                    }
-                },
-                {
-                    title: 'Last Measurement At',
-                    key: 'lastMeasurement',
-                    render: colData => {
-                        return <span>{colData.lastMeasurement}</span>
-                    }
-                },
-                {
-                    title: 'Actions',
-                    key: 'button',
-                    render: colData => {
-                        return <>{colData.actions}</>
-                    }
-                }
-            ],
-            cols: [
-                {
-                    title: '',
+                    title: 'Device Name',
                     key: 'deviceName',
                     render: colData => {
                         return <span>{colData.deviceName}</span>
                     }
                 },
                 {
-                    title: '',
+                    title: 'Device Type',
                     key: 'name',
                     render: colData => {
                         return <span>{colData.name}</span>
                     }
                 },
                 {
-                    title: '',
+                    title: 'Serial Number',
                     key: 'serialNum',
                     render: colData => {
                         return <span>{colData.serialNum}</span>
                     }
                 },
                 {
-                    title: '',
+                    title: 'Action',
                     key: 'button',
                     render: colData => {
                         return <button className="btn btn-danger" onClick={(e) => { this._removeDeviceData(colData.id) }}>Remove</button>
                     }
                 }
-            ],
+            ], // add device table column
             isPatientCreated: false,
             hasPatientCreated: false,
-            dob: new Date(),
-            physicianValue: '',
-            physicianData: [],
-            careManagerData: [],
-            careManagerLists: [],
-            physicianLists: [],
-            careManagerValue: '',
-            isPhysicianAdded: false,
+            dob: new Date(), // date of birth state
+            physicianValue: '', // store the physician value on select physician dropdown
+            physicianData: [], // store the physician data on select physician dropdown
+            careManagerValue: '', // store the care manager value on select care manager dropdown
+            careManagerData: [], // store the care manager value on select care manager dropdown
+            careManagerLists: [], // store all care managers and display in Primary Care Manager dropwdown
+            physicianLists: [], // store all physicians and display in Primary Physician dropdown
             diagnosisCode: [
                 {
                     name: 'Code 1'
@@ -109,9 +74,9 @@ class AddPatientPage extends React.Component {
                 {
                     name: 'Code 3'
                 }
-            ],
-            diagnosisCodeValue: '',
-            conditionValue: '',
+            ], // in conditions tab diagnosis code dropdown dummy data
+            diagnosisCodeValue: '', // get diagnosis code dropdown value
+            conditionValue: '', // get conditions dropdown value
             conditionLists: [
                 {
                     name: 'Condition 1'
@@ -122,7 +87,7 @@ class AddPatientPage extends React.Component {
                 {
                     name: 'Condition 3'
                 }
-            ],
+            ], // in conditions tab conditions dropdown dummy data
             conditionsAdded: [
                 {
                     condition: 'Condition 1',
@@ -160,8 +125,8 @@ class AddPatientPage extends React.Component {
                         }
                     ]
                 }
-            ],
-            devicesLists: [],
+            ], // dummy data of conditions - displayed in table
+            devicesLists: [], // store all the devices lists and display in dropdown
             devicesCols: [
                 {
                     title: 'Device',
@@ -202,8 +167,11 @@ class AddPatientPage extends React.Component {
                             </>
                     }
                 }
-            ],
-            devicesDataOnClick: [],
+            ], // devices column in supplied devices under Devices tab
+            devicesAdded: [], // under supplied devices
+            showModalAddPatientDevices: false, // show modal if "Add Device" button is clicked
+            deviceValue: '', // setting the device value on select device name
+            devicesDataOnClick: [], // save devices data on select devices dropdown inside modal
             conditionCols: [
                 {
                     title: '',
@@ -486,12 +454,12 @@ class AddPatientPage extends React.Component {
         let { isPatientCreated } = this.state
 
         this.setState({
-            showModal: true
+            showModalAddPatientDevices: true
         })
 
         // if (isPatientCreated) {
         //     this.setState({
-        //         showModal: true
+        //         showModalAddPatientDevices: true
         //     })
         // } else {
         //     iziToast.warning({
@@ -505,7 +473,7 @@ class AddPatientPage extends React.Component {
 
     _closeModal = () => {
         this.setState({
-            showModal: false
+            showModalAddPatientDevices: false
         })
     }
 
@@ -568,7 +536,7 @@ class AddPatientPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         let { patient } = this.props
-        let { hasPatientCreated, isPatientCreated, physicianData, careManagerData, isPhysicianAdded } = this.state
+        let { hasPatientCreated, isPatientCreated, physicianData, careManagerData } = this.state
         const { dispatch } = this.props
 
         if (prevProps.patient !== this.props.patient) {
@@ -764,7 +732,7 @@ class AddPatientPage extends React.Component {
     }
 
     render() {
-        let { showModal,
+        let { showModalAddPatientDevices,
               devicesAdded,
               devicesLists,
               physicianValue,
@@ -1537,7 +1505,7 @@ class AddPatientPage extends React.Component {
                                  render={({values, initialValues, pristine, submitting, handleSubmit }) => (
                                      <Form onSubmit={handleSubmit}>
                                          <Modal
-                                             show={showModal}
+                                             show={showModalAddPatientDevices}
                                              size="md"
                                              aria-labelledby="contained-modal-title-vcenter"
                                              centered
