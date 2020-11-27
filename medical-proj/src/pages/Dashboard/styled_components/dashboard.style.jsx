@@ -71,6 +71,8 @@ export const DashboardWrapper = styled.div`
                     -webkit-box-shadow: 0 5px 20px rgba(0, 0, 0, .1);
                     margin-bottom: 20px;
                     padding: 15px;
+                    -webkit-transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+                    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
 
                     .info-box-icon {
                         display: flex;
@@ -142,6 +144,10 @@ export const DashboardWrapper = styled.div`
                                 }
                             }
                         }
+
+                        &.get-total-rpm {
+                            cursor: pointer;
+                        }
                     }
 
                     &.bg-blue {
@@ -154,6 +160,11 @@ export const DashboardWrapper = styled.div`
 
                     &.bg-purple {
                         background-color: #8E44AD;
+                    }
+
+                    &:hover {
+                        -webkit-transform: scale(1.1, 1.1);
+                        transform: scale(1.1, 1.1);
                     }
                 }
             }

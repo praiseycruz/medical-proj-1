@@ -83,7 +83,8 @@ class DashboardPage extends React.Component {
         const { dispatch } = this.props
         dispatch(dashboardAction.count())
         dispatch(patientAction.getAll(10, 0))
-        dispatch(practitionerAction.getAll(20, 0, this.state.role))
+        // dispatch(practitionerAction.getAll(20, 0, this.state.role))
+        dispatch(practitionerAction.getAllCareManager(100,0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -249,6 +250,10 @@ class DashboardPage extends React.Component {
         })
     }
 
+    _onClickGetRpmPatient = () => {
+
+    }
+
     render() {
         let { practitioner } = this.props
         let { pagination, count, patientLoading, careManagerLists } = this.state
@@ -339,7 +344,7 @@ class DashboardPage extends React.Component {
                                                 <FontAwesomeIcon size="sm" className="icon" icon={faUsers} />
                                             </span>
 
-                                            <div className="info-box-content">
+                                            <div className="info-box-content get-total-rpm" onClick={this._onClickGetRpmPatient}>
                                                 <span className="info-box-text">Total RPM patients</span>
                                                 <span className="info-box-number">{ this.state.count }</span>
                                             </div>
