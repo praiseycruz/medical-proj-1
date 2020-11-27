@@ -21,6 +21,24 @@ import { CurrentLocation } from '../../../components/Map'
 
 Geocode.setApiKey(config.googleApiKey)
 
+//style for info window
+const styles = {
+    infoWindow: {
+        h4: {
+            fontSize: '13px !important',
+            color: 'black'
+        }
+    }
+}
+
+//string prototype for uppercase
+//use for geocoding address display
+String.prototype.ucwords = function() {
+  let str = this.toLowerCase()
+  return str.toLowerCase().replace(/(?<= )[^\s]|^./g, a=>a.toUpperCase())
+};
+
+
 class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
@@ -195,15 +213,27 @@ class EditPatientPage extends React.Component {
     }
 
     // open patient location modal
-    _openPatientLocation = () => {
-        
+    _openPatientLocation = form => {
+
         let { patientLocation } = this.state
-        let location = document.querySelector('input[name="addressLine1"]').value
+        
+        //set the location to get the longitude and latitude
+        let completeAddress = {
+            addressLine1: typeof form.getFieldState('addressLine1').value!=='undefined' ? form.getFieldState('addressLine1').value : '',
+            addressLine2: typeof form.getFieldState('addressLine2').value!=='undefined' ? form.getFieldState('addressLine2').value : '',
+            state: typeof form.getFieldState('state').value!=='undefined' ? form.getFieldState('state').value : '',
+            zipcode: typeof form.getFieldState('zipcode').value!=='undefined' ? form.getFieldState('zipcode').value : ''
+        }
+
+
+        let location = `${completeAddress.addressLine1} ${completeAddress.addressLine2} ${completeAddress.state} ${completeAddress.zipcode}`.ucwords()
+
         this.setState({
             showPatientLocationModal: true,
             patientAddress: location
         })
-   
+    
+        //geocode now the address into longitude and latitude
         Geocode.fromAddress(location).then(
           response => {
             const { lat, lng } = response.results[0].geometry.location
@@ -564,7 +594,7 @@ class EditPatientPage extends React.Component {
                                 }}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
-                                render={({values, initialValues, pristine, submitting, handleSubmit }) => (
+                                render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
                                     <Form onSubmit={handleSubmit}>
                                         <div className="patient-info">
                                             <Row>
@@ -887,7 +917,7 @@ class EditPatientPage extends React.Component {
                                                             <Col sm={12} className="patient-inputs">
                                                                 <Form.Label className="col-sm-4">State</Form.Label>
                                                                 <div className="col-sm-8">
-                                                                    <Field name="state" type="number">
+                                                                    <Field name="state" type="text">
                                                                         {({ input, meta, type }) => (
                                                                             <>
                                                                                 <Form.Control
@@ -933,7 +963,7 @@ class EditPatientPage extends React.Component {
                                                             <Col sm={12} className="patient-inputs">
                                                                 <Form.Label className="col-sm-4"></Form.Label>
                                                                 <div className="col-sm-8">
-                                                                    <Button className="get-patient-location" onClick={ this._openPatientLocation }>
+                                                                    <Button className="get-patient-location" onClick={ () => {this._openPatientLocation(form) }}>
                                                                         <i className="fas fa-map-marker-alt"></i>
                                                                     </Button>
                                                                 </div>
@@ -981,7 +1011,7 @@ class EditPatientPage extends React.Component {
                                   onClose={this.onClose}
                                 >
                                   <div>
-                                    <h4>{this.state.selectedPlace.name}</h4>
+                                    <h4 style={styles.infoWindow.h4}>{this.state.selectedPlace.name}</h4>
                                   </div>
                                 </InfoWindow>
                               </CurrentLocation>
@@ -1007,6 +1037,7 @@ function mapStateToProps(state) {
         practitioner,
     }
 }
+
 
 const connectedEditPatientPage = connect(mapStateToProps)(GoogleApiWrapper({
   apiKey: config.googleApiKey
