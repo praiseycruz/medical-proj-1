@@ -13,7 +13,8 @@ import { config } from '../../../config'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
-
+import { OnChange } from 'react-final-form-listeners'
+import _ from 'lodash'
 
 //string prototype for uppercase
 String.prototype.ucwords = function() {
@@ -24,23 +25,25 @@ String.prototype.ucwords = function() {
 //label when adding the device
 var addingNewDeviceLabel = ''
 
+
 //hidden form component
 const HiddenForm = ({values}) => {
+
     addingNewDeviceLabel = `${typeof values.firstname!=='undefined' ? values.firstname : ''} ${typeof values.lastname!=='undefined' ? values.lastname : ''}`.ucwords()
+    
     return null
 }
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class AddPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            deviceIds: [],
+            currentSelectedDevice: null,
             hasSetSelects: false,
-            patientDevicesLists: [
-                {
-                    device: '',
-                    deviceType: '',
-                }
-            ], // store all the devices populated in the table (data passed in registering patient)
+            patientDevicesLists: [], // store all the devices populated in the table (data passed in registering patient)
             patientDevicesCols: [
                 {
                     title: 'Device Name',
@@ -298,13 +301,12 @@ class AddPatientPage extends React.Component {
 
     _handleSubmit = async (values) => {
         const { dispatch } = this.props
-        let { careManagerData, physicianData } = this.state
+        let { careManagerData, physicianData, deviceIds } = this.state
 
         let s = document.getElementById("date_picker_id")
         let dobFormat = moment(s.value).format("MM-DD-yyyy")
         let physicianID = null
         let careManagerID = null
-        let devicesId = []
 
         if (physicianData.length > 0 && careManagerData.length > 0) {
             // get physician id
@@ -533,15 +535,57 @@ class AddPatientPage extends React.Component {
     }
 
     _removeDeviceData = (id) => {
-        alert(id)
+        
+        let { patientDevicesLists, deviceIds } = this.state
+
+        patientDevicesLists = _.filter(patientDevicesLists, e => e.id!==id)
+       
+
+        if (deviceIds.indexOf(id)!==-1)
+            deviceIds.splice(deviceIds.indexOf(id), 1)
+
+        this.setState({
+            patientDevicesLists,
+            deviceIds
+        })
     }
 
-    _handleSubmitDevice = (values) => {
+    _handleSubmitDevice = async (values) => {
 
+        await sleep(300)
+        
+        let { currentSelectedDevice, patientDevicesLists, deviceIds } = this.state
+
+        if (currentSelectedDevice!==null) {
+            
+            //insert into the patient devices lists
+            patientDevicesLists.push({
+                deviceName: currentSelectedDevice.resource.deviceName[0].name,
+                name: currentSelectedDevice.resource.type.text,
+                serialNum: currentSelectedDevice.resource.serialNumber,
+                id: currentSelectedDevice.resource.id
+            })
+
+            //insert separately for device ids
+            //will be use later for adding of patient
+            deviceIds.push(currentSelectedDevice.resource.id)
+
+            //update now the states
+            this.setState({
+                patientDevicesLists,
+                deviceIds
+            })
+
+        }
+
+
+        
+       
     }
 
     _handleValidateDevice = () => {
-
+        let errors = {}
+        return errors
     }
 
     componentDidMount() {
@@ -634,8 +678,23 @@ class AddPatientPage extends React.Component {
             }
         }
     }
+    _setSelectedDevice = (value, devicesLists) => {
+
+        let { currentSelectedDevice } = this.state
+        devicesLists.map (deviceItem => {
+            if (deviceItem.resource.id==value) {
+                currentSelectedDevice = deviceItem
+                this.setState({
+                    currentSelectedDevice
+                })
+            }
+        })
+
+    }
 
     _getDeviceName = (e) => {
+        
+        /*
         let { value } = e.target
 
         var index = e.target.selectedIndex;
@@ -659,7 +718,7 @@ class AddPatientPage extends React.Component {
         this.setState({
             deviceValue: value,
             devicesDataOnClick
-        })
+        })*/
     }
 
     _getPhysicianValue = (e) => {
@@ -767,6 +826,7 @@ class AddPatientPage extends React.Component {
               initialValues,
               physicianLists,
               careManagerLists,
+              currentSelectedDevice,
               showAlertModal } = this.state
 
         let { patient, practitioner } = this.props
@@ -863,7 +923,7 @@ class AddPatientPage extends React.Component {
                         return (
                             <option
                                 key={deviceItem.resource.id}
-                                value={deviceName[0].name}
+                                value={deviceItem.resource.id}
                                 data-id={deviceItem.resource.id}
                                 data-type={deviceItem.resource.type.text}
                                 data-man={deviceItem.resource.manufacturer}
@@ -877,6 +937,55 @@ class AddPatientPage extends React.Component {
             })
         }
 
+        populateDeviceData = (
+            <div>
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Device Type</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.type.text : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Device Model</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.modelNumber : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.serialNumber : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.manufacturer : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+            </div>
+        )
+
+        /*
         if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
             populateDeviceData = devicesDataOnClick.map((item, key) => {
                 console.log(item.type);
@@ -944,7 +1053,7 @@ class AddPatientPage extends React.Component {
                     </Form.Group>
                 </div>
             )
-        }
+        }*/
 
         let diagnosisCodeOption = diagnosisCode.map((item, key) => {
             return (
@@ -1516,9 +1625,6 @@ class AddPatientPage extends React.Component {
                                 )} />
 
                             <FormFinal
-                                 initialValues={{
-
-                                 }}
                                  onSubmit={this._handleSubmitDevice}
                                  validate={this._handleValidateDevice}
                                  render={({values, initialValues, pristine, submitting, handleSubmit }) => (
@@ -1531,9 +1637,8 @@ class AddPatientPage extends React.Component {
                                              onHide={this._closeModal}
                                          >
                                              <Modal.Header closeButton>
-                                                <h5>Adding new device - {`"${addingNewDeviceLabel}"`}</h5>
+                                                <h5>Adding new device - {`${addingNewDeviceLabel}`}</h5>
                                              </Modal.Header>
-
                                              <Modal.Body>
                                                  <div className="adding-new">
                                                      <Form.Group className="devices-types">
@@ -1554,6 +1659,11 @@ class AddPatientPage extends React.Component {
                                                                      </>
                                                                  )}
                                                              </Field>
+                                                             <OnChange name="addDevice">
+                                                                {(value, previous) => {
+                                                                  this._setSelectedDevice(value, devicesLists)
+                                                                }}
+                                                              </OnChange>
                                                          </div>
                                                      </Form.Group>
 
@@ -1714,7 +1824,12 @@ class AddPatientPage extends React.Component {
                                              </Modal.Body>
 
                                              <Modal.Footer>
-                                                 <Button type="submit" disabled={pristine} variant="primary" className="btn-submit">
+                                                 <Button onClick={(event) => {
+                                                    handleSubmit(event).then(() => {
+                                                        this._closeModal()
+                                                    })
+                                                 }}
+                                                 type="submit" disabled={pristine} variant="primary" className="btn-submit">
                                                      Add Device
                                                  </Button>
                                              </Modal.Footer>
