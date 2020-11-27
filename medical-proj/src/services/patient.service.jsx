@@ -244,7 +244,7 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
                 "request": { "method": "POST" }
             },
             ...deviceIds.map(id => deviceTemplate(id, tempPatientId)),
-            ...conditions.map(name => conditionsTemplate(name, tempPatientId)),
+            // ...conditions.map(name => conditionsTemplate(name, tempPatientId)),
         ]
     }
 
