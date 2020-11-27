@@ -96,7 +96,7 @@ body {
 
             .modal-header {
                 margin: 0 16px;
-                padding: 16px 0;
+                padding: 12px 0;
 
                 h5 {
                     margin-bottom: 0;
@@ -155,10 +155,55 @@ body {
                         max-width: 100px;
                     }
                 }
+
+                .goal {
+                    margin-top: 15px;
+
+                    .form-group {
+                        margin-bottom: 0;
+
+                        input {
+                            margin-right: 10px;
+                        }
+                    }
+                }
+
+                .high-severity {
+                    margin: 15px 0 0;
+
+                    .checkbox-wrapper {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 25px;
+
+                        .col-sm-6 {
+                            padding: 0 25px;
+                        }
+
+                        label {
+                            margin-bottom: 0;
+                            text-align: right;
+
+                            &.notification-label {
+                                margin-right: 15px;
+
+                                input {
+                                    margin-right: 5px;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             .modal-footer {
                 border: none;
+
+                button {
+                    border-radius: 2px;
+                    min-width: 100px;
+                }
             }
         }
 
