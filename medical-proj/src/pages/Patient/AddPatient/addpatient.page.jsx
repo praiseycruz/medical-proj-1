@@ -9,6 +9,7 @@ import { patientAction, dashboardAction, practitionerAction, deviceAction, careT
 import iziToast from 'izitoast';
 import { RandNum } from '../../../helpers/misc'
 import { config } from '../../../config'
+import { patientService } from '../../../services'
 
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -30,7 +31,7 @@ var addingNewDeviceLabel = ''
 const HiddenForm = ({values}) => {
 
     addingNewDeviceLabel = `${typeof values.firstname!=='undefined' ? values.firstname : ''} ${typeof values.lastname!=='undefined' ? values.lastname : ''}`.ucwords()
-    
+
     return null
 }
 
@@ -295,11 +296,12 @@ class AddPatientPage extends React.Component {
                 allowSendText: true
 
             }, // form final initial values
-            showAlertModal: false
+            showAlertModal: false,
+            isAddingNewPatientLoading: false
         }
     }
 
-    _handleSubmit = async (values) => {
+    _handleSubmit = async (values, form) => {
         const { dispatch } = this.props
         let { careManagerData, physicianData, deviceIds } = this.state
 
@@ -366,7 +368,8 @@ class AddPatientPage extends React.Component {
                     "value": `${values.ssn}`
                 },
                 {
-                    "system": `${values.patientIdIdentifier}`,
+                    // "system": `${values.patientIdIdentifier}`,
+                    "system": `${values.patientId}`,
                     "value": `${values.patientId}`
                 },
                 {
@@ -386,12 +389,48 @@ class AddPatientPage extends React.Component {
             ]
         }
 
-        if (physicianID !== null && careManagerID !== null) {
-            // dispatch(patientAction.create(patientData, physicianID, careManagerID, devicesId))
-            console.log(values, physicianID, careManagerID);
-            console.log(physicianID, 'physician id');
-            console.log(careManagerID, 'care managerid');
-        }
+        if (physicianID !== null && careManagerID !== null && deviceIds.length > 0) {
+            try {
+                this.setState({
+                    isAddingNewPatientLoading: true
+                })
+
+                await patientService.create(patientData, physicianID, careManagerID, deviceIds)
+
+                this.setState({
+                    isAddingNewPatientLoading: false
+                })
+
+                Object.keys(values).forEach(key => {
+                    form.change(key, undefined)
+                    form.resetFieldState(key)
+                })
+
+            } catch(e) {
+                console.log(e)
+            }
+        } else if (physicianID == null) {
+            iziToast.error({
+               position: 'topRight',
+               title: 'Error',
+               displayMode: 1,
+               message: "Please select patient's primary physician"
+           });
+       } else if (careManagerID == null) {
+           iziToast.error({
+              position: 'topRight',
+              title: 'Error',
+              displayMode: 1,
+              message: "Please select patient's primary care manager"
+          });
+      } else if (deviceIds.length < 0) {
+          iziToast.error({
+             position: 'topRight',
+             title: 'Error',
+             displayMode: 1,
+             message: "Please add patient's devices before registering patient"
+         });
+      }
     }
 
     _handleValidate = values => {
@@ -545,11 +584,11 @@ class AddPatientPage extends React.Component {
     }
 
     _removeDeviceData = (id) => {
-        
+
         let { patientDevicesLists, deviceIds } = this.state
 
         patientDevicesLists = _.filter(patientDevicesLists, e => e.id!==id)
-       
+
 
         if (deviceIds.indexOf(id)!==-1)
             deviceIds.splice(deviceIds.indexOf(id), 1)
@@ -563,11 +602,11 @@ class AddPatientPage extends React.Component {
     _handleSubmitDevice = async (values) => {
 
         await sleep(300)
-        
+
         let { currentSelectedDevice, patientDevicesLists, deviceIds } = this.state
 
         if (currentSelectedDevice!==null) {
-            
+
             //insert into the patient devices lists
             patientDevicesLists.push({
                 deviceName: currentSelectedDevice.resource.deviceName[0].name,
@@ -589,8 +628,8 @@ class AddPatientPage extends React.Component {
         }
 
 
-        
-       
+
+
     }
 
     _handleValidateDevice = () => {
@@ -601,7 +640,9 @@ class AddPatientPage extends React.Component {
     componentDidMount() {
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
-        dispatch(practitionerAction.getAll(100, 0))
+        // dispatch(practitionerAction.getAll(100, 0))
+        dispatch(practitionerAction.getAllPhysician(100, 0))
+        dispatch(practitionerAction.getAllCareManager(100, 0))
 
         console.log(this.hiddenForm)
     }
@@ -647,47 +688,86 @@ class AddPatientPage extends React.Component {
             }
         }
 
-        if (prevProps.practitioner !== this.props.pracitioner) {
+        if (prevProps.practitioner !== this.props.practitioner) {
             let { getAll } = this.props.practitioner
 
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
+                let { careManagers, physicians } = getAll
+
                 if (!this.state.hasSetSelects) {
-                    if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                        let { entry } = practitioners
+                    /*// if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    //     let { entry } = practitioners
+                    //
+                    //     if (typeof entry !== 'undefined' && entry !== null) {
+                    //         let finalEntriesOfPhysicians = []
+                    //         let finalEntriesOfCareManagers = []
+                    //
+                    //         entry.map((physician, index) => {
+                    //             let { resource } = physician
+                    //
+                    //             if (typeof resource !== 'undefined' && resource !== null) {
+                    //                 let { extension } = resource
+                    //
+                    //                 if (typeof extension !=='undefined' && extension.length > 0) {
+                    //                     if (extension[0].valueString == 'Primary Physician') {
+                    //                         finalEntriesOfPhysicians.push(physician)
+                    //
+                    //                     } else if (extension[0].valueString == 'Care Manager') {
+                    //                         finalEntriesOfCareManagers.push(physician)
+                    //                     }
+                    //                 }
+                    //             }
+                    //         })
+                    //
+                    //         this.setState({
+                    //             hasSetSelects: true,
+                    //             physicianLists: finalEntriesOfPhysicians,
+                    //             careManagerLists: finalEntriesOfCareManagers
+                    //         })
+                    //     }
+                    // }*/
+
+                    let finalEntriesOfPhysicians = []
+                    let finalEntriesOfCareManagers = []
+
+                    if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                        let { entry } = careManagers
 
                         if (typeof entry !== 'undefined' && entry !== null) {
-                            let finalEntriesOfPhysicians = []
-                            let finalEntriesOfCareManagers = []
-
-                            entry.map((physician, index) => {
-                                let { resource } = physician
+                            entry.map((careManagersLists, index) => {
+                                let { resource } = careManagersLists
 
                                 if (typeof resource !== 'undefined' && resource !== null) {
-                                    let { extension } = resource
-
-                                    if (typeof extension !=='undefined' && extension.length > 0) {
-                                        if (extension[0].valueString == 'Primary Physician') {
-                                            finalEntriesOfPhysicians.push(physician)
-
-                                        } else if (extension[0].valueString == 'Care Manager') {
-                                            finalEntriesOfCareManagers.push(physician)
-                                        }
-                                    }
+                                    finalEntriesOfCareManagers.push(careManagersLists)
                                 }
-                            })
-
-                            this.setState({
-                                hasSetSelects: true,
-                                physicianLists: finalEntriesOfPhysicians,
-                                careManagerLists: finalEntriesOfCareManagers
                             })
                         }
                     }
+
+                    if (typeof physicians !== 'undefined' && physicians !== null) {
+                        let { entry } = physicians
+
+                        if (typeof entry !== 'undefined' && entry !== null) {
+                            entry.map((physiciansLists, index) => {
+                                let { resource } = physiciansLists
+
+                                if (typeof resource !== 'undefined' && resource !== null) {
+                                    finalEntriesOfPhysicians.push(physiciansLists)
+                                }
+                            })
+                        }
+                    }
+
+                    this.setState({
+                        hasSetSelects: true,
+                        physicianLists: finalEntriesOfPhysicians,
+                        careManagerLists: finalEntriesOfCareManagers
+                    })
                 }
             }
         }
     }
+
     _setSelectedDevice = (value, devicesLists) => {
 
         let { currentSelectedDevice } = this.state
@@ -703,7 +783,7 @@ class AddPatientPage extends React.Component {
     }
 
     _getDeviceName = (e) => {
-        
+
         /*
         let { value } = e.target
 
@@ -850,6 +930,7 @@ class AddPatientPage extends React.Component {
         let careManagerListsOptions = []
         let populateDeviceData = null
 
+
         if (typeof patient !== 'undefined' && patient !== null) {
             let { create } = patient
 
@@ -995,76 +1076,6 @@ class AddPatientPage extends React.Component {
             </div>
         )
 
-        /*
-        if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
-            populateDeviceData = devicesDataOnClick.map((item, key) => {
-                console.log(item.type);
-                return (
-                    <div key={key}>
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Device Type</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.type}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Device Model</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.model}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Serial Number</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.serial}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Manufacturer</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.manufacturer}</label>
-                            </div>
-                        </Form.Group>
-                    </div>
-                )
-            })
-        } else {
-            populateDeviceData = (
-                <div>
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Device Type</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Device Model</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Serial Number</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Manufacturer</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-                </div>
-            )
-        }*/
-
         let diagnosisCodeOption = diagnosisCode.map((item, key) => {
             return (
                 <option key={key}>{item.name}</option>
@@ -1089,8 +1100,22 @@ class AddPatientPage extends React.Component {
                                 initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
-                                render={({values, initialValues, pristine, submitting, handleSubmit }) => (
-                                    <Form onSubmit={handleSubmit}>
+                                render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
+                                    <Form onSubmit={(event) => {
+                                        const promise = handleSubmit(event);
+                                        promise && promise.then(() => {
+                                            const { dispatch } = this.props
+                                            //dispatch(practitionerAction.getAll(100, 0, this.state.role))
+                                            dispatch(patientAction.getAll(100, 0))
+                                            form.reset();
+                                            iziToast.success({
+                                                position: 'topRight',
+                                                title: 'Success',
+                                                displayMode: 1,
+                                                message: 'Patient registered successfully!!',
+                                            })
+                                         }); return promise; }}>
+
                                         <div className="patient-info">
                                             <Row>
                                                 <Col sm={6}>

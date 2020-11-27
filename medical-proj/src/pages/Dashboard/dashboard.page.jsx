@@ -291,10 +291,10 @@ class DashboardPage extends React.Component {
             let { getAll } = practitioner
 
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
+                let { careManagers } = getAll
 
-                if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry } = practitioners
+                if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                    let { entry } = careManagers
 
                     if (typeof entry !== 'undefined' && entry !== null) {
                         primaryCareManagerOptions = entry.map((careManager, index) => {

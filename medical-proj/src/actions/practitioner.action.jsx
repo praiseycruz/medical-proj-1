@@ -10,27 +10,50 @@ export const practitionerAction = {
     getAllCareManager
 }
 
-function getAllCareManager(count, skip) {
-
-    return dispatch => {
-
-        dispatch(request())
-
-        proceed()
-
-        function proceed() {
-            practitionerService.getAllCareManager(count, skip).then( response => {
-                dispatch(success(response))
-            }).catch(error => {
-                dispatch(failure(error))
-            })
-        }
-    }
-
-    function request() { return { type: practitionerConstants.GET_ALL_REQUEST } }
-    function success(practitioners) { return { type: practitionerConstants.GET_ALL_SUCCESS, practitioners } }
-    function failure(error) { return { type: practitionerConstants.GET_ALL_FAILURE, error } }
-}
+// function getAllCareManager(count, skip) {
+//
+//     return dispatch => {
+//
+//         dispatch(request())
+//
+//         proceed()
+//
+//         function proceed() {
+//             practitionerService.getAllCareManager(count, skip).then( response => {
+//                 dispatch(success(response))
+//             }).catch(error => {
+//                 dispatch(failure(error))
+//             })
+//         }
+//     }
+//
+//     function request() { return { type: practitionerConstants.GET_ALL_REQUEST } }
+//     function success(practitioners) { return { type: practitionerConstants.GET_ALL_SUCCESS, practitioners } }
+//     function failure(error) { return { type: practitionerConstants.GET_ALL_FAILURE, error } }
+// }
+//
+//
+// function getAllPhysician(count, skip) {
+//
+//     return dispatch => {
+//
+//         dispatch(request())
+//
+//         proceed()
+//
+//         function proceed() {
+//             practitionerService.getAllPhysician(count, skip).then( response => {
+//                 dispatch(success(response))
+//             }).catch(error => {
+//                 dispatch(failure(error))
+//             })
+//         }
+//     }
+//
+//     function request() { return { type: practitionerConstants.GET_ALL_REQUEST } }
+//     function success(practitioners) { return { type: practitionerConstants.GET_ALL_SUCCESS, practitioners } }
+//     function failure(error) { return { type: practitionerConstants.GET_ALL_FAILURE, error } }
+// }
 
 
 function getAllPhysician(count, skip) {
@@ -51,8 +74,29 @@ function getAllPhysician(count, skip) {
     }
 
     function request() { return { type: practitionerConstants.GET_ALL_REQUEST } }
-    function success(practitioners) { return { type: practitionerConstants.GET_ALL_SUCCESS, practitioners } }
+    function success(physicians) { return { type: practitionerConstants.GET_ALL_SUCCESS, physicians } }
     function failure(error) { return { type: practitionerConstants.GET_ALL_FAILURE, error } }
+}
+
+function getAllCareManager(count, skip) {
+    return dispatch => {
+
+        dispatch(request())
+
+        proceed()
+
+        function proceed() {
+            practitionerService.getAllCareManager(count, skip).then( response => {
+                dispatch(success(response))
+            }).catch(error => {
+                dispatch(failure(error))
+            })
+        }
+    }
+
+    function request() { return { type: practitionerConstants.CARE_MANAGERS_GET_ALL_REQUEST } }
+    function success(careManagers) { return { type: practitionerConstants.CARE_MANAGERS_GET_ALL_SUCCESS, careManagers } }
+    function failure(error) { return { type: practitionerConstants.CARE_MANAGERS_GET_ALL_FAILURE, error } }
 }
 
 

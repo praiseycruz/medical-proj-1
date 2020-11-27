@@ -89,10 +89,14 @@ class EditPatientPage extends React.Component {
             deviceValue: '',
             dob: new Date(),
             physicianValue: '',
+            careManagerValue: '',
             devicesDataOnClick: [],
             physicianData: [],
             isPhysicianAdded: false,
-            showNotificationModal: false
+            showNotificationModal: false,
+            hasSetSelects: false,
+            careManagerLists: [], // store all care managers and display in Primary Care Manager dropwdown
+            physicianLists: [], // store all physicians and display in Primary Physician dropdown
         }
     }
 
@@ -332,9 +336,10 @@ class EditPatientPage extends React.Component {
 
         const { dispatch } = this.props
         dispatch(deviceAction.findUnassigned())
-        dispatch(practitionerAction.getAll(10, 0))
+        // dispatch(practitionerAction.getAll(10, 0))
         //this._loadMap(this.state.patientLocation)
-
+        dispatch(practitionerAction.getAllPhysician(100, 0))
+        dispatch(practitionerAction.getAllCareManager(100, 0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -356,6 +361,85 @@ class EditPatientPage extends React.Component {
                             devicesLists: entry
                         })
                     }
+                }
+            }
+        }
+
+        if (prevProps.practitioner !== this.props.practitioner) {
+            let { getAll } = this.props.practitioner
+
+            if (typeof getAll !== 'undefined' && getAll !== null) {
+                let { careManagers, physicians } = getAll
+
+                if (!this.state.hasSetSelects) {
+                    /*// if (typeof practitioners !== 'undefined' && practitioners !== null) {
+                    //     let { entry } = practitioners
+                    //
+                    //     if (typeof entry !== 'undefined' && entry !== null) {
+                    //         let finalEntriesOfPhysicians = []
+                    //         let finalEntriesOfCareManagers = []
+                    //
+                    //         entry.map((physician, index) => {
+                    //             let { resource } = physician
+                    //
+                    //             if (typeof resource !== 'undefined' && resource !== null) {
+                    //                 let { extension } = resource
+                    //
+                    //                 if (typeof extension !=='undefined' && extension.length > 0) {
+                    //                     if (extension[0].valueString == 'Primary Physician') {
+                    //                         finalEntriesOfPhysicians.push(physician)
+                    //
+                    //                     } else if (extension[0].valueString == 'Care Manager') {
+                    //                         finalEntriesOfCareManagers.push(physician)
+                    //                     }
+                    //                 }
+                    //             }
+                    //         })
+                    //
+                    //         this.setState({
+                    //             hasSetSelects: true,
+                    //             physicianLists: finalEntriesOfPhysicians,
+                    //             careManagerLists: finalEntriesOfCareManagers
+                    //         })
+                    //     }
+                    // }*/
+
+                    let finalEntriesOfPhysicians = []
+                    let finalEntriesOfCareManagers = []
+
+                    if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                        let { entry } = careManagers
+
+                        if (typeof entry !== 'undefined' && entry !== null) {
+                            entry.map((careManagersLists, index) => {
+                                let { resource } = careManagersLists
+
+                                if (typeof resource !== 'undefined' && resource !== null) {
+                                    finalEntriesOfCareManagers.push(careManagersLists)
+                                }
+                            })
+                        }
+                    }
+
+                    if (typeof physicians !== 'undefined' && physicians !== null) {
+                        let { entry } = physicians
+
+                        if (typeof entry !== 'undefined' && entry !== null) {
+                            entry.map((physiciansLists, index) => {
+                                let { resource } = physiciansLists
+
+                                if (typeof resource !== 'undefined' && resource !== null) {
+                                    finalEntriesOfPhysicians.push(physiciansLists)
+                                }
+                            })
+                        }
+                    }
+
+                    this.setState({
+                        hasSetSelects: true,
+                        physicianLists: finalEntriesOfPhysicians,
+                        careManagerLists: finalEntriesOfCareManagers
+                    })
                 }
             }
         }
@@ -390,14 +474,16 @@ class EditPatientPage extends React.Component {
     _getPhysicianValue = (e) => {
         let { value } = e.target
 
-        var index = e.target.selectedIndex
+        var index = e.target.selectedIndex;
         var optionElement = e.target.childNodes[index]
         var optionId =  optionElement.getAttribute('data-id')
+        var optionValue =  optionElement.getAttribute('value')
 
         let physicianData = [
             {
                 "id": optionId,
-                "role": "Primary Physician"
+                "role": "Primary Physician",
+                "name": optionValue
             }
         ]
 
@@ -405,8 +491,28 @@ class EditPatientPage extends React.Component {
             physicianValue: value,
             physicianData
         })
+    }
 
-        console.log(physicianData)
+    _getPrimaryCareManager = (e) => {
+        let { value } = e.target
+
+        var index = e.target.selectedIndex;
+        var optionElement = e.target.childNodes[index]
+        var optionId =  optionElement.getAttribute('data-id')
+        var optionValue =  optionElement.getAttribute('value')
+
+        let careManagerData = [
+            {
+                "id": optionId,
+                "role": "Primary Care Manager",
+                "name": optionValue
+            }
+        ]
+
+        this.setState({
+            careManagerValue: value,
+            careManagerData
+        })
     }
 
     _setDob = date => {
@@ -450,7 +556,9 @@ class EditPatientPage extends React.Component {
               physicianValue,
               physicianLists,
               devicesDataOnClick,
-              showNotificationModal } = this.state
+              showNotificationModal,
+              careManagerValue,
+              careManagerLists } = this.state
         let { patient, practitioner, removeBc } = this.props
 
         let isAddingNewPatientLoading = false
@@ -459,6 +567,7 @@ class EditPatientPage extends React.Component {
         // let patientData = null
         let optionDevicesLists = null
         let physicianOptions = []
+        let careManagerListsOptions = []
         let populateDeviceData = null
 
         if (typeof patient !== 'undefined' && patient !== null) {
@@ -485,40 +594,52 @@ class EditPatientPage extends React.Component {
             }
         }
 
-        if (typeof practitioner !== 'undefined' && practitioner !== null) {
-            let { getAll } = practitioner
+        // display physician lists in dropdown
+        if (physicianLists !== null && physicianLists.length > 0) {
+            physicianOptions = physicianLists.map((physician, index) => {
+                let { resource } = physician
 
-            if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
+                if (typeof resource !== 'undefined' && resource !== null) {
+                    let { name } = resource
 
-                if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry } = practitioners
+                    if (typeof name !== 'undefined' && name !== null) {
+                        let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
 
-                    if (typeof entry !== 'undefined' && entry !== null) {
-                        physicianOptions = entry.map((physician, index) => {
-                            let { resource } = physician
-
-                            if (typeof resource !== 'undefined' && resource !== null) {
-                                let { name } = resource
-
-                                if (typeof name !== 'undefined' && name !== null) {
-
-                                    let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
-
-                                    return (
-                                        <option
-                                            key={physician.resource.id}
-                                            value={physician.resource.id}
-                                            data-id={physician.resource.id}>
-                                                {physicianName}
-                                        </option>
-                                    )
-                                }
-                            }
-                        })
+                        return (
+                            <option
+                                key={physician.resource.id}
+                                value={physicianName}
+                                data-id={physician.resource.id}>
+                                    {physicianName}
+                            </option>
+                        )
                     }
                 }
-            }
+            })
+        }
+
+        // display care manager lists in dropdown
+        if (careManagerLists !== null && careManagerLists.length > 0) {
+            careManagerListsOptions = careManagerLists.map((careManager, index) => {
+                let { resource } = careManager
+
+                if (typeof resource !== 'undefined' && resource !== null) {
+                    let { name } = resource
+
+                    if (typeof name !== 'undefined' && name !== null) {
+                        let careManagerName = name[0].given + ' ' + name[0].family
+
+                        return (
+                            <option
+                                key={careManager.resource.id}
+                                value={careManagerName}
+                                data-id={careManager.resource.id}>
+                                    {careManagerName}
+                            </option>
+                        )
+                    }
+                }
+            })
         }
 
         if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
@@ -809,10 +930,10 @@ class EditPatientPage extends React.Component {
                                                                         {({ input, meta, type }) => (
                                                                             <Form.Control
                                                                                  as="select"
-                                                                                 value={physicianValue}
-                                                                                 onChange={(e) => { this._getPhysicianValue(e) }}>
+                                                                                 value={careManagerValue}
+                                                                                 onChange={(e) => { this._getPrimaryCareManager(e) }}>
                                                                                  <option>Select a Primary Care Manager</option>
-                                                                                 {physicianOptions}
+                                                                                 {careManagerListsOptions}
                                                                             </Form.Control>
                                                                         )}
                                                                     </Field>

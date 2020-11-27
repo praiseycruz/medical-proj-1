@@ -106,7 +106,6 @@ class PhysicianPage extends React.Component {
         const { dispatch } = this.props
         //dispatch(practitionerAction.getAll(100, 0, this.state.role))
         dispatch(practitionerAction.getAllPhysician(100,0))
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -137,7 +136,7 @@ class PhysicianPage extends React.Component {
 
             // getting all the lists of practitioners
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners, loading } = getAll
+                let { physicians, loading } = getAll
 
                 if (loading) {
                     this.setState({
@@ -149,8 +148,8 @@ class PhysicianPage extends React.Component {
                     })
                 }
 
-                if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry, link, total } = practitioners
+                if (typeof physicians !== 'undefined' && physicians !== null) {
+                    let { entry, link, total } = physicians
 
                     this.setState({
                         practitionerTotal: total,

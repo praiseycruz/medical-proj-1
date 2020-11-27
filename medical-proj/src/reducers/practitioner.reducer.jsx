@@ -11,7 +11,9 @@ var defaultState = {
         loading: false,
         practitioners: [],
         sucess: false,
-        error: null
+        error: null,
+        careManagers: [],
+        physicians: []
     },
     findById: {
         loading: false,
@@ -89,12 +91,56 @@ export function practitioner(state = defaultState, action) {
             getAll.error = null
             getAll.success = true
             getAll.practitioners = action.practitioners
+            getAll.physicians = action.physicians
             state = {
                 getAll,
                 ...otherState
             }
             return state
         case practitionerConstants.GET_ALL_FAILURE:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = action.error
+            getAll.success = false
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.CARE_MANAGERS_GET_ALL_REQUEST:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = true
+            getAll.error = null
+            getAll.success = false
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.CARE_MANAGERS_GET_ALL_SUCCESS:
+            var {
+                getAll,
+                ...otherState
+            } = state
+
+            getAll.loading = false
+            getAll.error = null
+            getAll.success = true
+            getAll.careManagers = action.careManagers
+            state = {
+                getAll,
+                ...otherState
+            }
+            return state
+        case practitionerConstants.CARE_MANAGERS_GET_ALL_FAILURE:
             var {
                 getAll,
                 ...otherState

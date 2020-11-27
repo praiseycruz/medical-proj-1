@@ -159,10 +159,10 @@ class CareManagerPage extends React.Component {
             }
 
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { practitioners } = getAll
+                let { careManagers } = getAll
 
-                if (typeof practitioners !== 'undefined' && practitioners !== null) {
-                    let { entry, link, total } = practitioners
+                if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                    let { entry, link, total } = careManagers
 
                     this.setState({
                         practitionerTotal: total,

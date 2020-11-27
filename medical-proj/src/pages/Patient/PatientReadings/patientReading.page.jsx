@@ -327,20 +327,15 @@ class PatientReadingsPage extends React.Component {
     }
 
     componentDidMount() {
-        // let { data } = this.props.location
-        //
-        // if (typeof data !== 'undefined' && data !== null) {
-        //     console.log(data);
-        // }
-        let patientDetails = localStorage.getItem("patientDetails")
+        const { dispatch } = this.props
+        dispatch(practitionerAction.getAllPhysician(100, 0))
+        dispatch(practitionerAction.getAllCareManager(100, 0))
 
-        console.log(patientDetails);
+        let patientDetails = localStorage.getItem("patientDetails")
     }
 
     componentDidUpdate(prevProps, prevState) {
         let patientDetails = localStorage.getItem("patientDetails")
-
-        console.log(patientDetails);
 
         if (prevProps.device !== this.props.device) {
             let { unassignedDevices } = this.props.device
