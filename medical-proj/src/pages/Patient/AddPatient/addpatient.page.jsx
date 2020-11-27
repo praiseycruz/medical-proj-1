@@ -364,7 +364,7 @@ class AddPatientPage extends React.Component {
                     "value": `${values.ssn}`
                 },
                 {
-                    "system": `${config.apiGateway.URL}` + "/CustomId",
+                    "system": `${values.patientIdIdentifier}`,
                     "value": `${values.patientId}`
                 },
                 {
