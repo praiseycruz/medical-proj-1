@@ -222,7 +222,7 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
 
     const requestOptions = headers(Method.POST, reqBody)
 
-    return fetch(config.apiGateway.URL, requestOptions)
+    return fetch(config.apiGateway.URL + "/Bundle", requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
