@@ -29,7 +29,7 @@ export const AddCareManagerWrapper = styled.div`
 
     .card {
         background-color: #353C48;
-        min-height: 260px;
+        min-height: 300px;
 
         .card-header {
             font-size: 20px;
