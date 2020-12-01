@@ -364,10 +364,6 @@ class AddPatientPage extends React.Component {
             ],
             "identifier": [
                 {
-                    "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${values.ssn}`
-                },
-                {
                     // "system": `${values.patientIdIdentifier}`,
                     "system": `${values.patientId}`,
                     "value": `${values.patientId}`

@@ -192,10 +192,6 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
 
     // End resources transaction
 
-    let getPatientSSN = (patientData) => {
-        return JSON.parse(patientData).filter(e => e.system === "http://hl7.org/fhir/sid/us-ssn")[0].value
-    }
-
     let reqBody = {
         "resourceType": "Bundle",
         "type": "transaction",
@@ -205,7 +201,6 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
                 ...patientData,
                 "request": {
                     "method": "POST",
-                    "ifNoneExist": `identifier=http://hl7.org/fhir/sid/us-ssn|${getPatientSSN(patientData)}`,
                 }
             },
             {
