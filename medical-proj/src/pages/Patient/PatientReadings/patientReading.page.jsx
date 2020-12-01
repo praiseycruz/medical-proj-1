@@ -12,10 +12,23 @@ import { RandNum } from '../../../helpers/misc'
 
 import { AddPatientPage } from '../AddPatient'
 
+//import modal for search patients
+import ModalSearch from '../../../components/Modals/ModalSearch'
+//import patient service for searching purpose
+import { patientService } from '../../../services'
+
 class PatientReadingsPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            patientSearchBtn: {
+                loadingText: 'Searching...',
+                text: 'Search'
+            },
+            patientSearchModal: {
+                show: false,
+                results: [],
+            },
             diagnosisCode: [
                 {
                     name: 'Code 1'
@@ -358,7 +371,34 @@ class PatientReadingsPage extends React.Component {
         }
     }
 
-    _handleSubmitSearch = () => {
+    _handleSubmitSearch = async ({searchPatient}) => {
+            
+        //get patient search button state
+        let { patientSearchBtn } = this.state
+        
+        //get default text
+        let getText = patientSearchBtn.text
+        
+
+        //set search btn text to a loading text
+        patientSearchBtn.text = patientSearchBtn.loadingText
+    
+        //set now the state        
+        this.setState({
+            patientSearchBtn
+        })
+
+        //do the search query now
+        try {
+            const response = await patientService.searchByIdOrName(searchPatient, 100)
+            patientSearchBtn.text = getText
+            this.setState({
+                patientSearchBtn
+            })
+            return Promise.resolve(response)
+        }catch(e) {
+            return Promise.reject(e)
+        }
 
     }
 
@@ -468,8 +508,17 @@ class PatientReadingsPage extends React.Component {
         })
     }
 
+    _closePatientModalSearch = () => {
+        let { patientSearchModal } = this.state
+        patientSearchModal.show = false
+        this.setState({
+            patientSearchModal
+        })
+    }
+
     render() {
         let {
+            patientSearchBtn,
             diagnosisCode,
             diagnosisCodeValue,
             conditionLists,
@@ -483,7 +532,8 @@ class PatientReadingsPage extends React.Component {
             showModalDevices,
             devicesDataOnClick,
             devicesAdded,
-            billingLists
+            billingLists,
+            patientSearchModal
         } = this.state
 
         let optionDevicesLists = null
@@ -624,12 +674,26 @@ class PatientReadingsPage extends React.Component {
                                                     )}
                                                 </Field>
                                             </div>
-
+                                            <ModalSearch query={values.searchPatient} results={patientSearchModal.results} closeModal={this._closePatientModalSearch} show={patientSearchModal.show} label="Results for" />
                                             <Button
+                                                onClick={ e => {
+                                                    handleSubmit(e).then(results => {
+                                                        
+                                                        if (!patientSearchModal.show) {
+                                                            patientSearchModal.show = true
+                                                            patientSearchModal.results = results
+                                                            this.setState({
+                                                                patientSearchModal
+                                                            })
+
+                                                        }
+                                                        
+                                                    })
+                                                }}
                                                 type="submit"
                                                 className="btn btn-submit"
                                                 disabled={pristine}
-                                            >Search</Button>
+                                            >{patientSearchBtn.text}</Button>
                                         </Form.Group>
                                     </Form>
                                 )}
