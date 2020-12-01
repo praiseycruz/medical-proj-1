@@ -18,6 +18,7 @@ import moment from 'moment'
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react'
 import Geocode from "react-geocode"
 import { CurrentLocation } from '../../../components/Map'
+import { practitionerService } from '../../../services'
 
 Geocode.setApiKey(config.googleApiKey)
 
@@ -338,8 +339,55 @@ class EditPatientPage extends React.Component {
         dispatch(deviceAction.findUnassigned())
         // dispatch(practitionerAction.getAll(10, 0))
         //this._loadMap(this.state.patientLocation)
-        dispatch(practitionerAction.getAllPhysician(100, 0))
-        dispatch(practitionerAction.getAllCareManager(100, 0))
+        //dispatch(practitionerAction.getAllPhysician(100, 0))
+        //dispatch(practitionerAction.getAllCareManager(100, 0))
+        
+
+        //get all physicians
+        practitionerService.getAllPhysician(100, 0).then( physicians => {
+            let finalEntriesOfPhysicians = []
+            if (typeof physicians !== 'undefined' && physicians !== null) {
+                let { entry } = physicians
+
+                if (typeof entry !== 'undefined' && entry !== null) {
+                    entry.map((physiciansLists, index) => {
+                        let { resource } = physiciansLists
+
+                        if (typeof resource !== 'undefined' && resource !== null) {
+                            finalEntriesOfPhysicians.push(physiciansLists)
+                        }
+                    })
+                }
+
+                this.setState({
+                    physicianLists: finalEntriesOfPhysicians
+                })
+            }
+        }).catch(e => {
+            console.log(e)
+        })
+
+        practitionerService.getAllCareManager(100, 0).then( careManagers => {
+            let finalEntriesOfCareManagers = []
+            if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                let { entry } = careManagers
+                if (typeof entry !== 'undefined' && entry !== null) {
+                    entry.map((careManagersLists, index) => {
+                        let { resource } = careManagersLists
+                        if (typeof resource !== 'undefined' && resource !== null) {
+                            finalEntriesOfCareManagers.push(careManagersLists)
+                        }
+                    })
+                }
+                this.setState({
+                    careManagerLists: finalEntriesOfCareManagers
+                })
+            }
+        }).catch(e => {
+            console.log(e)
+        })
+
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -404,42 +452,6 @@ class EditPatientPage extends React.Component {
                     //     }
                     // }*/
 
-                    let finalEntriesOfPhysicians = []
-                    let finalEntriesOfCareManagers = []
-
-                    if (typeof careManagers !== 'undefined' && careManagers !== null) {
-                        let { entry } = careManagers
-
-                        if (typeof entry !== 'undefined' && entry !== null) {
-                            entry.map((careManagersLists, index) => {
-                                let { resource } = careManagersLists
-
-                                if (typeof resource !== 'undefined' && resource !== null) {
-                                    finalEntriesOfCareManagers.push(careManagersLists)
-                                }
-                            })
-                        }
-                    }
-
-                    if (typeof physicians !== 'undefined' && physicians !== null) {
-                        let { entry } = physicians
-
-                        if (typeof entry !== 'undefined' && entry !== null) {
-                            entry.map((physiciansLists, index) => {
-                                let { resource } = physiciansLists
-
-                                if (typeof resource !== 'undefined' && resource !== null) {
-                                    finalEntriesOfPhysicians.push(physiciansLists)
-                                }
-                            })
-                        }
-                    }
-
-                    this.setState({
-                        hasSetSelects: true,
-                        physicianLists: finalEntriesOfPhysicians,
-                        careManagerLists: finalEntriesOfCareManagers
-                    })
                 }
             }
         }
@@ -566,8 +578,8 @@ class EditPatientPage extends React.Component {
         // let patientName = null
         // let patientData = null
         let optionDevicesLists = null
-        let physicianOptions = []
-        let careManagerListsOptions = []
+        let physicianOptions = null
+        let careManagerListsOptions = null
         let populateDeviceData = null
 
         if (typeof patient !== 'undefined' && patient !== null) {
@@ -742,7 +754,7 @@ class EditPatientPage extends React.Component {
                 <div className="mt-3">
                     <Card>
                         <Card.Header className="edit-patient-header">
-                            <span>Update patient info</span>
+                            <span>Patient Information</span>
                             <Button variant="primary" onClick={this._showNotifications}>Notifications</Button>
                         </Card.Header>
 
@@ -911,8 +923,17 @@ class EditPatientPage extends React.Component {
                                                                                  as="select"
                                                                                  value={physicianValue}
                                                                                  onChange={(e) => { this._getPhysicianValue(e) }}>
-                                                                                 <option>Select a Primary Physician</option>
-                                                                                 {physicianOptions}
+                                                                                  {
+                                                                                    physicianOptions==null &&
+                                                                                    <option>Loading Physicians...</option>
+                                                                                 }
+                                                                                 {
+                                                                                    physicianOptions!==null &&
+                                                                                    <>
+                                                                                    <option>Select a Primary Physician</option>
+                                                                                    {physicianOptions}
+                                                                                    </>
+                                                                                 }
                                                                             </Form.Control>
                                                                         )}
                                                                     </Field>
@@ -932,8 +953,17 @@ class EditPatientPage extends React.Component {
                                                                                  as="select"
                                                                                  value={careManagerValue}
                                                                                  onChange={(e) => { this._getPrimaryCareManager(e) }}>
-                                                                                 <option>Select a Primary Care Manager</option>
-                                                                                 {careManagerListsOptions}
+                                                                                 {
+                                                                                    careManagerListsOptions==null &&
+                                                                                    <option>Loading Care Managers...</option>
+                                                                                 }
+                                                                                 {
+                                                                                    careManagerListsOptions!==null &&
+                                                                                    <>
+                                                                                    <option>Select a Primary Care Manager</option>
+                                                                                    {careManagerListsOptions}
+                                                                                    </>
+                                                                                 }
                                                                             </Form.Control>
                                                                         )}
                                                                     </Field>
