@@ -4893,6 +4893,11 @@ globule@^1.0.0:
     lodash "~4.17.10"
     minimatch "~3.0.2"
 
+goober@^2.0.4:
+  version "2.0.15"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.0.15.tgz#da0429f6a3b90420d705c0311650d27d636ea595"
+  integrity sha512-mdEMp8LcMvVt1tn3ZW+Rhk8DlmQlRfvU3SmY7KymcCE906qec8IKB31UpptO7emg/fRxYYgamx44a5ILzSNIpQ==
+
 google-maps-react@2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/google-maps-react/-/google-maps-react-2.0.6.tgz#0473356207ab6b47227b393b89e4b83f6eab06da"
@@ -8496,6 +8501,13 @@ react-is@^17.0.1:
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+
+react-multi-select-component@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/react-multi-select-component/-/react-multi-select-component-3.0.7.tgz#73a1642cd795bfc7ac878371cf1bb9bb4b508a37"
+  integrity sha512-Mhvn8ANIaFOzj7dKz8DEQNcCS2ZikesuWNpmEbbWkDG2Hwbao2QcmLTyiSPQILMo+NP8D2+KWQu5qDN1wV9Cqw==
+  dependencies:
+    goober "^2.0.4"
 
 react-onclickoutside@^6.9.0:
   version "6.9.0"
