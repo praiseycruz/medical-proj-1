@@ -540,45 +540,6 @@ class AddPatientPage extends React.Component {
         })
     }
 
-    _addDevice = () => {
-        // let deviceData = {
-        //     "resourceType": "Device",
-        //     "text": {
-        //         "status": "generated",
-        //         "div": "<div>\n      <p>example</p>\n    </div>"
-        //     },
-        //     "identifier": [
-        //         {
-        //             "system": "http://goodcare.org/devices/id",
-        //             "value": "345675"
-        //         },
-        //         {
-        //             "label": "Serial Number",
-        //             "value": "AMID-342135-8464"
-        //         }
-        //     ],
-        //     "type": {
-        //         "coding": [
-        //             {
-        //                 "system": "http://snomed.info/sct",
-        //                 "code": "86184003",
-        //                 "display": "Electrocardiographic monitor and recorder"
-        //             }
-        //         ],
-        //         "text": "ECG"
-        //     },
-        //     "manufacturer": "Acme Devices, Inc",
-        //     "model": "AB 45-J",
-        //     "lotNumber": "43453424",
-        //     "contact": [
-        //         {
-        //             "system": "phone",
-        //             "value": "ext 4352"
-        //         }
-        //     ]
-        // }
-    }
-
     _removeDeviceData = (id) => {
 
         let { patientDevicesLists, deviceIds } = this.state
@@ -765,8 +726,8 @@ class AddPatientPage extends React.Component {
     }
 
     _setSelectedDevice = (value, devicesLists) => {
-
         let { currentSelectedDevice } = this.state
+
         devicesLists.map (deviceItem => {
             if (deviceItem.resource.id==value) {
                 currentSelectedDevice = deviceItem
@@ -775,7 +736,6 @@ class AddPatientPage extends React.Component {
                 })
             }
         })
-
     }
 
     _getDeviceName = (e) => {
