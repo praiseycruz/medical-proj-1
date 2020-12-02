@@ -6,7 +6,7 @@ import { ModalSearchStyle, ModalSearchItems } from './styled-components/ModalSea
 function ModalSearch(props) {
 		
 	//extract properties
-	const { show, label, closeModal, results, query } = props
+	const { show, label, closeModal, results, query, selectData } = props
 
 	//initiate with null
 	let displayResults = null
@@ -29,14 +29,15 @@ function ModalSearch(props) {
 		entries.map( entry => {
 			let { resource } = entry
 			let buildItem = {
-				name: `${resource.name[0].given} ${resource.name[0].family}` 
+				name: `${resource.name[0].given} ${resource.name[0].family}`,
+				resource 
 			}
 			items.push(buildItem)
 		})
 
 		//iterate build items for display purpose
 		itemsDisplay = items.map( (item, key) => {
-			return (<ModalSearchItems key={key}>{item.name}</ModalSearchItems>)
+			return (<ModalSearchItems onClick={() => {selectData(item); closeModal();}} key={key}>{item.name}</ModalSearchItems>)
 		})
 
 	} else {
