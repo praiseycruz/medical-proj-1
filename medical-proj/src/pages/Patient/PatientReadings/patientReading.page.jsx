@@ -17,6 +17,8 @@ import ModalSearch from '../../../components/Modals/ModalSearch'
 //import patient service for searching purpose
 import { patientService } from '../../../services'
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 class PatientReadingsPage extends React.Component {
     constructor(props) {
         super(props)
@@ -372,18 +374,18 @@ class PatientReadingsPage extends React.Component {
     }
 
     _handleSubmitSearch = async ({searchPatient}) => {
-            
+
         //get patient search button state
         let { patientSearchBtn } = this.state
-        
+
         //get default text
         let getText = patientSearchBtn.text
-        
+
 
         //set search btn text to a loading text
         patientSearchBtn.text = patientSearchBtn.loadingText
-    
-        //set now the state        
+
+        //set now the state
         this.setState({
             patientSearchBtn
         })
@@ -678,7 +680,7 @@ class PatientReadingsPage extends React.Component {
                                             <Button
                                                 onClick={ e => {
                                                     handleSubmit(e).then(results => {
-                                                        
+
                                                         if (!patientSearchModal.show) {
                                                             patientSearchModal.show = true
                                                             patientSearchModal.results = results
@@ -687,7 +689,7 @@ class PatientReadingsPage extends React.Component {
                                                             })
 
                                                         }
-                                                        
+
                                                     })
                                                 }}
                                                 type="submit"
@@ -700,10 +702,10 @@ class PatientReadingsPage extends React.Component {
                             />
                         </div>
 
-                        <EditPatientPage/>
+                        <EditPatientPage />
                     </Col>
 
-                    <Col sm={12} md={12} lg={12} xl={12}>
+                    {/*<Col sm={12} md={12} lg={12} xl={12}>
                         <div>
                             <Card className="mt-4">
                                 <Card.Body>
@@ -854,7 +856,7 @@ class PatientReadingsPage extends React.Component {
                                 </Card.Body>
                             </Card>
                         </div>
-                    </Col>
+                    </Col>*/}
 
                     <FormFinal
                         onSubmit={this._handleSubmitSearch}
@@ -914,7 +916,7 @@ class PatientReadingsPage extends React.Component {
                         )}
                     />
 
-                    <FormFinal
+                    {/*<FormFinal
                          initialValues={{
 
                          }}
@@ -930,7 +932,7 @@ class PatientReadingsPage extends React.Component {
                                      onHide={this._closeModalDevices}
                                  >
                                      <Modal.Header closeButton>
-                                        <h5>Adding new device - ""</h5>
+                                        <h5>Adding new device - {`${addingNewDeviceLabel}`}</h5>
                                      </Modal.Header>
 
                                      <Modal.Body>
@@ -1119,7 +1121,7 @@ class PatientReadingsPage extends React.Component {
                                      </Modal.Footer>
                                  </Modal>
                              </Form>
-                     )} />
+                     )} />*/}
 
                     <Modal
                         show={showAlertModal}

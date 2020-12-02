@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import ReactDOM from 'react-dom'
 import { AddPatientWrapper } from '../styled_components/addpatient.style'
 import { Form as FormFinal, Field } from "react-final-form"
-import { Form, Row, Col, Button, Modal, Card, Container } from 'react-bootstrap'
+import { Form, Row, Col, Button, Modal, Card, Container, Tab, Tabs } from 'react-bootstrap'
 import { TableComponent } from '../../../components/Table'
 import { patientAction, dashboardAction, practitionerAction, deviceAction, careTeamAction } from '../../../actions'
 import iziToast from 'izitoast'
@@ -14,11 +14,13 @@ import { config } from '../../../config'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
+import { OnChange } from 'react-final-form-listeners'
 
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react'
 import Geocode from "react-geocode"
 import { CurrentLocation } from '../../../components/Map'
 import { practitionerService } from '../../../services'
+import _ from 'lodash'
 
 Geocode.setApiKey(config.googleApiKey)
 
@@ -39,17 +41,31 @@ String.prototype.ucwords = function() {
   return str.toLowerCase().replace(/(?<= )[^\s]|^./g, a=>a.toUpperCase())
 };
 
+var addingNewDeviceLabel = ''
+
+
+//hidden form component
+const HiddenForm = ({values}) => {
+
+    addingNewDeviceLabel = `${typeof values.firstname!=='undefined' ? values.firstname : ''} ${typeof values.lastname!=='undefined' ? values.lastname : ''}`.ucwords()
+
+    return null
+}
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            deviceIds: [],
             showingInfoWindow: false,
+            currentSelectedDevice: null,
             activeMarker: {},
             selectedPlace: {},
             showPatientLocationModal: false,
             devicesAdded: [],
-            devicesLists: [],
+            devicesLists: [], // store all the devices lists and display in dropdown
             patientLocation: {
                 lat: 4.210484,
                 lng: 101.975766
@@ -98,239 +114,217 @@ class EditPatientPage extends React.Component {
             hasSetSelects: false,
             careManagerLists: [], // store all care managers and display in Primary Care Manager dropwdown
             physicianLists: [], // store all physicians and display in Primary Physician dropdown
-        }
-    }
+            showModalDevices: false,
+            initialValues: {
+                patientId: '',
+                firstname: '',
+                lastname: '',
+                addemail: '',
+                phoneNum: '',
+                mobileNum: '',
+                gender: 'male',
+                ssn: '',
+                addressLine1: '',
+                addressLine2: '',
+                medicareId: '',
+                state: '',
+                zipcode: '',
+                allowSendText: true
 
-    // submit patient update data
-    _handleSubmit = async (values) => {
-        const { dispatch } = this.props
-
-        let s = document.getElementById("date_picker_id")
-        let dobFormat = moment(s.value).format("MM-DD-yyyy")
-
-        let patientData = {
-            "resourceType": "Patient",
-            "name": [
+            }, // form final initial values
+            conditionCols: [
                 {
-                    "use": "official",
-                    "given": [`${values.firstname}`],
-                    "family": `${values.lastname}`
-                }
-            ],
-            "gender": `${values.gender}`,
-            "birthDate": `${dobFormat}`,
-            "telecom": [
-                {
-                    "value": `${values.phoneNum}`,
-                    "use": "mobile",
-                    "system": "phone"
+                    title: '',
+                    key: 'condition',
+                    render: colData => {
+                        return <span>{colData.condition}</span>
+                    }
                 },
                 {
-                    "system": "email",
-                    "value": `${values.addemail}`
-                }
-            ],
-            "address": [
-                {
-                    "text": [
-                        `${values.addressLine1} ${values.addressLine2}, ${values.state} ${values.zipcode}`
-                    ],
-                    "line": [
-                        `${values.addressLine1}`,
-                        `${values.addressLine2}`
-                    ],
-                    "state": `${values.state}`,
-                    "postalCode": `${values.zipcode}`
-                }
-            ],
-            "identifier": [
-                {
-                    "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${values.ssn}`
+                    title: '',
+                    key: 'diagnosisCode',
+                    render: colData => {
+                        return <span>{colData.diagnosisCode}</span>
+                    }
                 },
                 {
-                    "value": RandNum("PX"),
-                    "system": "EXSYS"
+                    title: '',
+                    key: 'programs',
+                    render: colData => {
+                        return <span>{colData.programs[0].name}</span>
+                    }
+                },
+                {
+                    title: '',
+                    key: 'button',
+                    render: colData => {
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeCondition(colData.id) }}><i className="fa fa-times" aria-hidden="true"></i></button>
+                    }
                 }
             ],
-            "extension": [{
-                "url": config.apiGateway.URL + "/IsRemoteMonitored",
-                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
-            }]
+            alertLists: [
+                {
+                    priority: 'High',
+                    title: "Patient's blood pressure is out of target range",
+                    date: '10/17/2020 3:37 PM'
+                },
+                {
+                    priority: 'High',
+                    title: "Patient's blood pressure is out of target range",
+                    date: '10/17/2020 3:37 PM'
+                },
+                {
+                    priority: 'Low',
+                    title: "Patient's blood pressure is out of target range",
+                    date: '10/17/2020 3:37 PM'
+                },
+                {
+                    priority: 'High',
+                    title: "Patient's blood pressure is out of target range",
+                    date: '10/17/2020 3:37 PM'
+                },
+                {
+                    priority: 'Low',
+                    title: "Patient's blood pressure is out of target range",
+                    date: '10/17/2020 3:37 PM'
+                },
+            ],
+            alertCols: [
+                {
+                    title: 'Priority',
+                    key: 'priority',
+                    render: colData => {
+                        return <span className={colData.priority.toLowerCase()}>{colData.priority}</span>
+                    }
+                },
+                {
+                    title: 'Title',
+                    key: 'title',
+                    render: colData => {
+                        return <span>{colData.title}</span>
+                    }
+                },
+                {
+                    title: 'Date',
+                    key: 'date',
+                    render: colData => {
+                        return <span>{colData.date}</span>
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'button',
+                    render: colData => {
+                        return <button className="btn btn-primary" onClick={(e, id) => { this._viewAlert(e, colData.id) }}>View</button>
+                    }
+                }
+            ],
+            diagnosisCode: [
+                {
+                    name: 'Code 1'
+                },
+                {
+                    name: 'Code 2'
+                },
+                {
+                    name: 'Code 3'
+                }
+            ], // in conditions tab diagnosis code dropdown dummy data
+            diagnosisCodeValue: '', // get diagnosis code dropdown value
+            conditionValue: '', // get conditions dropdown value
+            conditionLists: [
+                {
+                    name: 'Condition 1'
+                },
+                {
+                    name: 'Condition 2'
+                },
+                {
+                    name: 'Condition 3'
+                }
+            ], // in conditions tab conditions dropdown dummy data
+            conditionsAdded: [
+                {
+                    condition: 'Condition 1',
+                    diagnosisCode: 'Code 1',
+                    programs: [
+                        {
+                            name: 'rpm',
+                        }
+                    ]
+                },
+                {
+                    condition: 'Condition 2',
+                    diagnosisCode: 'Code 2',
+                    programs: [
+                        {
+                            name: 'rpm',
+                        }
+                    ]
+                },
+                {
+                    condition: 'Condition 3',
+                    diagnosisCode: 'Code 3',
+                    programs: [
+                        {
+                            name: 'rpm',
+                        }
+                    ]
+                },
+                {
+                    condition: 'Condition 4',
+                    diagnosisCode: 'Code 4',
+                    programs: [
+                        {
+                            name: 'rpm',
+                        }
+                    ]
+                }
+            ], // dummy data of conditions - displayed in table
+            devicesCols: [
+                {
+                    title: 'Device',
+                    key: 'device',
+                    render: colData => {
+                        return <span>{colData.device}</span>
+                    }
+                },
+                {
+                    title: 'Device ID',
+                    key: 'deviceId',
+                    render: colData => {
+                        return <span>{colData.deviceId}</span>
+                    }
+                },
+                {
+                    title: 'Connected At',
+                    key: 'connectedAt',
+                    render: colData => {
+                        return <span>{colData.connectedAt}</span>
+                    }
+                },
+                {
+                    title: 'Last Measurement At',
+                    key: 'lastMeasurement',
+                    render: colData => {
+                        return <span>{colData.lastMeasurement}</span>
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'button',
+                    render: colData => {
+                        return <>
+                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Bill for 1199</button>*/}
+                                <button className="btn btn-danger">Remove</button>
+                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Edit</button>*/}
+                            </>
+                    }
+                }
+            ], // devices column in supplied devices under Devices tab
+            devicesAdded: [], // under supplied devices
+            patientDevicesLists: [], // store all the devices populated in the table (data passed in registering patient)
         }
-
-        dispatch(patientAction.create(patientData))
-    }
-
-    _handleValidate = values => {
-        const errors = {}
-		let firstname = []
-        let lastname = []
-		let addemail = []
-        let ssn = []
-        let address = []
-        let zipcode = []
-        let phoneNum = []
-
-		if (!values.firstname)
-			firstname.push("Firstname is required")
-
-        if (!values.lastname)
-            lastname.push("Lastname is required")
-
-        if (!values.addemail)
-            addemail.push("Email is required")
-
-        if (!values.ssn)
-            ssn.push("SSN is required")
-
-        if (!values.address)
-            address.push("Address is required")
-
-        if (!values.zipcode)
-            zipcode.push("Zipcode is required")
-
-        if (!values.phoneNum)
-            phoneNum.push("Phone number is required")
-
-
-        if (firstname.length > 0)
-            errors.firstname = firstname
-
-        if (lastname.length > 0)
-            errors.lastname = lastname
-
-        if (addemail.length > 0)
-            errors.addemail = addemail
-
-        if (ssn.length > 0)
-            errors.ssn = ssn
-
-        if (address.length > 0)
-            errors.address = address
-
-        if (zipcode.length > 0)
-            errors.zipcode = zipcode
-
-        if (phoneNum.length > 0)
-            errors.phoneNum = phoneNum
-
-		return errors
-    }
-
-    _handleSubmitNotifications = () => {
-
-    }
-
-    _handleValidateNotifications = () => {
-
-    }
-
-    // open patient location modal
-    _openPatientLocation = form => {
-
-        let { patientLocation } = this.state
-
-        //set the location to get the longitude and latitude
-        let completeAddress = {
-            addressLine1: typeof form.getFieldState('addressLine1').value!=='undefined' ? form.getFieldState('addressLine1').value : '',
-            addressLine2: typeof form.getFieldState('addressLine2').value!=='undefined' ? form.getFieldState('addressLine2').value : '',
-            state: typeof form.getFieldState('state').value!=='undefined' ? form.getFieldState('state').value : '',
-            zipcode: typeof form.getFieldState('zipcode').value!=='undefined' ? form.getFieldState('zipcode').value : ''
-        }
-
-        let completeAddressArray = []
-
-        if (completeAddress.addressLine1!='')
-            completeAddressArray.push(completeAddress.addressLine1)
-
-        if (completeAddress.addressLine2!='')
-            completeAddressArray.push(completeAddress.addressLine2)
-
-        if (completeAddress.state!='')
-            completeAddressArray.push(completeAddress.state)
-
-        if (completeAddress.zipcode!='')
-            completeAddressArray.push(completeAddress.zipcode)
-
-        //combined address inputs
-        let location = completeAddressArray.join(', ').ucwords()
-
-        this.setState({
-            showPatientLocationModal: true,
-            patientAddress: location
-        })
-
-        //geocode now the address into longitude and latitude
-        Geocode.fromAddress(location).then(
-          response => {
-            const { lat, lng } = response.results[0].geometry.location
-
-            patientLocation = {
-                lat,
-                lng
-            }
-            this.setState({
-                patientLocation
-            })
-          },
-          error => {
-            console.error(error)
-          }
-        )
-
-    }
-
-    // close patient location modal
-    _closeModal = () => {
-        this.setState({
-            showPatientLocationModal: false
-        })
-    }
-
-    // for adding device to patient
-    _addDevice = () => {
-        // let deviceData = {
-        //     "resourceType": "Device",
-        //     "text": {
-        //         "status": "generated",
-        //         "div": "<div>\n      <p>example</p>\n    </div>"
-        //     },
-        //     "identifier": [
-        //         {
-        //             "system": "http://goodcare.org/devices/id",
-        //             "value": "345675"
-        //         },
-        //         {
-        //             "label": "Serial Number",
-        //             "value": "AMID-342135-8464"
-        //         }
-        //     ],
-        //     "type": {
-        //         "coding": [
-        //             {
-        //                 "system": "http://snomed.info/sct",
-        //                 "code": "86184003",
-        //                 "display": "Electrocardiographic monitor and recorder"
-        //             }
-        //         ],
-        //         "text": "ECG"
-        //     },
-        //     "manufacturer": "Acme Devices, Inc",
-        //     "model": "AB 45-J",
-        //     "lotNumber": "43453424",
-        //     "contact": [
-        //         {
-        //             "system": "phone",
-        //             "value": "ext 4352"
-        //         }
-        //     ]
-        // }
-    }
-
-    // removing device data
-    _removeDeviceData = (id) => {
-        alert(id)
     }
 
     componentDidMount() {
@@ -341,7 +335,7 @@ class EditPatientPage extends React.Component {
         //this._loadMap(this.state.patientLocation)
         //dispatch(practitionerAction.getAllPhysician(100, 0))
         //dispatch(practitionerAction.getAllCareManager(100, 0))
-        
+
 
         //get all physicians
         practitionerService.getAllPhysician(100, 0).then( physicians => {
@@ -457,30 +451,210 @@ class EditPatientPage extends React.Component {
         }
     }
 
-    _getDeviceName = (e) => {
-        let { value } = e.target
+    // submit patient update data
+    _handleSubmit = async (values) => {
+        const { dispatch } = this.props
 
-        var index = e.target.selectedIndex
-        var optionElement = e.target.childNodes[index]
-        var optionId =  optionElement.getAttribute('data-id')
-        var optionType =  optionElement.getAttribute('data-type')
-        var optionSer =  optionElement.getAttribute('data-serial')
-        var optionMan =  optionElement.getAttribute('data-man')
-        var optionModel =  optionElement.getAttribute('data-model')
+        let s = document.getElementById("date_picker_id")
+        let dobFormat = moment(s.value).format("MM-DD-yyyy")
 
-        let devicesDataOnClick = [
-            {
-                "type": optionType,
-                "serial": optionSer,
-                "manufacturer": optionMan,
-                "model": optionModel
-            }
-        ]
+        let patientData = {
+            "resourceType": "Patient",
+            "name": [
+                {
+                    "use": "official",
+                    "given": [`${values.firstname}`],
+                    "family": `${values.lastname}`
+                }
+            ],
+            "gender": `${values.gender}`,
+            "birthDate": `${dobFormat}`,
+            "telecom": [
+                {
+                    "value": `${values.phoneNum}`,
+                    "use": "mobile",
+                    "system": "phone"
+                },
+                {
+                    "system": "email",
+                    "value": `${values.addemail}`
+                }
+            ],
+            "address": [
+                {
+                    "text": [
+                        `${values.addressLine1} ${values.addressLine2}, ${values.state} ${values.zipcode}`
+                    ],
+                    "line": [
+                        `${values.addressLine1}`,
+                        `${values.addressLine2}`
+                    ],
+                    "state": `${values.state}`,
+                    "postalCode": `${values.zipcode}`
+                }
+            ],
+            "identifier": [
+                {
+                    "system": "http://hl7.org/fhir/sid/us-ssn",
+                    "value": `${values.ssn}`
+                },
+                {
+                    "value": RandNum("PX"),
+                    "system": "EXSYS"
+                }
+            ],
+            "extension": [{
+                "url": config.apiGateway.URL + "/IsRemoteMonitored",
+                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
+            }]
+        }
+
+        dispatch(patientAction.create(patientData))
+    }
+
+    _handleValidate = values => {
+        const errors = {}
+		let firstname = []
+        let lastname = []
+		let addemail = []
+        let address = []
+        let zipcode = []
+        let phoneNum = []
+
+		if (!values.firstname)
+			firstname.push("Firstname is required")
+
+        if (!values.lastname)
+            lastname.push("Lastname is required")
+
+        if (!values.addemail)
+            addemail.push("Email is required")
+
+        if (!values.address)
+            address.push("Address is required")
+
+        if (!values.zipcode)
+            zipcode.push("Zipcode is required")
+
+        if (!values.phoneNum)
+            phoneNum.push("Phone number is required")
+
+
+        if (firstname.length > 0)
+            errors.firstname = firstname
+
+        if (lastname.length > 0)
+            errors.lastname = lastname
+
+        if (addemail.length > 0)
+            errors.addemail = addemail
+
+        if (address.length > 0)
+            errors.address = address
+
+        if (zipcode.length > 0)
+            errors.zipcode = zipcode
+
+        if (phoneNum.length > 0)
+            errors.phoneNum = phoneNum
+
+		return errors
+    }
+
+    _handleSubmitNotifications = () => {
+
+    }
+
+    _handleValidateNotifications = () => {
+
+    }
+
+    // open patient location modal
+    _openPatientLocation = form => {
+
+        let { patientLocation } = this.state
+
+        //set the location to get the longitude and latitude
+        let completeAddress = {
+            addressLine1: typeof form.getFieldState('addressLine1').value!=='undefined' ? form.getFieldState('addressLine1').value : '',
+            addressLine2: typeof form.getFieldState('addressLine2').value!=='undefined' ? form.getFieldState('addressLine2').value : '',
+            state: typeof form.getFieldState('state').value!=='undefined' ? form.getFieldState('state').value : '',
+            zipcode: typeof form.getFieldState('zipcode').value!=='undefined' ? form.getFieldState('zipcode').value : ''
+        }
+
+        let completeAddressArray = []
+
+        if (completeAddress.addressLine1!='')
+            completeAddressArray.push(completeAddress.addressLine1)
+
+        if (completeAddress.addressLine2!='')
+            completeAddressArray.push(completeAddress.addressLine2)
+
+        if (completeAddress.state!='')
+            completeAddressArray.push(completeAddress.state)
+
+        if (completeAddress.zipcode!='')
+            completeAddressArray.push(completeAddress.zipcode)
+
+        //combined address inputs
+        let location = completeAddressArray.join(', ').ucwords()
 
         this.setState({
-            deviceValue: value,
-            devicesDataOnClick
+            showPatientLocationModal: true,
+            patientAddress: location
         })
+
+        //geocode now the address into longitude and latitude
+        Geocode.fromAddress(location).then(
+          response => {
+            const { lat, lng } = response.results[0].geometry.location
+
+            patientLocation = {
+                lat,
+                lng
+            }
+            this.setState({
+                patientLocation
+            })
+          },
+          error => {
+            console.error(error)
+          }
+        )
+
+    }
+
+    // close patient location modal
+    _closeModal = () => {
+        this.setState({
+            showPatientLocationModal: false
+        })
+    }
+
+    _getDeviceName = (e) => {
+        // let { value } = e.target
+        //
+        // var index = e.target.selectedIndex
+        // var optionElement = e.target.childNodes[index]
+        // var optionId =  optionElement.getAttribute('data-id')
+        // var optionType =  optionElement.getAttribute('data-type')
+        // var optionSer =  optionElement.getAttribute('data-serial')
+        // var optionMan =  optionElement.getAttribute('data-man')
+        // var optionModel =  optionElement.getAttribute('data-model')
+        //
+        // let devicesDataOnClick = [
+        //     {
+        //         "type": optionType,
+        //         "serial": optionSer,
+        //         "manufacturer": optionMan,
+        //         "model": optionModel
+        //     }
+        // ]
+        //
+        // this.setState({
+        //     deviceValue: value,
+        //     devicesDataOnClick
+        // })
     }
 
     _getPhysicianValue = (e) => {
@@ -561,6 +735,79 @@ class EditPatientPage extends React.Component {
         })
     }
 
+    // removing device data
+    _removeDeviceData = (id) => {
+        let { patientDevicesLists, deviceIds } = this.state
+
+        patientDevicesLists = _.filter(patientDevicesLists, e => e.id!==id)
+
+        if (deviceIds.indexOf(id)!==-1)
+            deviceIds.splice(deviceIds.indexOf(id), 1)
+
+        this.setState({
+            patientDevicesLists,
+            deviceIds
+        })
+    }
+
+    _setSelectedDevice = (value, devicesLists) => {
+        let { currentSelectedDevice } = this.state
+
+        devicesLists.map(deviceItem => {
+            if (deviceItem.resource.id == value) {
+                currentSelectedDevice = deviceItem
+
+                this.setState({
+                    currentSelectedDevice
+                })
+            }
+        })
+    }
+
+    _handleSubmitDevice = async (values) => {
+        await sleep(300)
+
+        let { currentSelectedDevice, patientDevicesLists, deviceIds } = this.state
+
+        if (currentSelectedDevice !== null) {
+
+            //insert into the patient devices lists
+            patientDevicesLists.push({
+                deviceName: currentSelectedDevice.resource.deviceName[0].name,
+                name: currentSelectedDevice.resource.type.text,
+                serialNum: currentSelectedDevice.resource.serialNumber,
+                id: currentSelectedDevice.resource.id
+            })
+
+            //insert separately for device ids
+            //will be use later for adding of patient
+            deviceIds.push(currentSelectedDevice.resource.id)
+
+            //update now the states
+            this.setState({
+                patientDevicesLists,
+                deviceIds
+            })
+        }
+    }
+
+    _handleValidateDevice = () => {
+        let errors = {}
+        return errors
+    }
+
+    _openModalDevices = () => {
+        this.setState({
+            showModalDevices: true
+        })
+    }
+
+    _closeModalDevices = () => {
+        this.setState({
+            showModalDevices: false
+        })
+    }
+
     render() {
         let { showPatientLocationModal,
               devicesAdded,
@@ -570,7 +817,17 @@ class EditPatientPage extends React.Component {
               devicesDataOnClick,
               showNotificationModal,
               careManagerValue,
-              careManagerLists } = this.state
+              careManagerLists,
+              showModalDevices,
+              initialValues,
+              diagnosisCode,
+              diagnosisCodeValue,
+              conditionLists,
+              conditionValue,
+              conditionsAdded,
+              alertLists,
+              patientDevicesLists,
+              currentSelectedDevice } = this.state
         let { patient, practitioner, removeBc } = this.props
 
         let isAddingNewPatientLoading = false
@@ -679,75 +936,90 @@ class EditPatientPage extends React.Component {
             })
         }
 
-        // commented for now
-        /*if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
-            populateDeviceData = devicesDataOnClick.map((item, key) => {
-
-                return (
-                    <div key={key}>
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Device Type</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.type}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Device Model</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.model}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Serial Number</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.serial}</label>
-                            </div>
-                        </Form.Group>
-
-                        <Form.Group className="devices-types">
-                            <Form.Label className="col-sm-5">Manufacturer</Form.Label>
-                            <div className="col-sm-7">
-                                <label>{item.manufacturer}</label>
-                            </div>
-                        </Form.Group>
-                    </div>
-                )
-            })
-        } else {
-            populateDeviceData = (
-                <div>
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Device Type</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Device Model</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Serial Number</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-
-                    <Form.Group className="devices-types">
-                        <Form.Label className="col-sm-5">Manufacturer</Form.Label>
-                        <div className="col-sm-7">
-                            <label>--</label>
-                        </div>
-                    </Form.Group>
-                </div>
+        let diagnosisCodeOption = diagnosisCode.map((item, key) => {
+            return (
+                <option key={key}>{item.name}</option>
             )
-        }*/
+        })
+
+        let conditionOptions = conditionLists.map((item, key) => {
+            return (
+                <option key={key}>{item.name}</option>
+            )
+        })
+
+        if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
+            optionDevicesLists = devicesLists.map((deviceItem, deviceKey) => {
+                let { resource } = deviceItem
+
+                if (typeof resource !== 'undefined' && resource !== null) {
+                    let { deviceName, manufacturer } = resource
+
+                    if (typeof deviceName !== 'undefined' && deviceName !== null) {
+                        return (
+                            <option
+                                key={deviceItem.resource.id}
+                                value={deviceItem.resource.id}
+                                data-id={deviceItem.resource.id}
+                                data-type={deviceItem.resource.type.text}
+                                data-man={deviceItem.resource.manufacturer}
+                                data-serial={deviceItem.resource.serialNumber}
+                                data-model={deviceItem.resource.modelNumber}>
+                                    { deviceName[0].name }
+                            </option>
+                        )
+                    }
+                }
+            })
+        }
+
+        populateDeviceData = (
+            <div>
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Device Type</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.type.text : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Device Model</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.modelNumber : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Serial Number</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.serialNumber : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+
+                <Form.Group className="devices-types">
+                    <Form.Label className="col-sm-5">Manufacturer</Form.Label>
+                    <div className="col-sm-7">
+                        <label>
+                        {
+                            currentSelectedDevice!==null ? currentSelectedDevice.resource.manufacturer : '--'
+                        }
+                        </label>
+                    </div>
+                </Form.Group>
+            </div>
+        )
 
         return (
             <AddPatientWrapper>
@@ -755,15 +1027,16 @@ class EditPatientPage extends React.Component {
                     <Card>
                         <Card.Header className="edit-patient-header">
                             <span>Patient Information</span>
-                            <Button variant="primary" onClick={this._showNotifications}>Notifications</Button>
+                            <div>
+                                {/*<Button variant="primary" onClick={this._showNotifications}>Notifications</Button>*/}
+                                <Button variant="primary" className="mr-2 add">Add New Patient</Button>
+                                <Button variant="primary" className="edit">Edit Patient</Button>
+                            </div>
                         </Card.Header>
 
                         <Card.Body>
                             <FormFinal
-                                initialValues={{
-                                    gender: 'male',
-                                    allowSendText: true
-                                }}
+                                initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
                                 render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
@@ -794,6 +1067,7 @@ class EditPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
+                                                    <HiddenForm values={values} />
                                                     <Form.Group className="patient-lastname">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1028,29 +1302,8 @@ class EditPatientPage extends React.Component {
                                                                             />
                                                                         )}
                                                                     </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
 
-                                                    <Form.Group className="patient-ssn">
-                                                        <Row>
-                                                            <Col sm={12} className="patient-inputs">
-                                                                <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="ssn" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
+                                                                    <span className="ml-3">34 years old</span>
                                                                 </div>
                                                             </Col>
                                                         </Row>
@@ -1163,53 +1416,386 @@ class EditPatientPage extends React.Component {
                                                 </Col>
                                             </Row>
 
+                                            <div className="add-patient-condition-wrapper">
+                                                <div>
+                                                    <Tabs defaultActiveKey="devices" transition={false} id="noanim-tab-example">
+                                                        <Tab eventKey="conditions" title="Conditions">
+                                                            <div className="patient-condition">
+                                                                <div>
+                                                                    <Form.Group className="firstname">
+                                                                        <Row>
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Condition</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <Field name="condition" type="select">
+                                                                                        {({ input, meta, type }) => (
+                                                                                            <>
+                                                                                                <Form.Control
+                                                                                                     as="select"
+                                                                                                     value={conditionValue}
+                                                                                                     onChange={(e) => { this._getCondition(e) }}>
+                                                                                                     {conditionOptions}
+                                                                                                </Form.Control>
+                                                                                            </>
+                                                                                        )}
+                                                                                    </Field>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Diagnosis Code</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <Field name="diagnosis" type="select">
+                                                                                        {({ input, meta, type }) => (
+                                                                                            <Form.Control
+                                                                                                 as="select"
+                                                                                                 value={diagnosisCodeValue}
+                                                                                                 onChange={(e) => { this._getDiagnosisCode(e) }}>
+                                                                                                 {diagnosisCodeOption}
+                                                                                            </Form.Control>
+                                                                                        )}
+                                                                                    </Field>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Programs</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <div>
+                                                                                        <label className="programs-label">
+                                                                                            <Field name="programs-rpm" type="checkbox" value="rpm">
+                                                                                                {({ input, meta }) => (
+                                                                                                    <>
+                                                                                                        <input
+                                                                                                            {...input}
+                                                                                                        />
+                                                                                                    </>
+                                                                                                )}
+                                                                                            </Field>
+                                                                                            <span>RPM</span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </Col>
+
+                                                                            <Col sm={3}>
+                                                                                <Form.Label className="col-sm-12">Assessment</Form.Label>
+                                                                                <div className="col-sm-12">
+                                                                                    <div className="add-assessment">
+                                                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
+                                                                                            Start Now
+                                                                                        </Button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="mt-4">
+                                                                <TableComponent data={conditionsAdded} cols={this.state.conditionCols} bordered={false} striped={false} removeThead={true} isTableFor={'conditions'} />
+                                                            </div>
+                                                        </Tab>
+                                                        <Tab eventKey="devices" title="Devices">
+                                                            <div className="supplied-devices-wrapper">
+                                                                <div className="supplied-devices-section">
+                                                                    <h5>Supplied Devices:</h5>
+
+                                                                    <Button variant="primary" onClick={this._openModalDevices}>Add Device</Button>
+                                                                </div>
+                                                                <div className="mt-4">
+                                                                    <TableComponent data={devicesAdded} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="patient-device-wrapper">
+                                                                <h5>Patient Devices:</h5>
+
+                                                                <div className="mt-4">
+                                                                    <TableComponent data={patientDevicesLists} cols={this.state.patientDevicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
+                                                                </div>
+                                                            </div>
+                                                        </Tab>
+                                                        <Tab eventKey="alerts" title="Alerts">
+                                                            <div className="mt-4">
+                                                                <TableComponent data={alertLists} cols={this.state.alertCols} bordered={false} striped={false} isTableFor={'alerts'} />
+                                                            </div>
+                                                        </Tab>
+                                                        <Tab eventKey="billing" title="Billing">
+                                                            Billing
+                                                        </Tab>
+                                                        <Tab eventKey="portal" title="Portal">
+                                                            Portal
+                                                        </Tab>
+                                                        <Tab eventKey="rangeSetup" title="Patient Alerts Range Setup/Edit">
+                                                            Patient Alerts Range Setup/Edit
+                                                        </Tab>
+                                                    </Tabs>
+                                                </div>
+                                            </div>
+
                                             <div className="btn-add">
                                                 <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
                                                     { isAddingNewPatientLoading ?
-                                                        <span className="ml-2">Updating Patient Data...</span>
+                                                        <span className="ml-2">Saving Patient Data...</span>
                                                         :
-                                                        <>Edit Patient</>
+                                                        <>Save</>
                                                     }
                                                 </Button>
                                             </div>
                                         </div>
                                     </Form>
                                 )} />
+
+                            <FormFinal
+                                 onSubmit={this._handleSubmitDevice}
+                                 validate={this._handleValidateDevice}
+                                 render={({values, initialValues, pristine, submitting, handleSubmit }) => (
+                                     <Form onSubmit={handleSubmit}>
+                                         <Modal
+                                             show={showModalDevices}
+                                             size="md"
+                                             aria-labelledby="contained-modal-title-vcenter"
+                                             centered
+                                             onHide={this._closeModalDevices}
+                                         >
+                                             <Modal.Header closeButton>
+                                                <h5>Adding new device - {`${addingNewDeviceLabel}`}</h5>
+                                             </Modal.Header>
+
+                                             <Modal.Body>
+                                                 <div className="adding-new">
+                                                     <Form.Group className="devices-types">
+                                                         <Form.Label className="col-sm-5">Device Name</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <Field name="addDevice" type="select">
+                                                                 {({ input, meta, type }) => (
+                                                                     <>
+                                                                         <Form.Control
+                                                                             id="allow"
+                                                                             as="select"
+                                                                             onChange={(e) => { this._getDeviceName(e) }}
+                                                                             {...input}
+                                                                             className="form-control">
+                                                                                <option>-- SELECT A DEVICE --</option>
+                                                                                { optionDevicesLists }
+                                                                         </Form.Control>
+                                                                     </>
+                                                                 )}
+                                                             </Field>
+
+                                                             <OnChange name="addDevice">
+                                                                {(value, previous) => {
+                                                                  this._setSelectedDevice(value, devicesLists)
+                                                                }}
+                                                              </OnChange>
+                                                         </div>
+                                                     </Form.Group>
+
+                                                     { populateDeviceData }
+                                                 </div>
+
+                                                 <div className="device-limits">
+                                                     <h5>Device limits for patient</h5>
+
+                                                     <Form.Group className="devices-types mt-4">
+                                                         <Form.Label className="col-sm-5">Dangerously high</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <div className="limit-wrapper">
+                                                                 <label>above</label>
+                                                                 <Field name="dangerously" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="180"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+                                                             </div>
+                                                         </div>
+                                                     </Form.Group>
+
+                                                     <Form.Group className="devices-types mt-4">
+                                                         <Form.Label className="col-sm-5">High</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <div className="limit-wrapper">
+                                                                 <Field name="high" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="120"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+
+                                                                 <label>to</label>
+
+                                                                 <Field name="high-t" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="180"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+                                                             </div>
+                                                         </div>
+                                                     </Form.Group>
+
+                                                     <Form.Group className="devices-types mt-4">
+                                                         <Form.Label className="col-sm-5">Normal</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <div className="limit-wrapper">
+                                                                 <Field name="normal" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="80"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+
+                                                                 <label>to</label>
+
+                                                                 <Field name="normal-t" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="120"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+                                                             </div>
+                                                         </div>
+                                                     </Form.Group>
+
+                                                     <Form.Group className="devices-types mt-4">
+                                                         <Form.Label className="col-sm-5">Low</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <div className="limit-wrapper">
+                                                                 <Field name="low" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="50"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+
+                                                                 <label>to</label>
+
+                                                                 <Field name="low-t" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="80"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+                                                             </div>
+                                                         </div>
+                                                     </Form.Group>
+
+                                                     <Form.Group className="devices-types mt-4">
+                                                         <Form.Label className="col-sm-5">Dangerously low</Form.Label>
+                                                         <div className="col-sm-7">
+                                                             <div className="limit-wrapper">
+                                                                 <label>below</label>
+
+                                                                 <Field name="very-low" type="number">
+                                                                     {({ input, meta, type }) => (
+                                                                         <>
+                                                                             <Form.Control
+                                                                                 type={type}
+                                                                                 placeholder="50"
+                                                                                 autoComplete="off"
+                                                                                 {...input}
+                                                                             />
+                                                                         </>
+                                                                     )}
+                                                                 </Field>
+                                                             </div>
+                                                         </div>
+                                                     </Form.Group>
+                                                 </div>
+                                             </Modal.Body>
+
+                                             <Modal.Footer>
+                                                 <Button onClick={(event) => {
+                                                    handleSubmit(event).then(() => {
+                                                        this._closeModal()
+                                                    })
+                                                 }}
+                                                 type="submit" disabled={pristine} variant="primary" className="btn-submit">
+                                                     Add Device
+                                                 </Button>
+                                             </Modal.Footer>
+                                         </Modal>
+                                     </Form>
+                             )} />
                         </Card.Body>
 
                         { /* Patient Location Modal */ }
                         <Modal
-                          show={showPatientLocationModal}
-                          size="lg"
-                          aria-labelledby="contained-modal-title-vcenter"
-                          centered
-                          onHide={this._closeModal}>
-                            <Modal.Header closeButton>
-                                <Modal.Title id="contained-modal-title-vcenter">
-                                    Patient Location
-                                </Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                             <CurrentLocation
-                                google={this.props.google}
-                                initialCenter={this.state.patientLocation}
-                              >
-                                <Marker onClick={this.onMarkerClick} name={this.state.patientAddress} />
-                                <InfoWindow
-                                  marker={this.state.activeMarker}
-                                  visible={this.state.showingInfoWindow}
-                                  onClose={this.onClose}
-                                >
-                                  <div>
-                                    <h4 style={styles.infoWindow.h4}>{this.state.selectedPlace.name}</h4>
-                                  </div>
-                                </InfoWindow>
-                              </CurrentLocation>
-                            </Modal.Body>
+                            show={showPatientLocationModal}
+                            size="lg"
+                            aria-labelledby="contained-modal-title-vcenter"
+                            centered
+                            onHide={this._closeModal}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title id="contained-modal-title-vcenter">
+                                        Patient Location
+                                    </Modal.Title>
+                                </Modal.Header>
 
-                            <Modal.Footer>
-                                <Button onClick={this._closeModal}>Close</Button>
-                            </Modal.Footer>
+                                <Modal.Body>
+                                    <CurrentLocation
+                                        google={this.props.google}
+                                        initialCenter={this.state.patientLocation}>
+                                        <Marker onClick={this.onMarkerClick} name={this.state.patientAddress} />
+                                        <InfoWindow
+                                            marker={this.state.activeMarker}
+                                            visible={this.state.showingInfoWindow}
+                                            onClose={this.onClose}>
+                                            <div>
+                                                <h4 style={styles.infoWindow.h4}>{this.state.selectedPlace.name}</h4>
+                                            </div>
+                                        </InfoWindow>
+                                    </CurrentLocation>
+                                </Modal.Body>
+
+                                <Modal.Footer>
+                                    <Button onClick={this._closeModal}>Close</Button>
+                                </Modal.Footer>
                         </Modal>
 
                         {/* Show Notification modal */}
