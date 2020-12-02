@@ -69,6 +69,35 @@ export const AddPhysicianWrapper = styled.div`
                     input {
                         margin-right: 5px;
                     }
+
+                    &.multiselect-wrapper {
+                        .multi-select {
+                            background-color: #353C48 !important;
+                            --rmsc-bg: #353C48 !important;
+                            --rmsc-border: #767a8259 !important;
+                            --rmsc-radius: 2px !important;
+                            max-width: 100% !important;
+
+                            .dropdown-content {
+                                .panel-content {
+                                    .select-panel {
+                                        input {
+                                            background-color: #2D333D !important;
+                                            color: #ddd;
+                                        }
+
+                                        .select-item {
+                                            &:hover,
+                                            &.selected {
+                                                background-color: #353C48 !important;
+                                                color: #ddd;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 .react-datepicker-wrapper {

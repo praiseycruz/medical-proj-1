@@ -71,13 +71,6 @@ class CareManagerPage extends React.Component {
                     }
                 },
                 {
-                    title: 'DOB',
-                    key: 'dob',
-                    render: colData => {
-                        return <span>{colData.resource.birthDate}</span>;
-                    }
-                },
-                {
                     title: 'Gender',
                     key: 'gender',
                     render: colData => {
@@ -185,8 +178,8 @@ class CareManagerPage extends React.Component {
 
     _handleSubmit = async (values, form) => {
         const { dispatch } = this.props
-        let s = document.getElementById("date_picker_id")
-        let dobFormat = moment(s.value).format("yyyy-MM-DD")
+        // let s = document.getElementById("date_picker_id")
+        // let dobFormat = moment(s.value).format("yyyy-MM-DD")
 
         let practitionerData = {
             "resourceType": "Practitioner",
@@ -197,7 +190,6 @@ class CareManagerPage extends React.Component {
                     "family": `${values.lastname}`,
                 }
             ],
-            "birthDate": `${dobFormat}`,
             "gender": `${values.gender}`,
             "telecom": [
                 {
@@ -229,10 +221,6 @@ class CareManagerPage extends React.Component {
                 }
             ],
             "identifier": [
-                {
-                    "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${values.ssn}`
-                },
                 {
                     "value": RandNum("PX"),
                     "system": "EXSYS"
@@ -269,7 +257,6 @@ class CareManagerPage extends React.Component {
 		let firstname = []
         let lastname = []
 		let addemail = []
-        let ssn = []
         let addressLine1 = []
         let zipcode = []
         let phoneNum = []
@@ -282,9 +269,6 @@ class CareManagerPage extends React.Component {
 
         if (!values.addemail)
             addemail.push("Email is required")
-
-        if (!values.ssn)
-            ssn.push("SSN is required")
 
         if (!values.addressLine1)
             addressLine1.push("Address is required")
@@ -304,9 +288,6 @@ class CareManagerPage extends React.Component {
 
         if (addemail.length > 0)
             errors.addemail = addemail
-
-        if (ssn.length > 0)
-            errors.ssn = ssn
 
         if (addressLine1.length > 0)
             errors.addressLine1 = addressLine1
@@ -404,7 +385,10 @@ class CareManagerPage extends React.Component {
             <AddCareManagerWrapper>
                 <div className="mt-3">
                     <Card>
-                        <Card.Header>Care Manager Info</Card.Header>
+                        <Card.Header>
+                            <span>Care Manager Information</span>
+                            <Button variant="primary" className="add-physician">Add New Care Manger</Button>
+                        </Card.Header>
 
                         <Card.Body>
                             <FormFinal
@@ -584,52 +568,6 @@ class CareManagerPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
-                                                    <Form.Group className="dob">
-                                                        <Row>
-                                                            <Col sm={12}>
-                                                                <Form.Label className="col-sm-4">DOB</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="dob" type="select">
-                                                                        {({ input, meta, type }) => (
-                                                                            <DatePicker
-                                                                              selected={this.state.dob}
-                                                                              onChange={date => this._setDob(date)}
-                                                                              isClearable
-                                                                              placeholderText="MM/DD/YYYY"
-                                                                              dateFormat="MM/dd/yyyy"
-                                                                              value={this.state.dob}
-                                                                              id="date_picker_id"
-                                                                            />
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="care-manager-ssn">
-                                                        <Row>
-                                                            <Col sm={12}>
-                                                                <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="ssn" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
                                                     <Form.Group className="care-manager-address">
                                                         <Row>
                                                             <Col sm={12}>
@@ -728,7 +666,7 @@ class CareManagerPage extends React.Component {
                                                 <Button type="submit" disabled={pristine || this.state.isAddingNewPractitionerLoading} variant="primary" className={`btn-submit`}>
 
                                                     { this.state.isAddingNewPractitionerLoading ?
-                                                    'Adding Care Manager...' : 'Add Care Manager'
+                                                    'Saving care manager data...' : 'Save'
                                                     }
                                                 </Button>
                                             </div>
@@ -790,7 +728,7 @@ class CareManagerPage extends React.Component {
                                 </div>
                             </div>
 
-                            <FormFinal
+                            {/*<FormFinal
                                 initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
@@ -1137,7 +1075,7 @@ class CareManagerPage extends React.Component {
                                             <Button variant="danger" onClick={this._closeModal}>Close</Button>
                                         </Modal.Footer>
                                     </Modal>
-                                )} />
+                                )} />*/}
                         </Card.Body>
                     </Card>
                 </div>

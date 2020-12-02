@@ -14,6 +14,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import moment from 'moment'
 import { TableComponent } from '../../components/Table'
+import MultiSelect from "react-multi-select-component"
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -39,13 +40,6 @@ class PhysicianPage extends React.Component {
                     key: 'name',
                     render: colData => {
                         return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
-                    }
-                },
-                {
-                    title: 'DOB',
-                    key: 'dob',
-                    render: colData => {
-                        return <span>{colData.resource.birthDate}</span>;
                     }
                 },
                 {
@@ -89,7 +83,6 @@ class PhysicianPage extends React.Component {
                 phoneNum: '',
                 mobileNum: '',
                 gender: 'male',
-                ssn: '',
                 addressLine1: '',
                 addressLine2: '',
                 state: '',
@@ -98,7 +91,9 @@ class PhysicianPage extends React.Component {
             sort: {
                 col: 0,
                 asc: true
-            }
+            },
+            selected: [],
+            careManagersLists: []
         }
     }
 
@@ -106,6 +101,7 @@ class PhysicianPage extends React.Component {
         const { dispatch } = this.props
         //dispatch(practitionerAction.getAll(100, 0, this.state.role))
         dispatch(practitionerAction.getAllPhysician(100,0))
+        dispatch(practitionerAction.getAllCareManager(100, 0))
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -136,7 +132,7 @@ class PhysicianPage extends React.Component {
 
             // getting all the lists of practitioners
             if (typeof getAll !== 'undefined' && getAll !== null) {
-                let { physicians, loading } = getAll
+                let { physicians, loading, careManagers } = getAll
 
                 if (loading) {
                     this.setState({
@@ -166,6 +162,20 @@ class PhysicianPage extends React.Component {
                         })
                     }
                 }
+
+                if (typeof careManagers !== 'undefined' && careManagers !== null) {
+                    let { entry } = careManagers
+
+                    if (typeof entry !== 'undefined' && entry !== null) {
+                        this.setState({
+                            careManagersLists: entry
+                        })
+                    } else {
+                        this.setState({
+                            careManagersLists: []
+                        })
+                    }
+                }
             }
         }
     }
@@ -173,8 +183,8 @@ class PhysicianPage extends React.Component {
     _handleSubmit = async (values, form) => {
         const { dispatch } = this.props
 
-        let s = document.getElementById("date_picker_id")
-        let dobFormat = moment(s.value).format("yyyy-MM-DD")
+        // let s = document.getElementById("date_picker_id")
+        // let dobFormat = moment(s.value).format("yyyy-MM-DD")
 
         let practitionerData = {
             "resourceType": "Practitioner",
@@ -186,7 +196,6 @@ class PhysicianPage extends React.Component {
                     "prefix": [`${values.prefix}`]
                 }
             ],
-            "birthDate": `${dobFormat}`,
             "gender": `${values.gender}`,
             "telecom": [
                 {
@@ -218,10 +227,6 @@ class PhysicianPage extends React.Component {
                 }
             ],
             "identifier": [
-                {
-                    "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${values.ssn}`
-                },
                 {
                     "value": RandNum("PX"),
                     "system": "EXSYS"
@@ -260,7 +265,6 @@ class PhysicianPage extends React.Component {
 		let firstname = []
         let lastname = []
 		let addemail = []
-        let ssn = []
         let addressLine1 = []
         let zipcode = []
         let phoneNum = []
@@ -276,9 +280,6 @@ class PhysicianPage extends React.Component {
 
         if (!values.addemail)
             addemail.push("Email is required")
-
-        if (!values.ssn)
-            ssn.push("SSN is required")
 
         if (!values.addressLine1)
             addressLine1.push("Address is required")
@@ -299,9 +300,6 @@ class PhysicianPage extends React.Component {
         if (addemail.length > 0)
             errors.addemail = addemail
 
-        if (ssn.length > 0)
-            errors.ssn = ssn
-
         if (addressLine1.length > 0)
             errors.addressLine1 = addressLine1
 
@@ -310,8 +308,6 @@ class PhysicianPage extends React.Component {
 
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
-
-            console.log(errors);
 
 		return errors
     }
@@ -346,10 +342,22 @@ class PhysicianPage extends React.Component {
 
     }
 
+    _setSelectedCareManagers = (selected) => {
+        this.setState({
+            selected
+        })
+    }
+
 
     render() {
         let { practitioner } = this.props
-        let { practitionersPagination, practitionerLoading, initialValues, showPhysicianEditModal, getPhysicanDataOnClick } = this.state
+        let { practitionersPagination,
+              practitionerLoading,
+              initialValues,
+              showPhysicianEditModal,
+              getPhysicanDataOnClick,
+              selected,
+              careManagersLists } = this.state
 
         let isAddingNewPractitionerLoading = false
         let practitionerPagePagination = null
@@ -395,11 +403,21 @@ class PhysicianPage extends React.Component {
             })
         }
 
+        const options = [
+            { label: "John Doe, M.D.", value: "John Doe" },
+            { label: "Jane Doe, M.D.", value: "Jane Doe" },
+            { label: "Jasper Doe, M.D.", value: "Jasper Doe" },
+            { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
+        ]
+
         return (
             <AddPhysicianWrapper>
                 <div className="mt-3">
                     <Card>
-                        <Card.Header>Physician Info</Card.Header>
+                        <Card.Header>
+                            <span>Physician Information</span>
+                            <Button variant="primary" className="add-physician">Add New Physician</Button>
+                        </Card.Header>
 
                         <Card.Body>
                             <FormFinal
@@ -425,29 +443,6 @@ class PhysicianPage extends React.Component {
                                         <div className="physician-info">
                                             <Row>
                                                 <Col sm={6}>
-                                                    <Form.Group className="physician-prefix">
-                                                        <Row>
-                                                            <Col sm={12}>
-                                                                <Form.Label className="col-sm-4">Prefix</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="prefix" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="Physician Prefix"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
                                                     <Form.Group className="physician-firstname">
                                                         <Row>
                                                             <Col sm={12}>
@@ -482,6 +477,29 @@ class PhysicianPage extends React.Component {
                                                                                 <Form.Control
                                                                                     type={type}
                                                                                     placeholder="Last name"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="physician-designation">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Designation</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="designation" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="M.D. or O.D. or R.N. etc."
                                                                                     autoComplete="off"
                                                                                     className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
                                                                                     {...input}
@@ -562,6 +580,22 @@ class PhysicianPage extends React.Component {
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
+
+                                                    <Form.Group className="physician-assigning">
+                                                        <Row>
+                                                            <Col sm={12}>
+                                                                <Form.Label className="col-sm-4">Assign Care Managers</Form.Label>
+                                                                <div className="col-sm-8 multiselect-wrapper">
+                                                                    <MultiSelect
+                                                                        options={options}
+                                                                        value={selected}
+                                                                        onChange={(selected) => {this._setSelectedCareManagers(selected)}}
+                                                                        labelledBy={"Select"}
+                                                                      />
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
                                                 </Col>
 
                                                 <Col sm={6}>
@@ -596,52 +630,6 @@ class PhysicianPage extends React.Component {
                                                                         </Field>
                                                                         <span>Female</span>
                                                                     </label>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="dob">
-                                                        <Row>
-                                                            <Col sm={12}>
-                                                                <Form.Label className="col-sm-4">DOB</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="dob" type="select">
-                                                                        {({ input, meta, type }) => (
-                                                                            <DatePicker
-                                                                              selected={this.state.dob}
-                                                                              onChange={date => this._setDob(date)}
-                                                                              isClearable
-                                                                              placeholderText="MM/DD/YYYY"
-                                                                              dateFormat="MM/dd/yyyy"
-                                                                              value={this.state.dob}
-                                                                              id="date_picker_id"
-                                                                            />
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="physician-ssn">
-                                                        <Row>
-                                                            <Col sm={12}>
-                                                                <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="ssn" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
-                                                                        )}
-                                                                    </Field>
                                                                 </div>
                                                             </Col>
                                                         </Row>
@@ -743,9 +731,8 @@ class PhysicianPage extends React.Component {
 
                                             <div className="btn-add">
                                                 <Button type="submit" disabled={pristine || this.state.isAddingNewPractitionerLoading} variant="primary" className={`btn-submit`}>
-
                                                     { this.state.isAddingNewPractitionerLoading ?
-                                                    'Adding Physician...' : 'Add Physician'
+                                                    'Saving physician data...' : 'Save'
                                                     }
                                                 </Button>
                                             </div>
@@ -807,7 +794,7 @@ class PhysicianPage extends React.Component {
                                 </div>
                             </div>
 
-                            <FormFinal
+                            {/*<FormFinal
                                 initialValues={initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
@@ -1154,7 +1141,7 @@ class PhysicianPage extends React.Component {
                                             <Button variant="danger" onClick={this._closeModal}>Close</Button>
                                         </Modal.Footer>
                                     </Modal>
-                                )} />
+                                )} />*/}
                         </Card.Body>
                     </Card>
                 </div>
