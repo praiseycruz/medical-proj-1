@@ -410,10 +410,14 @@ class EditPatientPage extends React.Component {
                 }
             ],
             "gender": `${values.gender}`,
-            "birthDate": `${dobFormat}`,
             "telecom": [
                 {
                     "value": `${values.phoneNum}`,
+                    "use": "home",
+                    "system": "phone"
+                },
+                {
+                    "value": `${values.mobileNum}`,
                     "use": "mobile",
                     "system": "phone"
                 },
@@ -437,18 +441,25 @@ class EditPatientPage extends React.Component {
             ],
             "identifier": [
                 {
-                    "system": "http://hl7.org/fhir/sid/us-ssn",
-                    "value": `${values.ssn}`
+                    // "system": `${values.patientIdIdentifier}`,
+                    "system": `${values.patientId}`,
+                    "value": `${values.patientId}`
                 },
                 {
                     "value": RandNum("PX"),
                     "system": "EXSYS"
                 }
             ],
-            "extension": [{
-                "url": config.apiGateway.URL + "/IsRemoteMonitored",
-                "valueBoolean": typeof values.monitor === 'undefined' ? false : values.monitor
-            }]
+            "extension": [
+                {
+                    "url": config.apiGateway.URL + "/CanSendText",
+                    "valueBoolean": typeof values.canText === 'undefined' ? false : values.canText
+                },
+                {
+                    "url": config.apiGateway.URL + "/MedicareId",
+                    "valueString": values.medicareId
+                },
+            ]
         }
 
         dispatch(patientAction.create(patientData))
@@ -456,12 +467,20 @@ class EditPatientPage extends React.Component {
 
     _handleValidate = values => {
         const errors = {}
+        let patientId = []
 		let firstname = []
         let lastname = []
 		let addemail = []
         let address = []
         let zipcode = []
         let phoneNum = []
+        let medicareId = []
+
+        if (!values.patientId)
+			patientId.push("Patient ID is required")
+
+        if (!values.medicareId)
+			medicareId.push("Medicare ID is required")
 
 		if (!values.firstname)
 			firstname.push("Firstname is required")
@@ -481,6 +500,12 @@ class EditPatientPage extends React.Component {
         if (!values.phoneNum)
             phoneNum.push("Phone number is required")
 
+
+        if (patientId.length > 0)
+            errors.patientId = patientId
+
+        if (medicareId.length > 0)
+            errors.medicareId = medicareId
 
         if (firstname.length > 0)
             errors.firstname = firstname
@@ -987,6 +1012,29 @@ class EditPatientPage extends React.Component {
                                         <div className="patient-info">
                                             <Row>
                                                 <Col sm={6}>
+                                                    <Form.Group className="patient-id">
+                                                        <Row>
+                                                            <Col sm={12} className="patient-inputs">
+                                                                <Form.Label className="col-sm-4">ID</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="patientId" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Patient ID"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
                                                     <Form.Group className="patient-firstname">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
@@ -1247,6 +1295,29 @@ class EditPatientPage extends React.Component {
                                                                     </Field>
 
                                                                     <span className="ml-3">34 years old</span>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>
+
+                                                    <Form.Group className="patient-medicare">
+                                                        <Row>
+                                                            <Col sm={12} className="patient-inputs">
+                                                                <Form.Label className="col-sm-4">Medicare ID</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="medicareId" type="text">
+                                                                        {({ input, meta, type }) => (
+                                                                            <>
+                                                                                <Form.Control
+                                                                                    type={type}
+                                                                                    placeholder="Medicare ID"
+                                                                                    autoComplete="off"
+                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
+                                                                                    {...input}
+                                                                                />
+                                                                            </>
+                                                                        )}
+                                                                    </Field>
                                                                 </div>
                                                             </Col>
                                                         </Row>

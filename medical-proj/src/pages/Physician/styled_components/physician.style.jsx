@@ -14,6 +14,9 @@ export const AddPhysicianWrapper = styled.div`
         padding: 0 15px;
 
         button {
+            border-radius: 2px;
+            min-width: 140px;
+
             &:focus {
                 box-shadow: none;
             }
@@ -36,6 +39,13 @@ export const AddPhysicianWrapper = styled.div`
             border-radius: 2px;
             border: none;
             background-color: #2D333D;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            button {
+                border-radius: 2px;
+            }
         }
 
         .card-body {
