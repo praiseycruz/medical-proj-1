@@ -751,7 +751,8 @@ class EditPatientPage extends React.Component {
     }
 
     render() {
-        let { showPatientLocationModal,
+        let { 
+              showPatientLocationModal,
               devicesAdded,
               devicesLists,
               physicianValue,
@@ -770,7 +771,7 @@ class EditPatientPage extends React.Component {
               alertLists,
               patientDevicesLists,
               currentSelectedDevice } = this.state
-        let { patient, practitioner, removeBc } = this.props
+        let { patient, practitioner, removeBc, patientRecord, clearPatientFields } = this.props
 
         let isAddingNewPatientLoading = false
         let patientId = null
@@ -971,14 +972,14 @@ class EditPatientPage extends React.Component {
                             <span>Patient Information</span>
                             <div>
                                 {/*<Button variant="primary" onClick={this._showNotifications}>Notifications</Button>*/}
-                                <Button variant="primary" className="mr-2 add">Add New Patient</Button>
-                                <Button variant="primary" className="edit">Edit Patient</Button>
+                                <Button variant="primary" className="mr-2 add" onClick={() => {clearPatientFields()}}>Add New Patient</Button>
+                                <Button variant="primary" className="edit" disabled={(patientRecord.isEditMode) ? false : true}>Edit Patient</Button>
                             </div>
                         </Card.Header>
 
                         <Card.Body>
                             <FormFinal
-                                initialValues={initialValues}
+                                initialValues={patientRecord.initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
                                 render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (

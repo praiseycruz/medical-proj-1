@@ -16,13 +16,34 @@ import { AddPatientPage } from '../AddPatient'
 import ModalSearch from '../../../components/Modals/ModalSearch'
 //import patient service for searching purpose
 import { patientService } from '../../../services'
-
+import _ from 'lodash'
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class PatientReadingsPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+            random: 0,
+            patientRecord: {
+                isEditMode: false,
+                currentPatient: {},
+                initialValues: {
+                    patientId: '',
+                    firstname: '',
+                    lastname: '',
+                    addemail: '',
+                    phoneNum: '',
+                    mobileNum: '',
+                    gender: 'male',
+                    ssn: '',
+                    addressLine1: '',
+                    addressLine2: '',
+                    medicareId: '',
+                    state: '',
+                    zipcode: '',
+                    allowSendText: true
+                }
+            },
             patientSearchBtn: {
                 loadingText: 'Searching...',
                 text: 'Search'
@@ -399,7 +420,7 @@ class PatientReadingsPage extends React.Component {
             })
             return Promise.resolve(response)
         }catch(e) {
-            return Promise.reject(e)
+            return Promise.refect(e)
         }
 
     }
@@ -450,6 +471,88 @@ class PatientReadingsPage extends React.Component {
         this.setState({
             showEditPatientModal: false
         })
+    }
+
+    _clearPatientFields = () => {
+        //get patient record
+        let { patientRecord, random } = this.state
+        
+        //generate random number
+        random = Math.random()
+
+        patientRecord = {
+            isEditMode: false,
+            currentPatient: {},
+            initialValues: {
+                patientId: '',
+                firstname: '',
+                lastname: '',
+                addemail: '',
+                phoneNum: '',
+                mobileNum: '',
+                gender: 'male',
+                ssn: '',
+                addressLine1: '',
+                addressLine2: '',
+                medicareId: '',
+                state: '',
+                zipcode: '',
+                allowSendText: true
+            }
+        }
+
+        this.setState({
+            patientRecord
+        })
+   
+    }
+
+    _selectPatient = item => {
+
+        //get patient record
+        let { patientRecord, random } = this.state
+        
+
+        //generate random number
+        random = Math.random()
+
+
+        //extract resource from patient
+        let { resource } = item
+
+        //set now the edit mode to true
+        patientRecord.isEditMode = true
+
+        //set now the initial values for patient fields information
+        patientRecord.initialValues = {
+            patientId: resource.id,
+            firstname: resource.name[0].given[0],
+            lastname: resource.name[0].family,
+            addemail: _.find(resource.telecom, {system: 'email'}).value,
+            phoneNum: _.find(resource.telecom, {system: 'phone',use: 'home'}).value,
+            mobileNum: _.find(resource.telecom, {system: 'phone', use: 'mobile'}).value,
+            gender: resource.gender,
+            ssn: '',
+            addressLine1: resource.address[0].line[0],
+            addressLine2: resource.address[0].line[1],
+            medicareId: _.find(resource.extension,{url: 'https://hapi.fhir.org/baseR4/MedicareId'}).valueString,
+            state: resource.address[0].state,
+            zipcode: resource.address[0].postalCode,
+            allowSendText: _.find(resource.extension,{url: 'https://hapi.fhir.org/baseR4/CanSendText'}).valueBoolean
+        }
+
+        //set now the current data
+        patientRecord.currentData = item
+        
+
+        //sets now the patientRecord state
+        this.setState({
+            patientRecord,
+            random
+        })
+
+        console.log(this.state.patientRecord)
+
     }
 
     _getDeviceName = (e) => {
@@ -676,7 +779,14 @@ class PatientReadingsPage extends React.Component {
                                                     )}
                                                 </Field>
                                             </div>
-                                            <ModalSearch query={values.searchPatient} results={patientSearchModal.results} closeModal={this._closePatientModalSearch} show={patientSearchModal.show} label="Results for" />
+                                            <ModalSearch 
+                                                query={values.searchPatient}
+                                                results={patientSearchModal.results}
+                                                closeModal={this._closePatientModalSearch}
+                                                show={patientSearchModal.show}
+                                                label="Results for" 
+                                                selectData={item => {this._selectPatient(item)}}
+                                            />
                                             <Button
                                                 onClick={ e => {
                                                     handleSubmit(e).then(results => {
@@ -702,7 +812,7 @@ class PatientReadingsPage extends React.Component {
                             />
                         </div>
 
-                        <EditPatientPage />
+                        <EditPatientPage clearPatientFields={() => {this._clearPatientFields()}} random={this.state.random} patientRecord={this.state.patientRecord} />
                     </Col>
 
                     {/*<Col sm={12} md={12} lg={12} xl={12}>
