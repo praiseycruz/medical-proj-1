@@ -1,6 +1,7 @@
 import React from 'react'
 import { config } from '../config'
 import { Method, headers, RandNum } from '../helpers'
+import { v4 as uuidv4 } from 'uuid'
 
 export const patientService = {
     create,
@@ -153,21 +154,43 @@ function appendPractitionerToPatient(patientId, currentGPData, practitionerId) {
 
 function create(patientData, physicianId, careManagerId, deviceIds) {
 
-    let tempPatientId = RandNum('')
+    let tempPatientId = `urn:uuid:${uuidv4()}`
 
     // TODO: Use sonmed code role
     // https://www.hl7.org/fhir/valueset-participant-role.html
 
     let deviceTemplate = (deviceId, patientId) => {
+
+        let patchTemplate = (patientId) => [
+            {
+                op: "test",
+                path: "/status",
+                value: "inactive"
+            },
+            {
+                op: "add",
+                path: "/patient",
+                value: {
+                    reference: `${patientId}`,
+                    type: "Patient"
+                }
+            },
+            {
+                op: "replace",
+                path: "/status",
+                value: "active"
+            }
+        ]
+
         return {
-            "resourceType": "Device",
-            "status": "active",
-            "subject": {
-                reference: `Patient/${patientId}`,
-                type: "Patient"
+            "resource": {
+                "resourceType": "Binary",
+                "contentType": "application/json-patch+json",
+                "data": btoa(JSON.stringify(patchTemplate(patientId)))
             },
             "request": {
                 "method": "PATCH",
+                "url": `Device/${deviceId}`,
                 "ifNoneExist": `status=active&_id=${deviceId}`,
             }
         }
@@ -175,17 +198,19 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
 
     let conditionsTemplate = (patientId, contitionName) => {
         return {
-            "resourceType": "Condition",
-            "code": {
-                "system": "EXSYS",
-                "text": `${contitionName}`,
-            },
-            "subject": {
-                "reference": `Patient/${patientId}`,
-                "type": "Patient"
-            },
-            "request": {
-                "method": "POST",
+            "resource": {
+                "resourceType": "Condition",
+                "code": {
+                    "system": "EXSYS",
+                    "text": `${contitionName}`,
+                },
+                "subject": {
+                    "reference": `${patientId}`,
+                    "type": "Patient"
+                },
+                "request": {
+                    "method": "POST",
+                }
             }
         }
     }
@@ -197,45 +222,49 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
         "type": "transaction",
         "entry": [
             {
-                "id": `${tempPatientId}`,
-                ...patientData,
+                "fullUrl": `${tempPatientId}`,
+                "resource": {
+                    ...patientData,
+                },
                 "request": {
                     "method": "POST",
                 }
             },
             {
-                "resourceType": "CareTeam",
-                "identifier": [{
-                    "value": RandNum("CT"),
-                    "system": "EXSYS"
-                }],
-                "subject": {
-                    "reference": `Patient/${tempPatientId}`,
-                    "type": "Patient"
-                },
-                "participant": [
-                    {
-                        "role": [{
-                            "coding": "http://snomed.info/sct",
-                            "text": "Primary Physician",
-                        }],
-                        "member": {
-                            "reference": `Practitioner/${physicianId}`,
-                            "type": "Practitioner"
-                        }
+                "resource": {
+                    "resourceType": "CareTeam",
+                    "identifier": [{
+                        "value": RandNum("CT"),
+                        "system": "EXSYS"
+                    }],
+                    "subject": {
+                        "reference": `Patient/${tempPatientId}`,
+                        "type": "Patient"
                     },
-                    {
-                        "role": [{
-                            "coding": "http://snomed.info/sct",
-                            "text": "Primary Care Manager",
-                        }],
-                        "member": {
-                            "reference": `Practitioner/${careManagerId}`,
-                            "type": "Practitioner"
+                    "participant": [
+                        {
+                            "role": [{
+                                "coding": "http://snomed.info/sct",
+                                "text": "Primary Physician",
+                            }],
+                            "member": {
+                                "reference": `Practitioner/${physicianId}`,
+                                "type": "Practitioner"
+                            }
+                        },
+                        {
+                            "role": [{
+                                "coding": "http://snomed.info/sct",
+                                "text": "Primary Care Manager",
+                            }],
+                            "member": {
+                                "reference": `Practitioner/${careManagerId}`,
+                                "type": "Practitioner"
+                            }
                         }
-                    }
-                ],
-                "status": "active",
+                    ],
+                    "status": "active",
+                },
                 "request": { "method": "POST" }
             },
             ...deviceIds.map(id => deviceTemplate(id, tempPatientId)),
@@ -243,9 +272,8 @@ function create(patientData, physicianId, careManagerId, deviceIds) {
         ]
     }
 
-    const requestOptions = headers(Method.POST, reqBody)
-
-    return fetch(config.apiGateway.URL + "/Bundle", requestOptions)
+    const requestOptions = headers(Method.POST, JSON.stringify(reqBody))
+    return fetch(config.apiGateway.URL, requestOptions)
     .then(handleResponse)
     .then(response => {
         return Promise.resolve(response)
