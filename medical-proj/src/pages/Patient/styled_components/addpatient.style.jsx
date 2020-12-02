@@ -116,7 +116,8 @@ export const AddPatientWrapper = styled.div`
 
         .add-patient-condition-wrapper {
             margin-top: 45px;
-            border-top: 2px solid #8f8f8f;
+            /* border-top: 2px solid #8f8f8f; */
+            border-top: 3px solid #2D333D;
             padding-top: 45px;
             min-height: 400px;
         }
@@ -281,6 +282,12 @@ export const AddPatientWrapper = styled.div`
 
                 .patient-device-wrapper {
                     margin-top: 30px;
+
+                    .header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
                 }
 
                 .portal-wrapper {
@@ -302,7 +309,7 @@ export const AddPatientWrapper = styled.div`
             }
 
             .patient-condition {
-                .col-sm-3 {
+                .col-sm-4 {
                     text-align: center;
                     padding: 0;
 
@@ -336,6 +343,10 @@ export const AddPatientWrapper = styled.div`
                                 margin-right: 5px;
                             }
                         }
+                    }
+
+                    .form-control {
+                        margin: 0 auto;
                     }
                 }
             }
