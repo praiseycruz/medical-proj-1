@@ -54,13 +54,13 @@ export class App extends React.Component {
             // 'task-management': 'Office Setup',
             // 'add-device': 'Office Setup'
             'physician': 'Physician Management',
-            'care-manager': 'Care Manager Management',
+            'care-manager': 'Care Management',
             'task-management': 'Task Management',
             'add-device': 'Add Device'
         }
 
         let exceptions = ['physician','care-manager','task-management','add-device']
-        // let exceptionsMap = ['Physician Management', 'Care Manager Management', 'Tasks', 'Add New Device']
+        // let exceptionsMap = ['Physician Management', 'Care Management', 'Tasks', 'Add New Device']
         let currentPage = (window.location.pathname).toString().replace('/','')
 
         this._setCurrentPage(pages[currentPage])
@@ -315,9 +315,9 @@ export class App extends React.Component {
                                                         <span className="link-text">Physician Management</span>
                                                     </NavLink>
 
-                                                    <NavLink onClick={() => {this._setCurrentPage('Care Manager Management')}} to="/care-manager" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setCurrentPage('Care Management')}} to="/care-manager" className="card-links" activeClassName="active">
                                                         <i className="fas fa-file-medical"></i>
-                                                        <span className="link-text">Care Manager Management</span>
+                                                        <span className="link-text">Care Management</span>
                                                     </NavLink>
 
                                                     <NavLink onClick={() => {this._setCurrentPage('Tasks')}} to="/task-management" className="card-links" activeClassName="active">
