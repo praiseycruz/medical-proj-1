@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const SideBarContainer = styled.div`
     background-color: #282e38;
     position: fixed;
-    width: 245px;
+    width: 260px;
     float: left;
     box-shadow: none;
     transition: all 300ms ease-in-out;
@@ -59,7 +59,7 @@ export const SideBarContent = styled.div`
 
         .accordion {
             .card-links {
-                padding: 15px;
+                padding: 15px 12px;
                 color: #fff;
                 display: flex;
                 align-items: center;

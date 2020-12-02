@@ -4,7 +4,7 @@ export const PageLogoSection = styled.div`
     background-color: #333a47;
     float: left;
     display: block;
-    width: 220px;
+    width: 235px;
     height: 60px;
     padding: 10px 0;
     transition: all 300ms ease-in-out;

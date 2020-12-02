@@ -2,53 +2,59 @@ body {
     color: #ddd !important;
     font-family: 'Lato', sans-serif !important;
 
-    .page-breadcrumbs {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    // .breadcrumb-wrapper {
+    //     width: 100%;
+    //     display: flex;
+    //     justify-content: center;
+    //     align-items: center;
+    //
+    //     .page-breadcrumbs {
+    //         display: flex;
+    //         justify-content: space-between;
+    //         align-items: center;
+    //
+    //         h1 {
+    //             margin-top: 20px;
+    //             font-size: 30px;
+    //             margin-bottom: 0;
+    //         }
+    //
+    //         ol {
+    //             float: right;
+    //             margin: 0;
+    //             list-style: none;
+    //             background-color: transparent;
+    //             padding: 12px 15px;
+    //
+    //             li {
+    //                 display: inline-block;
+    //                 font-size: 22px;
+    //                 margin-left: 10px;
+    //                 text-decoration: underline;
+    //
+    //                 i {
+    //                     font-size: 14px;
+    //                     text-shadow: none;
+    //                     display: inline-block;
+    //                     line-height: 14px;
+    //                     -webkit-font-smoothing: antialiased;
+    //                     text-decoration: none;
+    //                     color: #aaa;
+    //                     font-weight: 600;
+    //                 }
+    //
+    //                 a {
+    //                     color: #bdbdbd;
+    //                     text-decoration: none;
+    //                     font-size: 14px;
+    //                     text-shadow: none;
+    //                     margin-right: 10px;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-        h1 {
-            margin-top: 20px;
-            font-size: 30px;
-            margin-bottom: 0;
-        }
-
-        ol {
-            float: right;
-            margin: 0;
-            list-style: none;
-            background-color: transparent;
-            border-radius: 50px;
-            background: rgba(220, 208, 208, 0.3);
-            padding: 12px 15px;
-            margin-left: 15px;
-
-            li {
-                display: inline-block;
-                font-size: 14px;
-                margin-left: 10px;
-
-                i {
-                    font-size: 14px;
-                    text-shadow: none;
-                    display: inline-block;
-                    line-height: 14px;
-                    -webkit-font-smoothing: antialiased;
-                    text-decoration: none;
-                    color: #aaa;
-                    font-weight: 600;
-                }
-
-                a {
-                    color: #bdbdbd;
-                    text-decoration: none;
-                    font-size: 14px;
-                    text-shadow: none;
-                    margin-right: 10px;
-                }
-            }
-        }
-    }
 
     .input-errors {
         color: #ff2f2f;
