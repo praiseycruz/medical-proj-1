@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
                     key: 'name',
                     render: colData => {
                         // return <Link to="/patient-readings">{ colData.resource.name[0].given + " " + colData.resource.name[0].family }</Link>;
-                        return <span>{ colData.resource.name }</span>;
+                        return <span>{colData.resource.name[0].given + " " + colData.resource.name[0].family}</span>;
                     }
                 },
                 {
@@ -435,7 +435,7 @@ class DashboardPage extends React.Component {
                                             </Col>
 
                                             <Col sm={2} md={3} className="add-patient">
-                                                <Link to="/add-patients" className="bg-primary">
+                                                <Link to="/patient-management" className="bg-primary">
                                                     <i className="fas fa-plus mr-2"></i>
                                                     Add new patient
                                                 </Link>
