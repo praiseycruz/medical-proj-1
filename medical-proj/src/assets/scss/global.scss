@@ -2,6 +2,13 @@ body {
     color: #ddd !important;
     font-family: 'Lato', sans-serif !important;
 
+    .dashboard-table {
+        button {
+            border-radius: 2px;
+            font-size: 14px;
+        }
+    }
+
     // .breadcrumb-wrapper {
     //     width: 100%;
     //     display: flex;
@@ -64,7 +71,8 @@ body {
     .form-control {
         background-color: #353c48;
         width: 100%;
-        max-width: 250px;
+        // max-width: 250px;
+        max-width: 100%;
         color: #fff;
         border: 1px solid #464e5b;
         font-size: 14px;
