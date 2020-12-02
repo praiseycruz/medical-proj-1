@@ -14,6 +14,8 @@ export const AddPatientWrapper = styled.div`
         padding: 0 15px;
 
         button {
+            min-width: 140px;
+
             &:focus {
                 box-shadow: none;
             }
@@ -221,6 +223,7 @@ export const AddPatientWrapper = styled.div`
 
                 button {
                     border-radius: 2px;
+                    min-width: 140px;
                 }
             }
         }
