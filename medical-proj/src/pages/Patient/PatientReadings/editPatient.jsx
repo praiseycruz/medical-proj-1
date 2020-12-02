@@ -64,43 +64,11 @@ class EditPatientPage extends React.Component {
             activeMarker: {},
             selectedPlace: {},
             showPatientLocationModal: false,
-            devicesAdded: [],
-            devicesLists: [], // store all the devices lists and display in dropdown
             patientLocation: {
                 lat: 4.210484,
                 lng: 101.975766
             },
             patientAddress: '',
-            devicesCols: [
-                {
-                    title: '',
-                    key: 'deviceName',
-                    render: colData => {
-                        return <span>{colData.deviceName}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'name',
-                    render: colData => {
-                        return <span>{colData.name}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'serialNum',
-                    render: colData => {
-                        return <span>{colData.serialNum}</span>
-                    }
-                },
-                {
-                    title: '',
-                    key: 'button',
-                    render: colData => {
-                        return <button className="btn btn-danger" onClick={(e) => { this._removeDeviceData(colData.id) }}>Remove</button>
-                    }
-                }
-            ],
             isPatientCreated: false,
             hasPatientCreated: false,
             deviceValue: '',
@@ -149,19 +117,85 @@ class EditPatientPage extends React.Component {
                 },
                 {
                     title: '',
-                    key: 'programs',
-                    render: colData => {
-                        return <span>{colData.programs[0].name}</span>
-                    }
-                },
-                {
-                    title: '',
                     key: 'button',
                     render: colData => {
                         return <button className="btn btn-danger" onClick={(e) => { this._removeCondition(colData.id) }}><i className="fa fa-times" aria-hidden="true"></i></button>
                     }
                 }
             ],
+            conditionValue: '', // get conditions dropdown value
+            conditionLists: [
+                {
+                    name: 'Condition 1'
+                },
+                {
+                    name: 'Condition 2'
+                },
+                {
+                    name: 'Condition 3'
+                }
+            ], // in conditions tab conditions dropdown dummy data
+            conditionsAdded: [
+                {
+                    condition: 'Condition 1',
+                    diagnosisCode: 'Code 1'
+                },
+                {
+                    condition: 'Condition 2',
+                    diagnosisCode: 'Code 2'
+                },
+                {
+                    condition: 'Condition 3',
+                    diagnosisCode: 'Code 3'
+                },
+                {
+                    condition: 'Condition 4',
+                    diagnosisCode: 'Code 4'
+                }
+            ], // dummy data of conditions - displayed in table
+            devicesCols: [
+                {
+                    title: 'Device',
+                    key: 'device',
+                    render: colData => {
+                        return <span>{colData.device}</span>
+                    }
+                },
+                {
+                    title: 'Device ID',
+                    key: 'deviceId',
+                    render: colData => {
+                        return <span>{colData.deviceId}</span>
+                    }
+                },
+                {
+                    title: 'Connected At',
+                    key: 'connectedAt',
+                    render: colData => {
+                        return <span>{colData.connectedAt}</span>
+                    }
+                },
+                {
+                    title: 'Last Measurement At',
+                    key: 'lastMeasurement',
+                    render: colData => {
+                        return <span>{colData.lastMeasurement}</span>
+                    }
+                },
+                {
+                    title: 'Actions',
+                    key: 'button',
+                    render: colData => {
+                        return <>
+                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Bill for 1199</button>*/}
+                                <button className="btn btn-danger">Remove</button>
+                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Edit</button>*/}
+                            </>
+                    }
+                }
+            ], // devices column in supplied devices under Devices tab
+            devicesAdded: [], // under supplied devices
+            devicesLists: [], // store all the devices lists and display in dropdown
             alertLists: [
                 {
                     priority: 'High',
@@ -231,98 +265,6 @@ class EditPatientPage extends React.Component {
                 }
             ], // in conditions tab diagnosis code dropdown dummy data
             diagnosisCodeValue: '', // get diagnosis code dropdown value
-            conditionValue: '', // get conditions dropdown value
-            conditionLists: [
-                {
-                    name: 'Condition 1'
-                },
-                {
-                    name: 'Condition 2'
-                },
-                {
-                    name: 'Condition 3'
-                }
-            ], // in conditions tab conditions dropdown dummy data
-            conditionsAdded: [
-                {
-                    condition: 'Condition 1',
-                    diagnosisCode: 'Code 1',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 2',
-                    diagnosisCode: 'Code 2',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 3',
-                    diagnosisCode: 'Code 3',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                },
-                {
-                    condition: 'Condition 4',
-                    diagnosisCode: 'Code 4',
-                    programs: [
-                        {
-                            name: 'rpm',
-                        }
-                    ]
-                }
-            ], // dummy data of conditions - displayed in table
-            devicesCols: [
-                {
-                    title: 'Device',
-                    key: 'device',
-                    render: colData => {
-                        return <span>{colData.device}</span>
-                    }
-                },
-                {
-                    title: 'Device ID',
-                    key: 'deviceId',
-                    render: colData => {
-                        return <span>{colData.deviceId}</span>
-                    }
-                },
-                {
-                    title: 'Connected At',
-                    key: 'connectedAt',
-                    render: colData => {
-                        return <span>{colData.connectedAt}</span>
-                    }
-                },
-                {
-                    title: 'Last Measurement At',
-                    key: 'lastMeasurement',
-                    render: colData => {
-                        return <span>{colData.lastMeasurement}</span>
-                    }
-                },
-                {
-                    title: 'Actions',
-                    key: 'button',
-                    render: colData => {
-                        return <>
-                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Bill for 1199</button>*/}
-                                <button className="btn btn-danger">Remove</button>
-                                {/*<button className="btn btn-primary" onClick={(e) => { this._viewAlert(colData.id) }}>Edit</button>*/}
-                            </>
-                    }
-                }
-            ], // devices column in supplied devices under Devices tab
-            devicesAdded: [], // under supplied devices
             patientDevicesLists: [], // store all the devices populated in the table (data passed in registering patient)
         }
     }
@@ -1424,7 +1366,7 @@ class EditPatientPage extends React.Component {
                                                                 <div>
                                                                     <Form.Group className="firstname">
                                                                         <Row>
-                                                                            <Col sm={3}>
+                                                                            <Col sm={4}>
                                                                                 <Form.Label className="col-sm-12">Condition</Form.Label>
                                                                                 <div className="col-sm-12">
                                                                                     <Field name="condition" type="select">
@@ -1442,7 +1384,7 @@ class EditPatientPage extends React.Component {
                                                                                 </div>
                                                                             </Col>
 
-                                                                            <Col sm={3}>
+                                                                            <Col sm={4}>
                                                                                 <Form.Label className="col-sm-12">Diagnosis Code</Form.Label>
                                                                                 <div className="col-sm-12">
                                                                                     <Field name="diagnosis" type="select">
@@ -1458,35 +1400,8 @@ class EditPatientPage extends React.Component {
                                                                                 </div>
                                                                             </Col>
 
-                                                                            <Col sm={3}>
-                                                                                <Form.Label className="col-sm-12">Programs</Form.Label>
-                                                                                <div className="col-sm-12">
-                                                                                    <div>
-                                                                                        <label className="programs-label">
-                                                                                            <Field name="programs-rpm" type="checkbox" value="rpm">
-                                                                                                {({ input, meta }) => (
-                                                                                                    <>
-                                                                                                        <input
-                                                                                                            {...input}
-                                                                                                        />
-                                                                                                    </>
-                                                                                                )}
-                                                                                            </Field>
-                                                                                            <span>RPM</span>
-                                                                                        </label>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </Col>
-
-                                                                            <Col sm={3}>
+                                                                            <Col sm={4}>
                                                                                 <Form.Label className="col-sm-12">Assessment</Form.Label>
-                                                                                <div className="col-sm-12">
-                                                                                    <div className="add-assessment">
-                                                                                        <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit`}>
-                                                                                            Start Now
-                                                                                        </Button>
-                                                                                    </div>
-                                                                                </div>
                                                                             </Col>
                                                                         </Row>
                                                                     </Form.Group>
@@ -1498,7 +1413,7 @@ class EditPatientPage extends React.Component {
                                                             </div>
                                                         </Tab>
                                                         <Tab eventKey="devices" title="Devices">
-                                                            <div className="supplied-devices-wrapper">
+                                                            {/*<div className="supplied-devices-wrapper">
                                                                 <div className="supplied-devices-section">
                                                                     <h5>Supplied Devices:</h5>
 
@@ -1507,10 +1422,14 @@ class EditPatientPage extends React.Component {
                                                                 <div className="mt-4">
                                                                     <TableComponent data={devicesAdded} cols={this.state.devicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
                                                                 </div>
-                                                            </div>
+                                                            </div>*/}
 
                                                             <div className="patient-device-wrapper">
-                                                                <h5>Patient Devices:</h5>
+                                                                <div className="header">
+                                                                    <h5>Patient Devices:</h5>
+
+                                                                    <Button variant="primary" onClick={this._openModalDevices}>Add Device</Button>
+                                                                </div>
 
                                                                 <div className="mt-4">
                                                                     <TableComponent data={patientDevicesLists} cols={this.state.patientDevicesCols} bordered={false} striped={false} isTableFor={'patients-devices'} />
