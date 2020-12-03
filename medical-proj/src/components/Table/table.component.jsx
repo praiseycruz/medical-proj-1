@@ -29,10 +29,18 @@ export class TableComponent extends React.Component {
                                                 <th key={index}>
                                                     {headerItem.title}
 
-                                                    { index !== lastItem || isTableFor !== 'patients-billing' &&
+                                                    {/* index !== lastItem || isTableFor !== 'patients-billing' &&
                                                         <Button className="sort-button">
                                                             <i className="fas fa-sort"></i>
                                                         </Button>
+                                                    */}
+
+                                                    { headerItem.length == lastItem &&
+                                                        <>
+                                                            {
+                                                                console.log(headerItem.length == lastItem)
+                                                            }
+                                                        </>
                                                     }
                                                 </th>
                                             )
