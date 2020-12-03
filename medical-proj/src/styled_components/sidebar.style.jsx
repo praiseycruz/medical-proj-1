@@ -86,7 +86,7 @@ export const SideBarContent = styled.div`
                     align-items: center;
                     background-color: transparent;
                     border: none;
-                    padding: 15px;
+                    padding: 15px 12px;
 
                     i {
                         font-size: 16px;
@@ -110,9 +110,12 @@ export const SideBarContent = styled.div`
                         width: 100%;
                         font-size: 16px;
                         padding: 0;
+                        border: none;
 
                         &:focus {
                             box-shadow: none;
+                            outline: none;
+                            border: none;
                         }
                     }
                 }
