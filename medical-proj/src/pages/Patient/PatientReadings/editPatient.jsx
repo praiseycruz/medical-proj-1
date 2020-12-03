@@ -776,7 +776,7 @@ class EditPatientPage extends React.Component {
     }
 
     render() {
-        let { 
+        let {
               showPatientLocationModal,
               devicesAdded,
               devicesLists,
@@ -996,9 +996,9 @@ class EditPatientPage extends React.Component {
                         <Card.Header className="edit-patient-header">
                             <span>Patient Information</span>
                             <div>
-                                {/*<Button variant="primary" onClick={this._showNotifications}>Notifications</Button>*/}
                                 <Button variant="primary" className="mr-2 add" onClick={() => {clearPatientFields()}}>Add New Patient</Button>
-                                <Button variant="primary" className="edit" disabled={(patientRecord.isEditMode) ? false : true}>Edit Patient</Button>
+                                <Button variant="primary" className="edit mr-2" disabled={(patientRecord.isEditMode) ? false : true}>Edit Patient</Button>
+                                <Button variant="primary" onClick={this._showNotifications}>Notifications</Button>
                             </div>
                         </Card.Header>
 
@@ -1817,51 +1817,7 @@ class EditPatientPage extends React.Component {
                                                       <Form.Group className="high-severity">
                                                           <Row>
                                                               <Col sm={12} className="checkbox-wrapper">
-                                                                  <Form.Label className="col-sm-6">High-Severity Patient Assessment Score</Form.Label>
-                                                                  <div className="col-sm-6">
-                                                                      <label className="notification-label">
-                                                                          <Field name="patientAssessmentPush" type="checkbox" value="push">
-                                                                              {({ input, meta }) => (
-                                                                                  <>
-                                                                                      <input
-                                                                                          {...input}
-                                                                                      />
-                                                                                  </>
-                                                                              )}
-                                                                          </Field>
-                                                                          <span>Push</span>
-                                                                      </label>
-
-                                                                      <label className="notification-label">
-                                                                          <Field name="patientAssessmentEmail" type="checkbox" value="email">
-                                                                              {({ input, meta }) => (
-                                                                                  <>
-                                                                                      <input
-                                                                                          {...input}
-                                                                                      />
-                                                                                  </>
-                                                                              )}
-                                                                          </Field>
-                                                                          <span>Email</span>
-                                                                      </label>
-
-                                                                      <label className="notification-label">
-                                                                          <Field name="patientAssessmentText" type="checkbox" value="text">
-                                                                              {({ input, meta }) => (
-                                                                                  <>
-                                                                                      <input
-                                                                                          {...input}
-                                                                                      />
-                                                                                  </>
-                                                                              )}
-                                                                          </Field>
-                                                                          <span>Text</span>
-                                                                      </label>
-                                                                  </div>
-                                                              </Col>
-
-                                                              <Col sm={12} className="checkbox-wrapper">
-                                                                  <Form.Label className="col-sm-6">When you have an upcoming appointement</Form.Label>
+                                                                  <Form.Label className="col-sm-6">When you have an upcoming appointment</Form.Label>
                                                                   <div className="col-sm-6">
                                                                       <label className="notification-label">
                                                                           <Field name="upcomingAppointmentPush" type="checkbox" value="push">
@@ -1905,7 +1861,7 @@ class EditPatientPage extends React.Component {
                                                               </Col>
 
                                                               <Col sm={12} className="checkbox-wrapper">
-                                                                  <Form.Label className="col-sm-6">Remote Patient Reading is Outside of Recommended Range</Form.Label>
+                                                                  <Form.Label className="col-sm-6">Remote Patient Reading is outside of recommended range</Form.Label>
                                                                   <div className="col-sm-6">
                                                                       <label className="notification-label">
                                                                           <Field name="rpmReadingPush" type="checkbox" value="push">
