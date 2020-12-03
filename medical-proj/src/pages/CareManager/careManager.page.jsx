@@ -260,6 +260,7 @@ class CareManagerPage extends React.Component {
         let addressLine1 = []
         let zipcode = []
         let phoneNum = []
+        let mobileNum = []
 
 		if (!values.firstname)
 			firstname.push("Firstname is required")
@@ -279,6 +280,9 @@ class CareManagerPage extends React.Component {
         if (!values.phoneNum)
             phoneNum.push("Phone number is required")
 
+        if (!values.mobileNum)
+            mobileNum.push("Mobile number is required")
+
 
         if (firstname.length > 0)
             errors.firstname = firstname
@@ -297,6 +301,9 @@ class CareManagerPage extends React.Component {
 
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
+
+        if (mobileNum.length > 0)
+            errors.mobileNum = mobileNum
 
 		return errors
     }
@@ -400,7 +407,6 @@ class CareManagerPage extends React.Component {
                                         const promise = handleSubmit(event);
                                         promise && promise.then(() => {
                                             const { dispatch } = this.props
-                                            //dispatch(practitionerAction.getAll(100, 0, this.state.role))
                                             dispatch(practitionerAction.getAllCareManager(100,0))
 
                                             form.reset();

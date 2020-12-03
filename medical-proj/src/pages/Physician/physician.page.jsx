@@ -31,7 +31,6 @@ class PhysicianPage extends React.Component {
             practitionerLoading: false,
             practitionerData: {}, // store newly practitioner created
             practitionersLists: [], // store all the lists of practitioners
-            dob: new Date(),
             practitionersPagination: null, // pracitioner pagination
             practitionerTotal: null, // practitioner total
             practitionerCols: [
@@ -39,7 +38,7 @@ class PhysicianPage extends React.Component {
                     title: 'Name',
                     key: 'name',
                     render: colData => {
-                        return <span>{ colData.resource.name[0].prefix + " " + colData.resource.name[0].given + " " + colData.resource.name[0].family }</span>;
+                        return <span>{ colData.resource.name[0].given + " " + colData.resource.name[0].family + " " + colData.resource.name[0].prefix}</span>;
                     }
                 },
                 {
@@ -193,7 +192,7 @@ class PhysicianPage extends React.Component {
                     "use": "official",
                     "given": [`${values.firstname}`],
                     "family": `${values.lastname}`,
-                    "prefix": [`${values.prefix}`]
+                    "prefix": [`${values.designation}`]
                 }
             ],
             "gender": `${values.gender}`,
@@ -261,16 +260,17 @@ class PhysicianPage extends React.Component {
 
     _handleValidate = values => {
         const errors = {}
-        let prefix = []
+        let designation = []
 		let firstname = []
         let lastname = []
 		let addemail = []
         let addressLine1 = []
         let zipcode = []
         let phoneNum = []
+        let mobileNum = []
 
-        if (!values.prefix)
-			firstname.push("Physician Prefix is required")
+        if (!values.designation)
+			firstname.push("Physician Designation is required")
 
 		if (!values.firstname)
 			firstname.push("Firstname is required")
@@ -290,9 +290,15 @@ class PhysicianPage extends React.Component {
         if (!values.phoneNum)
             phoneNum.push("Phone number is required")
 
+        if (!values.mobileNum)
+            mobileNum.push("Mobile number is required")
+
 
         if (firstname.length > 0)
             errors.firstname = firstname
+
+        if (designation.length > 0)
+            errors.designation = designation
 
         if (lastname.length > 0)
             errors.lastname = lastname
@@ -309,13 +315,10 @@ class PhysicianPage extends React.Component {
         if (phoneNum.length > 0)
             errors.phoneNum = phoneNum
 
-		return errors
-    }
+        if (mobileNum.length > 0)
+            errors.mobileNum = mobileNum
 
-    _setDob = date => {
-        this.setState({
-            dob: date
-        });
+		return errors
     }
 
     _showEditModal = (e, data) => {
@@ -347,7 +350,6 @@ class PhysicianPage extends React.Component {
             selected
         })
     }
-
 
     render() {
         let { practitioner } = this.props
@@ -407,6 +409,8 @@ class PhysicianPage extends React.Component {
             { label: "John Doe, M.D.", value: "John Doe" },
             { label: "Jane Doe, M.D.", value: "Jane Doe" },
             { label: "Jasper Doe, M.D.", value: "Jasper Doe" },
+            { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
+            { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
             { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
         ]
 

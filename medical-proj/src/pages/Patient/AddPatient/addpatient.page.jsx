@@ -435,7 +435,6 @@ class AddPatientPage extends React.Component {
 		let firstname = []
         let lastname = []
 		let addemail = []
-        let ssn = []
         let addressLine1 = []
         let zipcode = []
         let phoneNum = []
@@ -457,9 +456,6 @@ class AddPatientPage extends React.Component {
 
         if (!values.addemail)
             addemail.push("Email is required")
-
-        if (!values.ssn)
-            ssn.push("SSN is required")
 
         if (!values.addressLine1)
             addressLine1.push("Address is required")
@@ -491,9 +487,6 @@ class AddPatientPage extends React.Component {
 
         if (addemail.length > 0)
             errors.addemail = addemail
-
-        if (ssn.length > 0)
-            errors.ssn = ssn
 
         if (addressLine1.length > 0)
             errors.addressLine1 = addressLine1
@@ -538,6 +531,45 @@ class AddPatientPage extends React.Component {
         this.setState({
             showModalAddPatientDevices: false
         })
+    }
+
+    _addDevice = () => {
+        // let deviceData = {
+        //     "resourceType": "Device",
+        //     "text": {
+        //         "status": "generated",
+        //         "div": "<div>\n      <p>example</p>\n    </div>"
+        //     },
+        //     "identifier": [
+        //         {
+        //             "system": "http://goodcare.org/devices/id",
+        //             "value": "345675"
+        //         },
+        //         {
+        //             "label": "Serial Number",
+        //             "value": "AMID-342135-8464"
+        //         }
+        //     ],
+        //     "type": {
+        //         "coding": [
+        //             {
+        //                 "system": "http://snomed.info/sct",
+        //                 "code": "86184003",
+        //                 "display": "Electrocardiographic monitor and recorder"
+        //             }
+        //         ],
+        //         "text": "ECG"
+        //     },
+        //     "manufacturer": "Acme Devices, Inc",
+        //     "model": "AB 45-J",
+        //     "lotNumber": "43453424",
+        //     "contact": [
+        //         {
+        //             "system": "phone",
+        //             "value": "ext 4352"
+        //         }
+        //     ]
+        // }
     }
 
     _removeDeviceData = (id) => {
@@ -726,8 +758,8 @@ class AddPatientPage extends React.Component {
     }
 
     _setSelectedDevice = (value, devicesLists) => {
-        let { currentSelectedDevice } = this.state
 
+        let { currentSelectedDevice } = this.state
         devicesLists.map (deviceItem => {
             if (deviceItem.resource.id==value) {
                 currentSelectedDevice = deviceItem
@@ -736,6 +768,7 @@ class AddPatientPage extends React.Component {
                 })
             }
         })
+
     }
 
     _getDeviceName = (e) => {
@@ -1336,29 +1369,6 @@ class AddPatientPage extends React.Component {
                                                                               id="date_picker_id"
                                                                               autoComplete="off"
                                                                             />
-                                                                        )}
-                                                                    </Field>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
-                                                    </Form.Group>
-
-                                                    <Form.Group className="patient-ssn">
-                                                        <Row>
-                                                            <Col sm={12} className="patient-inputs">
-                                                                <Form.Label className="col-sm-4">SSN</Form.Label>
-                                                                <div className="col-sm-8">
-                                                                    <Field name="ssn" type="text">
-                                                                        {({ input, meta, type }) => (
-                                                                            <>
-                                                                                <Form.Control
-                                                                                    type={type}
-                                                                                    placeholder="SSN"
-                                                                                    autoComplete="off"
-                                                                                    className={`${meta.error && meta.touched ? 'is-invalid' : ''}`}
-                                                                                    {...input}
-                                                                                />
-                                                                            </>
                                                                         )}
                                                                     </Field>
                                                                 </div>
