@@ -118,11 +118,11 @@ export const DashboardWrapper = styled.div`
 
                                 input {
                                     background-color: #b869d9 !important;
-                                    max-width: 110px;
+                                    max-width: 85px;
                                     border: 1px solid #d46eff;
                                     height: 25px;
                                     margin-bottom: 5px;
-                                    border-radius: 20px;
+                                    border-radius: 15px;
                                     padding: 6px 12px;
 
                                     &:focus {
