@@ -487,6 +487,7 @@ class PatientReadingsPage extends React.Component {
                 patientId: '',
                 firstname: '',
                 lastname: '',
+                dob: '',
                 addemail: '',
                 phoneNum: '',
                 mobileNum: '',
@@ -526,6 +527,7 @@ class PatientReadingsPage extends React.Component {
         //set now the initial values for patient fields information
         patientRecord.initialValues = {
             patientId: resource.id,
+            dob: '',
             firstname: resource.name[0].given[0],
             lastname: resource.name[0].family,
             addemail: _.find(resource.telecom, {system: 'email'}).value,
@@ -550,8 +552,6 @@ class PatientReadingsPage extends React.Component {
             patientRecord,
             random
         })
-
-        console.log(this.state.patientRecord)
 
     }
 
@@ -671,7 +671,7 @@ class PatientReadingsPage extends React.Component {
 
         if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
             populateDeviceData = devicesDataOnClick.map((item, key) => {
-                console.log(item.type);
+                
                 return (
                     <div key={key}>
                         <Form.Group className="devices-types">
