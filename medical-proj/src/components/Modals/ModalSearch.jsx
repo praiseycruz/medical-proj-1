@@ -29,7 +29,7 @@ function ModalSearch(props) {
 		entries.map( entry => {
 			let { resource } = entry
 			let buildItem = {
-				name: `${resource.name[0].given} ${resource.name[0].family}`,
+				name: `${resource.name[0].given} ${resource.name[0].family} - ${resource.id}`,
 				resource 
 			}
 			items.push(buildItem)

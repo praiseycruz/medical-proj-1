@@ -9,8 +9,7 @@ export const ModalSearchItems = styled.div `
     cursor: pointer;
     border-radius: 5rem;
     padding-left: 1rem;
-    width: 50%;
-    margin: auto;
+    width: 100%;
     text-align: center;
 
 	&:hover {
