@@ -16,6 +16,7 @@ import { practitionerAction } from './actions'
 
 import './assets/scss/global.scss'
 import { history } from './helpers'
+import jQuery from 'jquery'
 
 export class App extends React.Component {
     constructor(props) {
@@ -24,20 +25,10 @@ export class App extends React.Component {
             officeSetup: false,
             sidebarOpen: true,
             physicianLists: [],
-            physicianValue: ''
+            physicianValue: '',
+            currentPage: '',
+            isSetAccordion: false
         }
-    }
-
-    _caretOpen = () => {
-        this.setState({
-            officeSetup: !this.state.officeSetup
-        })
-    }
-
-    _handleSidebar = () => {
-        this.setState({
-            sidebarOpen: !this.state.sidebarOpen
-        })
     }
 
     componentDidMount() {
@@ -56,7 +47,7 @@ export class App extends React.Component {
             'physician': 'Physician Management',
             'care-manager': 'Care Management',
             'task-management': 'Task Management',
-            'add-device': 'Add Device'
+            'add-device': 'Add New Device'
         }
 
         let exceptions = ['physician','care-manager','task-management','add-device']
@@ -64,6 +55,9 @@ export class App extends React.Component {
         let currentPage = (window.location.pathname).toString().replace('/','')
 
         this._setCurrentPage(pages[currentPage])
+        this.setState({
+            currentPage: pages[currentPage]
+        })
 
         // if (exceptions.indexOf(currentPage)!==-1)
         //     this._setOfficePage(exceptionsMap[exceptions.indexOf(currentPage)])
@@ -72,6 +66,9 @@ export class App extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        let { currentPage, isSetAccordion } = this.state
+        let { dispatch, accordion } = this.props
+
         if (prevProps.practitioner !== this.props.practitioner) {
             let { create, getAll } = this.props.practitioner
 
@@ -94,6 +91,43 @@ export class App extends React.Component {
                 }
             }
         }
+
+        // open accordion if these pages are active when reloading
+        if (currentPage == 'Physician Management' ||
+            currentPage == 'Care Management' ||
+            currentPage == 'Tasks Management' ||
+            currentPage == 'Add New Device' ) {
+            if (!isSetAccordion) {
+                this._caretOpen()
+                jQuery('.click-caret').click()
+                this.setState({
+                    isSetAccordion: true
+                })
+            }
+        }
+    }
+
+    _caretOpen = () => {
+        /*
+        // let { dispatch, accordion } = this.props
+        // let { currentPage } = this.state
+        //
+        // accordion.officeSetup = (accordion.officeSetup == 1) ? 0 : 1
+        //
+        // //set open
+        // dispatch({
+        //     type: 'ACCORDION_SET_OPEN',
+        //     officeSetup: accordion.officeSetup
+        // })*/
+        this.setState({
+            officeSetup: !this.state.officeSetup
+        })
+    }
+
+    _handleSidebar = () => {
+        this.setState({
+            sidebarOpen: !this.state.sidebarOpen
+        })
     }
 
     _setCurrentPage = (page) => {
@@ -116,7 +150,6 @@ export class App extends React.Component {
     }
 
     _setOfficePage = (page) => {
-
         let { dispatch, breadCrumbs } = this.props
 
         breadCrumbs.history = []
@@ -297,7 +330,7 @@ export class App extends React.Component {
 
                                     <Card>
                                         <Card.Header>
-                                            <Accordion.Toggle as={Button} variant="link" eventKey="1" onClick={this._caretOpen}>
+                                            <Accordion.Toggle as={Button} variant="link" className="click-caret" eventKey="1" onClick={this._caretOpen}>
                                                 <span>
                                                     <i className="far fa-building"></i>
                                                     <span className="link-text">Office setup</span>
@@ -320,9 +353,9 @@ export class App extends React.Component {
                                                         <span className="link-text">Care Management</span>
                                                     </NavLink>
 
-                                                    <NavLink onClick={() => {this._setCurrentPage('Tasks')}} to="/task-management" className="card-links" activeClassName="active">
+                                                    <NavLink onClick={() => {this._setCurrentPage('Tasks Management')}} to="/task-management" className="card-links" activeClassName="active">
                                                         <i className="fas fa-tasks"></i>
-                                                        Tasks
+                                                        Tasks Management
                                                     </NavLink>
 
                                                     <NavLink onClick={() => {this._setCurrentPage('Add New Device')}} to="/add-device" className="card-links" activeClassName="active">
@@ -367,10 +400,11 @@ export class App extends React.Component {
 
 
 function mapStateToProps(state) {
-    const { breadCrumbs, practitioner } = state
+    const { breadCrumbs, practitioner, accordion } = state
     return {
         breadCrumbs,
-        practitioner
+        practitioner,
+        accordion
     }
 }
 
