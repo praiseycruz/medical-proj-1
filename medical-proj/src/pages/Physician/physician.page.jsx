@@ -92,13 +92,13 @@ class PhysicianPage extends React.Component {
                 asc: true
             },
             selected: [],
-            careManagersLists: []
+            careManagersLists: [],
+            careManagersId: []
         }
     }
 
     componentDidMount() {
         const { dispatch } = this.props
-        //dispatch(practitionerAction.getAll(100, 0, this.state.role))
         dispatch(practitionerAction.getAllPhysician(100,0))
         dispatch(practitionerAction.getAllCareManager(100, 0))
     }
@@ -181,6 +181,7 @@ class PhysicianPage extends React.Component {
 
     _handleSubmit = async (values, form) => {
         const { dispatch } = this.props
+        let { careManagersId } = this.state
 
         // let s = document.getElementById("date_picker_id")
         // let dobFormat = moment(s.value).format("yyyy-MM-DD")
@@ -231,10 +232,22 @@ class PhysicianPage extends React.Component {
                     "system": "EXSYS"
                 }
             ],
-            "extension": [{
-                "url": config.apiGateway.URL + "/Role",
-                "valueString": `${this.state.role}`
-            }]
+            "extension": [
+                {
+                    "url": config.apiGateway.URL + "/Role",
+                    "valueString": `${this.state.role}`
+                },
+                // as many of these as needed
+                // the extensions below must be added only to practitioners with role as primary physicians, not to
+                // practitioners with role as care manager
+                {
+                    "url": config.apiGateway.URL + "/CareManagers",
+                    "valueReference": {
+                        "type": "Practitioner",
+                        "reference": `Practitioner/${careManagersId}`
+                    }
+                }
+            ]
         }
 
         try {
@@ -270,7 +283,7 @@ class PhysicianPage extends React.Component {
         let mobileNum = []
 
         if (!values.designation)
-			firstname.push("Physician Designation is required")
+			designation.push("Physician Designation is required")
 
 		if (!values.firstname)
 			firstname.push("Firstname is required")
@@ -317,6 +330,8 @@ class PhysicianPage extends React.Component {
 
         if (mobileNum.length > 0)
             errors.mobileNum = mobileNum
+
+            console.log(errors);
 
 		return errors
     }
@@ -413,6 +428,8 @@ class PhysicianPage extends React.Component {
             { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
             { label: "Kenneth Doe, M.D.", value: "Kenneth Doe" },
         ]
+
+        console.log(selected);
 
         return (
             <AddPhysicianWrapper>
