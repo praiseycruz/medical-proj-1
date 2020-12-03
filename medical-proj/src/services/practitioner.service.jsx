@@ -20,7 +20,16 @@ function getAllCareManager(count, skip) {
     return fetch(config.apiGateway.URL + config.Practitioner.getAllCareManager(count, skip), requestOptions)
     .then(handleResponse)
     .then(response => {
-        return Promise.resolve(response)
+        
+        let { issue } = response
+        if ( typeof issue!=='undefined') {
+            return Promise.reject({status: 'not ok'})
+        } else {
+            return Promise.resolve(response)
+        }
+        //return Promise.resolve(response)
+    }).catch(error => {
+        return Promise.reject(error)
     })
 }
 
@@ -30,9 +39,17 @@ function getAllPhysician(count, skip) {
     return fetch(config.apiGateway.URL + config.Practitioner.getAllPhysician(count, skip), requestOptions)
     .then(handleResponse)
     .then(response => {
-        return Promise.resolve(response)
+        
+        let { issue } = response
+
+        if ( typeof issue!=='undefined') {
+            return Promise.reject({status: 'not ok'})
+        } else {
+            return Promise.resolve(response)
+        }
+        //return Promise.resolve(response)
     }).catch(error => {
-        return Promise.reject(error)
+        return Promise.reject({status: 'not ok'})
     })
 }
 

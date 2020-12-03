@@ -58,6 +58,36 @@ class EditPatientPage extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
+             patientDevicesCols: [
+                {
+                    title: 'Device Name',
+                    key: 'deviceName',
+                    render: colData => {
+                        return <span>{colData.deviceName}</span>
+                    }
+                },
+                {
+                    title: 'Device Type',
+                    key: 'name',
+                    render: colData => {
+                        return <span>{colData.name}</span>
+                    }
+                },
+                {
+                    title: 'Serial Number',
+                    key: 'serialNum',
+                    render: colData => {
+                        return <span>{colData.serialNum}</span>
+                    }
+                },
+                {
+                    title: 'Action',
+                    key: 'button',
+                    render: colData => {
+                        return <button className="btn btn-danger" onClick={(e) => { this._removeDeviceData(colData.id) }}>Remove</button>
+                    }
+                }
+            ], // add device table column
             deviceIds: [],
             showingInfoWindow: false,
             currentSelectedDevice: null,
@@ -82,6 +112,8 @@ class EditPatientPage extends React.Component {
             hasSetSelects: false,
             careManagerLists: [], // store all care managers and display in Primary Care Manager dropwdown
             physicianLists: [], // store all physicians and display in Primary Physician dropdown
+            physicianListsError: null,
+            careManagerListsError: false,
             showModalDevices: false,
             initialValues: {
                 patientId: '',
@@ -300,6 +332,10 @@ class EditPatientPage extends React.Component {
                 })
             }
         }).catch(e => {
+
+            this.setState({
+                physicianListsError: true
+            })
             console.log(e)
         })
 
@@ -320,7 +356,9 @@ class EditPatientPage extends React.Component {
                 })
             }
         }).catch(e => {
-            console.log(e)
+            this.setState({
+                careManagerListsError: true
+            })
         })
 
 
@@ -395,8 +433,20 @@ class EditPatientPage extends React.Component {
 
     // submit patient update data
     _handleSubmit = async (values) => {
-        const { dispatch } = this.props
+        await sleep(300)
 
+        let { patientRecord } = this.props
+
+
+        if (patientRecord.isEditMode) {
+            alert('For edit')
+        } else {
+            alert('adding patient')
+        }
+
+
+        /*
+        const { dispatch } = this.props
         let s = document.getElementById("date_picker_id")
         let dobFormat = moment(s.value).format("MM-DD-yyyy")
 
@@ -463,67 +513,75 @@ class EditPatientPage extends React.Component {
         }
 
         dispatch(patientAction.create(patientData))
+        */
     }
 
     _handleValidate = values => {
+        
         const errors = {}
-        let patientId = []
-		let firstname = []
-        let lastname = []
-		let addemail = []
-        let address = []
-        let zipcode = []
-        let phoneNum = []
-        let medicareId = []
 
-        if (!values.patientId)
-			patientId.push("Patient ID is required")
+        let { patientRecord: { isEditMode } } = this.props
+        if ( !isEditMode ) {
+            let patientId = []
+            let firstname = []
+            let lastname = []
+            let addemail = []
+            let address = []
+            let zipcode = []
+            let phoneNum = []
+            let medicareId = []
 
-        if (!values.medicareId)
-			medicareId.push("Medicare ID is required")
+            if (!values.patientId)
+                patientId.push("Patient ID is required")
 
-		if (!values.firstname)
-			firstname.push("Firstname is required")
+            if (!values.medicareId)
+                medicareId.push("Medicare ID is required")
 
-        if (!values.lastname)
-            lastname.push("Lastname is required")
+            if (!values.firstname)
+                firstname.push("Firstname is required")
 
-        if (!values.addemail)
-            addemail.push("Email is required")
+            if (!values.lastname)
+                lastname.push("Lastname is required")
 
-        if (!values.address)
-            address.push("Address is required")
+            if (!values.addemail)
+                addemail.push("Email is required")
 
-        if (!values.zipcode)
-            zipcode.push("Zipcode is required")
+            if (!values.addressLine1)
+                address.push("Address Line 1 is required")
 
-        if (!values.phoneNum)
-            phoneNum.push("Phone number is required")
+            if (!values.zipcode)
+                zipcode.push("Zipcode is required")
+
+            if (!values.phoneNum)
+                phoneNum.push("Phone number is required")
 
 
-        if (patientId.length > 0)
-            errors.patientId = patientId
+            if (patientId.length > 0)
+                errors.patientId = patientId
 
-        if (medicareId.length > 0)
-            errors.medicareId = medicareId
+            if (medicareId.length > 0)
+                errors.medicareId = medicareId
 
-        if (firstname.length > 0)
-            errors.firstname = firstname
+            if (firstname.length > 0)
+                errors.firstname = firstname
 
-        if (lastname.length > 0)
-            errors.lastname = lastname
+            if (lastname.length > 0)
+                errors.lastname = lastname
 
-        if (addemail.length > 0)
-            errors.addemail = addemail
+            if (addemail.length > 0)
+                errors.addemail = addemail
 
-        if (address.length > 0)
-            errors.address = address
+            if (address.length > 0)
+                errors.address = address
 
-        if (zipcode.length > 0)
-            errors.zipcode = zipcode
+            if (zipcode.length > 0)
+                errors.zipcode = zipcode
 
-        if (phoneNum.length > 0)
-            errors.phoneNum = phoneNum
+            if (phoneNum.length > 0)
+                errors.phoneNum = phoneNum
+        } else {
+
+        }
 
 		return errors
     }
@@ -594,7 +652,7 @@ class EditPatientPage extends React.Component {
     // close patient location modal
     _closeModal = () => {
         this.setState({
-            showPatientLocationModal: false
+            showPatientLocationModal: false,
         })
     }
 
@@ -668,10 +726,11 @@ class EditPatientPage extends React.Component {
         })
     }
 
-    _setDob = date => {
+    _setDob = (date, form) => {
         this.setState({
             dob: date
         })
+        //form.change('dob', date)
     }
 
     onMarkerClick = (props, marker, e) =>
@@ -749,7 +808,7 @@ class EditPatientPage extends React.Component {
             //insert separately for device ids
             //will be use later for adding of patient
             deviceIds.push(currentSelectedDevice.resource.id)
-
+            
             //update now the states
             this.setState({
                 patientDevicesLists,
@@ -795,6 +854,8 @@ class EditPatientPage extends React.Component {
               conditionsAdded,
               alertLists,
               patientDevicesLists,
+              careManagerListsError,
+              physicianListsError,
               currentSelectedDevice } = this.state
         let { patient, practitioner, removeBc, patientRecord, clearPatientFields } = this.props
 
@@ -855,6 +916,14 @@ class EditPatientPage extends React.Component {
             })
         }
 
+        if (physicianListsError) {
+            physicianOptions =  (
+                        <option>
+                            Error loading Physician lists
+                        </option>
+                    )
+        }
+
         // display care manager lists in dropdown
         if (careManagerLists !== null && careManagerLists.length > 0) {
             careManagerListsOptions = careManagerLists.map((careManager, index) => {
@@ -877,6 +946,14 @@ class EditPatientPage extends React.Component {
                     }
                 }
             })
+        } else {
+            if (careManagerListsError) {
+                careManagerListsOptions =  (
+                            <option>
+                                Error loading Care Manager Lists
+                            </option>
+                        )
+            }
         }
 
         if (typeof devicesLists !== 'undefined' && devicesLists !== null && devicesLists.length > 0) {
@@ -1007,7 +1084,7 @@ class EditPatientPage extends React.Component {
                                 initialValues={patientRecord.initialValues}
                                 onSubmit={this._handleSubmit}
                                 validate={this._handleValidate}
-                                render={({values, initialValues, pristine, submitting, handleSubmit, form }) => (
+                                render={({values, initialValues, pristine, submitting, handleSubmit, form, errors }) => (
                                     <Form onSubmit={handleSubmit}>
                                         <div className="patient-info">
                                             <Row>
@@ -1151,7 +1228,7 @@ class EditPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
-                                                    <Form.Group className="allo-send-text">
+                                                    <Form.Group className="allow-send-text">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
                                                                 <Form.Label className="col-sm-4"></Form.Label>
@@ -1193,12 +1270,10 @@ class EditPatientPage extends React.Component {
                                                                                     <option>Loading Physicians...</option>
                                                                                  }
                                                                                  {
-                                                                                    physicianOptions!==null &&
-                                                                                    <>
+                                                                                    !physicianListsError &&
                                                                                     <option>Select a Primary Physician</option>
+                                                                                }
                                                                                     {physicianOptions}
-                                                                                    </>
-                                                                                 }
                                                                             </Form.Control>
                                                                         )}
                                                                     </Field>
@@ -1223,12 +1298,10 @@ class EditPatientPage extends React.Component {
                                                                                     <option>Loading Care Managers...</option>
                                                                                  }
                                                                                  {
-                                                                                    careManagerListsOptions!==null &&
-                                                                                    <>
+                                                                                    !careManagerListsError &&
                                                                                     <option>Select a Primary Care Manager</option>
-                                                                                    {careManagerListsOptions}
-                                                                                    </>
-                                                                                 }
+                                                                                }
+                                                                                 {careManagerListsOptions}
                                                                             </Form.Control>
                                                                         )}
                                                                     </Field>
@@ -1284,7 +1357,7 @@ class EditPatientPage extends React.Component {
                                                                         {({ input, meta, type }) => (
                                                                             <DatePicker
                                                                               selected={this.state.dob}
-                                                                              onChange={date => this._setDob(date)}
+                                                                              onChange={date => this._setDob(date, form)}
                                                                               isClearable
                                                                               placeholderText="MM/DD/YYYY"
                                                                               dateFormat="MM/dd/yyyy"
@@ -1294,7 +1367,9 @@ class EditPatientPage extends React.Component {
                                                                         )}
                                                                     </Field>
 
-                                                                    <span className="ml-3">34 years old</span>
+                                                                    <span className="ml-3">
+                                                                        34 years old
+                                                                    </span>
                                                                 </div>
                                                             </Col>
                                                         </Row>
@@ -1525,9 +1600,8 @@ class EditPatientPage extends React.Component {
                                                     </Tabs>
                                                 </div>
                                             </div>
-
                                             <div className="btn-add">
-                                                <Button type="submit" disabled={pristine} variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
+                                                <Button type="submit" variant="primary" className={`btn-submit ${isAddingNewPatientLoading ? 'disabled' : ''}`}>
                                                     { isAddingNewPatientLoading ?
                                                         <span className="ml-2">Saving Patient Data...</span>
                                                         :
@@ -1743,7 +1817,7 @@ class EditPatientPage extends React.Component {
                                              <Modal.Footer>
                                                  <Button onClick={(event) => {
                                                     handleSubmit(event).then(() => {
-                                                        this._closeModal()
+                                                        this._closeModalDevices()
                                                     })
                                                  }}
                                                  type="submit" disabled={pristine} variant="primary" className="btn-submit">
