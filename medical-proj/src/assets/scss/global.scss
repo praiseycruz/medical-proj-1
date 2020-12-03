@@ -2,6 +2,20 @@ body {
     color: #ddd !important;
     font-family: 'Lato', sans-serif !important;
 
+    button {
+        &:focus {
+            border: none;
+            outline: none;
+        }
+
+        &:disabled {
+            background-color: #a9a9a900 !important;
+            border-color: #a9a9a936 !important;
+            border-radius: 2px !important;
+            color: #a9a9a980 !important;
+        }
+    }
+
     .dashboard-table {
         button {
             border-radius: 2px;
@@ -61,7 +75,6 @@ body {
     //         }
     //     }
     // }
-
 
     .input-errors {
         color: #ff2f2f;

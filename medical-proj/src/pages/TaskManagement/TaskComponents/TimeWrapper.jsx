@@ -78,7 +78,7 @@ class TaskTimerWrapper extends React.Component {
         if (secondsElapsed !== 0) {
 
         } else {
-            let error = "<span>Cannot log zero time amount. <br />Please try again after starting timer or click minutes to add manually</span>"
+            let error = "<span>Cannot log zero time amount. <br />Please try again after starting timer or click minutes to add manually.</span>"
 
             iziToast.error({
                position: 'topRight',
@@ -223,8 +223,8 @@ class TaskTimerWrapper extends React.Component {
                                         <div className="info-box-content">
                                             <span className="info-box-text">Care Team</span>
                                             <span className="info-box-names">
-                                                <span>Care Manager: <span>Dr. Test Manager</span></span>
-                                                <span>PCP: <span>Dr. Test Physician</span></span>
+                                                <p>Care Manager: <span>Dr. Test Manager</span></p>
+                                                <p>PCP: <span>Dr. Test Physician</span></p>
                                             </span>
                                         </div>
                                     </div>
