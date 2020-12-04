@@ -222,7 +222,7 @@ class DashboardPage extends React.Component {
         // })
 
         this.props.history.push('/patient-management')
-        localStorage.setItem('patientDetails', patientData);
+        localStorage.setItem('patientDetails', JSON.stringify(patientData));
     }
 
     _getPrimaryCareManagerValue = (e) => {

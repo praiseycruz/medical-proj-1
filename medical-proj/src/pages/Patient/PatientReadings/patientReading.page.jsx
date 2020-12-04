@@ -366,8 +366,19 @@ class PatientReadingsPage extends React.Component {
         const { dispatch } = this.props
         dispatch(practitionerAction.getAllPhysician(100, 0))
         dispatch(practitionerAction.getAllCareManager(100, 0))
+        let patientDetails = (localStorage.getItem("patientDetails")!==null) ? localStorage.getItem("patientDetails") : null
+        let finalPatientDetails = (patientDetails!==null) ? JSON.parse(patientDetails) : null
 
-        let patientDetails = localStorage.getItem("patientDetails")
+        if (localStorage.getItem("patientDetails")!==null) {
+            localStorage.removeItem("patientDetails")
+        }
+
+        if ( finalPatientDetails!==null ) {
+            let setPatient = {
+                resource: finalPatientDetails
+            }
+            this._selectPatient(setPatient)
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -476,7 +487,7 @@ class PatientReadingsPage extends React.Component {
     _clearPatientFields = () => {
         //get patient record
         let { patientRecord, random } = this.state
-        
+
         //generate random number
         random = Math.random()
 
@@ -505,14 +516,14 @@ class PatientReadingsPage extends React.Component {
         this.setState({
             patientRecord
         })
-   
+
     }
 
     _selectPatient = item => {
 
         //get patient record
         let { patientRecord, random } = this.state
-        
+
 
         //generate random number
         random = Math.random()
@@ -545,7 +556,7 @@ class PatientReadingsPage extends React.Component {
 
         //set now the current data
         patientRecord.currentData = item
-        
+
 
         //sets now the patientRecord state
         this.setState({
@@ -671,7 +682,7 @@ class PatientReadingsPage extends React.Component {
 
         if (devicesDataOnClick !== 'undefined' && devicesDataOnClick !== null && devicesDataOnClick.length > 0) {
             populateDeviceData = devicesDataOnClick.map((item, key) => {
-                
+
                 return (
                     <div key={key}>
                         <Form.Group className="devices-types">
@@ -779,12 +790,12 @@ class PatientReadingsPage extends React.Component {
                                                     )}
                                                 </Field>
                                             </div>
-                                            <ModalSearch 
+                                            <ModalSearch
                                                 query={values.searchPatient}
                                                 results={patientSearchModal.results}
                                                 closeModal={this._closePatientModalSearch}
                                                 show={patientSearchModal.show}
-                                                label="Results for" 
+                                                label="Results for"
                                                 selectData={item => {this._selectPatient(item)}}
                                             />
                                             <Button
