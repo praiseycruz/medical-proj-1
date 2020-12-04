@@ -1,6 +1,6 @@
 import React from 'react'
 import { Router, Route, Link, Switch, Redirect, NavLink } from 'react-router-dom'
-import { DashboardPage, PhysicianPage, CareManagerPage, TaskManagementPage, ReportsPage, AddNewDevicePage } from './pages'
+import { DashboardPage, PhysicianPage, CareManagerPage, TaskManagementPage, ReportsPage, AddNewDevicePage, AddDiagnosisCodePage, AddConditionPage } from './pages'
 import { AddPatientPage, PatientReadingsPage  } from './pages/Patient'
 import { MainWrapper, MainContentWrapper } from './styled_components/app.style'
 import { PageLogoSection } from './styled_components/header.style'
@@ -47,10 +47,12 @@ export class App extends React.Component {
             'physician': 'Physician Management',
             'care-manager': 'Care Management',
             'task-management': 'Task Management',
-            'add-device': 'Add New Device'
+            'add-device': 'Add New Device',
+            'add-condition': 'Add Conditions',
+            'add-diagnosis': 'Add Diagnosis Code'
         }
 
-        let exceptions = ['physician','care-manager','task-management','add-device']
+        let exceptions = ['physician','care-manager','task-management','add-device', 'add-condition', 'add-diagnosis']
         // let exceptionsMap = ['Physician Management', 'Care Management', 'Tasks', 'Add New Device']
         let currentPage = (window.location.pathname).toString().replace('/','')
 
@@ -96,7 +98,9 @@ export class App extends React.Component {
         if (currentPage == 'Physician Management' ||
             currentPage == 'Care Management' ||
             currentPage == 'Tasks Management' ||
-            currentPage == 'Add New Device' ) {
+            currentPage == 'Add New Device' ||
+            currentPage == 'Add Conditions' ||
+            currentPage == 'Add Diagnosis Code') {
             if (!isSetAccordion) {
                 this._caretOpen()
                 jQuery('.click-caret').click()
@@ -362,6 +366,16 @@ export class App extends React.Component {
                                                         <i className="fas fa-stethoscope"></i>
                                                         Add New Device
                                                     </NavLink>
+
+                                                    <NavLink onClick={() => {this._setCurrentPage('Add Conditions')}} to="/add-condition" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-notes-medical"></i>
+                                                        Add Conditions
+                                                    </NavLink>
+
+                                                    <NavLink onClick={() => {this._setCurrentPage('Add Diagnosis Code')}} to="/add-diagnosis" className="card-links" activeClassName="active">
+                                                        <i className="fas fa-laptop-code"></i>
+                                                        Add Diagnosis Code
+                                                    </NavLink>
                                                 </li>
                                             </ul>
                                         </Accordion.Collapse>
@@ -390,6 +404,8 @@ export class App extends React.Component {
                             <Route exact path="/reports" component={ReportsPage} />
                             <Route exact path="/task-management" component={TaskManagementPage} />
                             <Route exact path="/add-device" component={AddNewDevicePage} />
+                            <Route exact path="/add-condition" component={AddConditionPage} />
+                            <Route exact path="/add-diagnosis" component={AddDiagnosisCodePage} />
                         </Switch>
                     </MainContentWrapper>
         		</MainWrapper>
