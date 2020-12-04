@@ -1,6 +1,8 @@
 body {
-    color: #ddd !important;
+    color: #ddd;
     font-family: 'Lato', sans-serif !important;
+
+
 
     button {
         &:focus {
@@ -298,4 +300,37 @@ body {
             }
         }
     }
+}
+
+.test-style {
+    color: black;
+    label {
+        color: #dddddd;
+    }
+
+    // .col-sm-8 {
+    //     div {
+    //         background: transparent;
+    //         color: #ddd;
+    //         border-color: #4C525C;
+    //         box-shadow: none !important;
+    //
+    //         &:focus {
+    //             outline: 0 !important;
+    //         }
+    //
+    //         div:first-child {
+    //             div:last-child {
+    //                 // color: white;
+    //             }
+    //         }
+    //
+    //         div:last-child {
+    //             color: #dddddd;
+    //             background-color: #353c48;
+    //             border-color: #4C525C;
+    //             border-radius: 2px;
+    //         }
+    //     }
+    // }
 }
