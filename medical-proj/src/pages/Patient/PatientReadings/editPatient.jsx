@@ -21,6 +21,7 @@ import Geocode from "react-geocode"
 import { CurrentLocation } from '../../../components/Map'
 import { practitionerService } from '../../../services'
 import _ from 'lodash'
+import Select from 'react-select'
 
 Geocode.setApiKey(config.googleApiKey)
 
@@ -51,6 +52,7 @@ const HiddenForm = ({values}) => {
 
     return null
 }
+
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -102,7 +104,7 @@ class EditPatientPage extends React.Component {
             isPatientCreated: false,
             hasPatientCreated: false,
             deviceValue: '',
-            dob: new Date(),
+            dob: null,
             physicianValue: '',
             careManagerValue: '',
             devicesDataOnClick: [],
@@ -360,8 +362,6 @@ class EditPatientPage extends React.Component {
                 careManagerListsError: true
             })
         })
-
-
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -517,7 +517,7 @@ class EditPatientPage extends React.Component {
     }
 
     _handleValidate = values => {
-        
+
         const errors = {}
 
         let { patientRecord: { isEditMode } } = this.props
@@ -682,26 +682,28 @@ class EditPatientPage extends React.Component {
         // })
     }
 
-    _getPhysicianValue = (e) => {
-        let { value } = e.target
+    _getPhysicianValue = value => {
+        // let { value } = e.target
+        //
+        // var index = e.target.selectedIndex;
+        // var optionElement = e.target.childNodes[index]
+        // var optionId =  optionElement.getAttribute('data-id')
+        // var optionValue =  optionElement.getAttribute('value')
+        //
+        // let physicianData = [
+        //     {
+        //         "id": optionId,
+        //         "role": "Primary Physician",
+        //         "name": optionValue
+        //     }
+        // ]
+        //
+         this.setState({
+             physicianValue: value,
+        //     physicianData
+         })
 
-        var index = e.target.selectedIndex;
-        var optionElement = e.target.childNodes[index]
-        var optionId =  optionElement.getAttribute('data-id')
-        var optionValue =  optionElement.getAttribute('value')
 
-        let physicianData = [
-            {
-                "id": optionId,
-                "role": "Primary Physician",
-                "name": optionValue
-            }
-        ]
-
-        this.setState({
-            physicianValue: value,
-            physicianData
-        })
     }
 
     _getPrimaryCareManager = (e) => {
@@ -808,7 +810,7 @@ class EditPatientPage extends React.Component {
             //insert separately for device ids
             //will be use later for adding of patient
             deviceIds.push(currentSelectedDevice.resource.id)
-            
+
             //update now the states
             this.setState({
                 patientDevicesLists,
@@ -892,16 +894,24 @@ class EditPatientPage extends React.Component {
             }
         }
 
+        let buildPhysicianOptions = []
         // display physician lists in dropdown
         if (physicianLists !== null && physicianLists.length > 0) {
+
             physicianOptions = physicianLists.map((physician, index) => {
                 let { resource } = physician
+
 
                 if (typeof resource !== 'undefined' && resource !== null) {
                     let { name } = resource
 
                     if (typeof name !== 'undefined' && name !== null) {
                         let physicianName = name[0].prefix + ' ' + name[0].given + ' ' + name[0].family
+
+                        buildPhysicianOptions.push({
+                            value: physician.resource.id,
+                            label: physicianName
+                        })
 
                         return (
                             <option
@@ -1066,6 +1076,36 @@ class EditPatientPage extends React.Component {
             </div>
         )
 
+        const customStyles = {
+            menu: (provided, state) => ({
+                ...provided,
+                width: state.selectProps.width,
+                borderBottom: '1px dotted pink',
+                color: 'black',
+                padding: 20,
+          }),
+
+          control: (_, { selectProps: { width }}) => ({
+              width: width
+          }),
+
+          singleValue: (provided, state) => {
+              const opacity = state.isDisabled ? 0.5 : 1;
+              const transition = 'opacity 300ms';
+
+              return { ...provided, opacity, transition };
+            }
+        }
+
+        const theme = theme => ({
+            ...theme,
+            colors: {
+                ...theme.colors,
+                primary25: 'hotpink',
+                primary: 'black',
+            }
+        })
+
         return (
             <AddPatientWrapper>
                 <div className="mt-3">
@@ -1074,7 +1114,6 @@ class EditPatientPage extends React.Component {
                             <span>Patient Information</span>
                             <div>
                                 <Button variant="primary" className="mr-2 add" onClick={() => {clearPatientFields()}}>Add New Patient</Button>
-                                <Button variant="primary" className="edit mr-2" disabled={(patientRecord.isEditMode) ? false : true}>Edit Patient</Button>
                                 <Button variant="primary" onClick={this._showNotifications}>Notifications</Button>
                             </div>
                         </Card.Header>
@@ -1254,7 +1293,7 @@ class EditPatientPage extends React.Component {
                                                         </Row>
                                                     </Form.Group>
 
-                                                    <Form.Group className="patient-physician">
+                                                    {/*<Form.Group className="patient-physician">
                                                         <Row>
                                                             <Col sm={12} className="patient-inputs">
                                                                 <Form.Label className="col-sm-4">Primary Physician</Form.Label>
@@ -1275,6 +1314,28 @@ class EditPatientPage extends React.Component {
                                                                                 }
                                                                                     {physicianOptions}
                                                                             </Form.Control>
+                                                                        )}
+                                                                    </Field>
+                                                                </div>
+                                                            </Col>
+                                                        </Row>
+                                                    </Form.Group>*/}
+
+                                                    <Form.Group className="patient-physician">
+                                                        <Row>
+                                                            <Col sm={12} className="patient-inputs test-style">
+                                                                <Form.Label className="col-sm-4">Primary Physician</Form.Label>
+                                                                <div className="col-sm-8">
+                                                                    <Field name="patientPhysician" type="select">
+                                                                        {({ input, meta, type }) => (
+                                                                            <Select
+                                                                                style={customStyles}
+                                                                                isMulti={false}
+                                                                                value={physicianValue}
+                                                                                onChange={this._getPhysicianValue}
+                                                                                options={buildPhysicianOptions}
+                                                                                theme={theme}
+                                                                            />
                                                                         )}
                                                                     </Field>
                                                                 </div>
@@ -1368,7 +1429,7 @@ class EditPatientPage extends React.Component {
                                                                     </Field>
 
                                                                     <span className="ml-3">
-                                                                        34 years old
+                                                                        34 years
                                                                     </span>
                                                                 </div>
                                                             </Col>
@@ -1583,6 +1644,9 @@ class EditPatientPage extends React.Component {
                                                                 </div>
                                                             </div>
                                                         </Tab>
+                                                        <Tab eventKey="rangeSetup" title="Patient Alerts Range Setup/Edit">
+                                                            Patient Alerts Range Setup/Edit
+                                                        </Tab>
                                                         <Tab eventKey="alerts" title="Alerts">
                                                             <div className="mt-4">
                                                                 <TableComponent data={alertLists} cols={this.state.alertCols} bordered={false} striped={false} isTableFor={'alerts'} />
@@ -1593,9 +1657,6 @@ class EditPatientPage extends React.Component {
                                                         </Tab>
                                                         <Tab eventKey="portal" title="Portal">
                                                             Portal
-                                                        </Tab>
-                                                        <Tab eventKey="rangeSetup" title="Patient Alerts Range Setup/Edit">
-                                                            Patient Alerts Range Setup/Edit
                                                         </Tab>
                                                     </Tabs>
                                                 </div>
